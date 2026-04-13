@@ -1,0 +1,263 @@
+
+
+
+
+/* Estilo para la tabla */
+#tablaUsuarios {
+    width: 100%; /* Asegura que la tabla ocupe todo el espacio disponible */
+    border-collapse: collapse; /* Elimina el espacio entre las celdas */
+    margin-top: 20px; /* Margen superior para separarla de otros elementos */
+    font-family: 'consola', sans-serif; /* Tipografía más limpia */
+}
+
+/* Estilo para las celdas de la tabla */
+#tablaUsuarios th, #tablaUsuarios td {
+    padding: 12px 15px; /* Relleno para celdas */
+    text-align: left; /* Alineación del texto a la izquierda */
+    border-bottom: 1px solid #ddd; /* Línea sutil debajo de cada fila */
+    
+}
+#tablaUsuarios td {
+    word-wrap: break-word;
+    white-space: normal;  /* Permite los saltos de línea */
+    max-width: 150px;     /* Puedes ajustar el ancho máximo según necesites */
+}
+
+#tablaUsuarios {
+    table-layout: auto;
+}
+
+/* Estilo para los encabezados de la tabla */
+#tablaUsuarios th {
+    background-color: #008efb; /* Fondo celeste para los encabezados */
+    color: white; /* Texto blanco */
+    text-transform: uppercase; /* Convertir los textos de los encabezados a mayúsculas */
+    border-radius: 4px; /* Bordes redondeados */
+    font-family: 'consola'; /* Tipografía más limpia */
+}
+
+/* Efecto hover para las filas de la tabla */
+#tablaUsuarios tbody tr:hover {
+    background-color: #f2eb1228; /* Color de fondo claro cuando se pasa el ratón sobre una fila */
+}
+
+/* Estilo para las celdas de la columna "Acciones" */
+#tablaUsuarios td:last-child {
+    text-align: center; /* Centrar el contenido de la columna de acciones */
+}
+
+/* Estilo para los botones dentro de la tabla (por ejemplo, los botones de editar/eliminar) */
+#tablaUsuarios .btn {
+    padding: 6px 12px; /* Relleno para los botones */
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre los botones */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave para los efectos hover */
+}
+
+/* Estilo para el botón de editar */
+#tablaUsuarios .btn-edit {
+    background-color: #36f48b; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+
+/* Estilo para el botón de eliminar */
+#tablaUsuarios .btn-delete {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+
+/* Efecto hover para los botones */
+#tablaUsuarios .btn:hover {
+    opacity: 0.8; /* Hacer que los botones sean ligeramente transparentes al pasar el ratón */
+}
+#tablaUsuarios {
+    width: 100%;
+    border-collapse: collapse; /* Esto hace que las celdas y las líneas se toquen sin espacios */
+    margin-top: 20px;
+    font-family: 'Arial', sans-serif;
+}
+#tablaUsuarios th, #tablaUsuarios td {
+    padding: 12px 15px; /* Relleno para las celdas */
+    text-align: left; /* Alineación del texto */
+    border-right: 1px solid #ddd; /* Línea vertical entre las celdas */
+}
+
+/* Centrar solo los encabezados */
+#tablaUsuarios th {
+    background-color: #008efb; /* Fondo celeste para los encabezados */
+    text-transform: uppercase; /* Convertir los textos de los encabezados a mayúsculas */
+    text-align: center; /* Centra el texto solo en los encabezados */
+    color: white; /* Color del texto */
+
+}
+/* Eliminar la última línea vertical (derecha) para la última columna */
+#tablaUsuarios th:last-child, #tablaUsuarios td:last-child {
+    border-right: none; /* Eliminar la línea en la última columna */
+}
+
+/* Fondo del cuadro que indica la página actual */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button.current {
+    background: #007bff !important;
+    color: white !important;
+    border: 1px solid #007bff !important;
+    border-radius: 4px;
+}
+/* Borde para los botones "Anterior" y "Siguiente" */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button {
+    border: 1px solid #007bff !important;  /* Bordes azules */
+    padding: 5px 10px !important;  /* Ajusta el tamaño del borde si lo deseas */
+    border-radius: 4px;
+    
+}
+
+/* Estilo al pasar el ratón para el hover de los botones "Anterior" y "Siguiente" */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button:hover {
+    background-color: #007bff67 !important;  /* Fondo más oscuro al pasar el ratón */
+    color: white !important;  /* Mantener el texto blanco */
+    background: #007bff !important;
+    
+}
+
+/* Aumentar el tamaño de los íconos dentro de los botones de exportar  */
+.dt-button i {
+    font-size: 20px;  /* Ajusta el tamaño del ícono */
+}
+/* Cambiar el tamaño de los botones de los botones de exportar*/
+.dt-button {
+    font-size: 16px;  /* Ajusta el tamaño del texto del botón */
+    padding: 6px 10px;  /* Ajusta el tamaño del botón */
+    border-radius: 5px;  /* Opcional, para redondear las esquinas */
+}
+
+
+/* Opcional: Cambiar el color o el tamaño del ícono cuando se pasa el ratón */
+td.details-control:hover::before {
+    color: #b3000f; /* Cambio de color al pasar el ratón */
+}
+
+/* Estilo personalizado para el modal de confirmación */
+#confirmationModal .modal-content {
+    border-radius: 10px;  /* Bordes redondeados */
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#confirmationModal .modal-header {
+    background-color: #007bff15;
+    color: rgb(228, 29, 29);
+}
+
+#confirmationModal .modal-footer {
+    border-top: none;
+}
+
+#confirmationModal .modal-body {
+    font-size: 16px;
+    text-align: center;
+}
+/* Fin Estilo personalizado para el modal de confirmación */
+
+  #confirmationGif {
+      max-width: 50%;      /* Ajusta el GIF al ancho del contenedor */
+      max-height: 200px;    /* Define la altura máxima */
+      width: auto;          /* Mantiene la relación de aspecto */
+      height: auto;         /* Mantiene la relación de aspecto */
+      border-radius: 10px;  /* Bordes redondeados, si se desea */
+      margin-bottom: 10px;  /* Espacio debajo del GIF */
+  }
+
+  #confirmationModal .modal-body {
+      padding: 5px; /* Padding alrededor del contenido del modal */
+      text-align: center; /* Centra el contenido */
+  }
+  /* Estilo para que no se desborde el nombre y apellido del contendor*/
+  .b-title {
+    white-space: nowrap; /* Evita el salto de línea */
+    overflow: hidden; /* Oculta el contenido que desborda */
+    text-overflow: ellipsis; /* Muestra "..." al final del contenido si se desborda */
+    max-width: 155px; /* Ajusta el ancho según lo que necesites */
+}
+
+
+
+/* Inicio Estilo para registro_inventario.php */
+
+/* Limitar el ancho de los select dentro del contenedor */
+    .select-container {
+        max-width: 400px; /* Ajustar el ancho máximo del select */
+        margin: 0 auto; /* Centrar el formulario en el contenedor */
+    }
+
+    /* Personalización de Select2 */
+    .select2-container .select2-selection--single {
+        height: 40px; /* Alto de la caja seleccionada */
+        border: 1px solid #0870e6; /* Borde más suave */
+        border-radius: 5px; /* Bordes redondeados */
+        padding: 5px 12px; /* Relleno de la caja */
+        font-size: 16px; /* Tamaño de fuente más grande */
+        background-color: #f0f0f0; /* Fondo claro para el campo de selección */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 30px; /* Alineación vertical del texto */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 8px; /* Ajuste de la flecha */
+        right: 10px; /* Ajuste de la flecha */
+    }
+
+    /* Estilo del dropdown (lista de opciones) */
+    .select2-container--default .select2-dropdown {
+        border-radius: 5px; /* Bordes redondeados para el dropdown */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        background-color: #ffffff; /* Fondo blanco para la lista de opciones */
+    }
+
+    /* Opciones al pasar el ratón */
+    .select2-results__option[aria-selected] {
+        background-color: #007bff; /* Fondo azul al pasar el ratón */
+        color: #ffffff; /* Color del texto */
+    }
+
+    /* Estilo del placeholder */
+    .select2-selection__placeholder {
+        color: #6c757d; /* Color gris claro para el placeholder */
+        font-style: italic; /* Estilo de cursiva */
+    }
+
+    /* Fondo de la lista de opciones cuando el dropdown está abierto */
+    .select2-container--open .select2-dropdown {
+        background-color: #e9ecef; /* Fondo gris claro para la lista desplegable */
+    }
+
+    /* Fondo al hacer hover sobre las opciones */
+    .select2-results__option:hover {
+        background-color: #007bff; /* Fondo azul al pasar el ratón */
+        color: #ffffff; /* Color del texto */
+    }
+/* Fin de estilo para registro_inventario.php */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

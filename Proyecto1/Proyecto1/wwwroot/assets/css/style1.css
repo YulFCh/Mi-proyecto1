@@ -1,0 +1,696 @@
+/* Estilo para los encabezados de la tabla */
+#tablaUsuarios th {
+    background-color: #008efb; /* Fondo celeste para los encabezados */
+    color: white; /* Texto blanco */
+    text-transform: uppercase; /* Convertir los textos de los encabezados a mayúsculas */
+    border-radius: 4px; /* Bordes redondeados */
+    font-family: 'consola'; /* Tipografía más limpia */
+}
+/* Efecto hover para las filas de la tabla */
+#tablaUsuarios tbody tr:hover {
+    background-color: #f2eb1228; /* Color de fondo claro cuando se pasa el ratón sobre una fila */
+}
+/* Estilo para los botones dentro de la tabla (por ejemplo, los botones de editar/eliminar) */
+#tablaUsuarios .btn {
+    padding: 6px 12px; /* Relleno para los botones */
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre los botones */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave para los efectos hover */
+}
+/* Aumentar espacio entre la última fila de la tabla y la paginación */
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 40px; /* Ajusta el valor según el espacio que necesites */
+}
+
+/* Estilo para el botón de editar */
+#tablaUsuarios .btn-edit {
+    background-color: #36f48b; 
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+
+/* Estilo para el botón de editar */
+#tablaUsuarios .btn-edit {
+    background-color: #36f48b; 
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar */
+#tablaUsuarios .btn-delete {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tablaUsuarios .btn-baja {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+/* Estilo para el botón de editar1 */
+#tablaUsuarios .btn-editar {
+    background-color: #36f48b; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar1 */
+#tablaUsuarios .btn-eliminar {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tablaUsuarios {
+    border-collapse: collapse;
+    border: none;
+}
+/* Última fila con fondo gris claro y borde plomo */
+table.dataTable tbody tr:last-child {
+    border-bottom: 1px solid #ddd;  /* Borde plomo */
+    
+}
+/* Eliminar las líneas horizontales en todas las filas */
+#tablaUsuarios th, #tablaUsuarios td {
+    border-bottom: none; /* Eliminar todas las líneas horizontales */
+}
+/* Agregar una línea vertical al principio de la primera columna */
+table.dataTable thead th:first-child, 
+table.dataTable tbody td:first-child {
+    border-left: 1px solid #ddd;  /* Línea vertical color plomo */
+}
+
+
+/* Efecto hover para los botones */
+#tablaUsuarios .btn:hover {
+    opacity: 0.8; /* Hacer que los botones sean ligeramente transparentes al pasar el ratón */
+}
+
+#tablaUsuarios th, #tablaUsuarios td {
+    text-align: left; /* Alineación del texto */
+    border-right: 1px solid #ddd; /* Línea vertical entre las celdas */
+}
+
+
+/* Estilo para los encabezados de la tabla */
+#tabla_utilitarios th {
+    background-color: #008efb; /* Fondo celeste para los encabezados */
+    color: white; /* Texto blanco */
+    text-transform: uppercase; /* Convertir los textos de los encabezados a mayúsculas */
+    border-radius: 4px; /* Bordes redondeados */
+    font-family: 'consola'; /* Tipografía más limpia */
+}
+/* Efecto hover para las filas de la tabla */
+#tabla_utilitarios tbody tr:hover {
+    background-color: #f2eb1228; /* Color de fondo claro cuando se pasa el ratón sobre una fila */
+}
+/* Estilo para los botones dentro de la tabla (por ejemplo, los botones de editar/eliminar) */
+#tabla_utilitarios .btn {
+    padding: 6px 12px; /* Relleno para los botones */
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre los botones */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave para los efectos hover */
+}
+/* Aumentar espacio entre la última fila de la tabla y la paginación */
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 40px; /* Ajusta el valor según el espacio que necesites */
+}
+
+/* Estilo para el botón de editar */
+#tabla_utilitarios .btn-edit {
+    background-color: #36f48b; 
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar */
+#tabla_utilitarios .btn-delete {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tabla_utilitarios .btn-baja {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+/* Estilo para el botón de editar1 */
+#tabla_utilitarios .btn-editar {
+    background-color: #36f48b; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar1 */
+#tabla_utilitarios .btn-eliminar {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tabla_utilitarios {
+    border-collapse: collapse;
+    border: none;
+}
+/* Última fila con fondo gris claro y borde plomo */
+table.dataTable tbody tr:last-child {
+    border-bottom: 1px solid #ddd;  /* Borde plomo */
+    
+}
+/* Eliminar las líneas horizontales en todas las filas */
+#tabla_utilitarios th, #tabla_utilitarios td {
+    border-bottom: none; /* Eliminar todas las líneas horizontales */
+}
+/* Agregar una línea vertical al principio de la primera columna */
+table.dataTable thead th:first-child, 
+table.dataTable tbody td:first-child {
+    border-left: 1px solid #ddd;  /* Línea vertical color plomo */
+}
+
+
+/* Efecto hover para los botones */
+#tabla_utilitarios .btn:hover {
+    opacity: 0.8; /* Hacer que los botones sean ligeramente transparentes al pasar el ratón */
+}
+
+#tabla_utilitarios th, #tabla_utilitarios td {
+    text-align: left; /* Alineación del texto */
+    border-right: 1px solid #ddd; /* Línea vertical entre las celdas */
+}
+
+
+/* Estilo para los encabezados de la tabla */
+#tabla_proveedor th {
+    background-color: #008efb; /* Fondo celeste para los encabezados */
+    color: white; /* Texto blanco */
+    text-transform: uppercase; /* Convertir los textos de los encabezados a mayúsculas */
+    border-radius: 4px; /* Bordes redondeados */
+    font-family: 'consola'; /* Tipografía más limpia */
+}
+/* Efecto hover para las filas de la tabla */
+#tabla_proveedor tbody tr:hover {
+    background-color: #f2eb1228; /* Color de fondo claro cuando se pasa el ratón sobre una fila */
+}
+/* Estilo para los botones dentro de la tabla (por ejemplo, los botones de editar/eliminar) */
+#tabla_proveedor .btn {
+    padding: 6px 12px; /* Relleno para los botones */
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre los botones */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave para los efectos hover */
+}
+/* Aumentar espacio entre la última fila de la tabla y la paginación */
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 40px; /* Ajusta el valor según el espacio que necesites */
+}
+
+/* Estilo para el botón de editar */
+#tabla_proveedor .btn-edit {
+    background-color: #36f48b; 
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+
+/* Estilo para el botón de editar */
+#tabla_proveedor .btn-edit {
+    background-color: #36f48b; 
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar */
+#tabla_proveedor .btn-delete {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tabla_proveedor .btn-baja {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+/* Estilo para el botón de editar1 */
+#tabla_proveedor .btn-editar {
+    background-color: #36f48b; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+}
+/* Estilo para el botón de eliminar1 */
+#tabla_proveedor .btn-eliminar {
+    background-color: #f44336; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+
+    /*background: none !important; sin fondo
+    /*color: rgb(255, 17, 0);
+    /*padding: 0;
+    /*border: none; /* Sin borde */
+    /*font-size: 20px; */
+}
+#tabla_proveedor {
+    border-collapse: collapse;
+    border: none;
+}
+/* Última fila con fondo gris claro y borde plomo */
+table.dataTable tbody tr:last-child {
+    border-bottom: 1px solid #ddd;  /* Borde plomo */
+    
+}
+/* Eliminar las líneas horizontales en todas las filas */
+#tabla_proveedor th, #tabla_proveedor td {
+    border-bottom: none; /* Eliminar todas las líneas horizontales */
+}
+/* Agregar una línea vertical al principio de la primera columna */
+table.dataTable thead th:first-child, 
+table.dataTable tbody td:first-child {
+    border-left: 1px solid #ddd;  /* Línea vertical color plomo */
+}
+
+
+/* Efecto hover para los botones */
+#tabla_proveedor .btn:hover {
+    opacity: 0.8; /* Hacer que los botones sean ligeramente transparentes al pasar el ratón */
+}
+
+#tabla_proveedor th, #tabla_proveedor td {
+    text-align: left; /* Alineación del texto */
+    border-right: 1px solid #ddd; /* Línea vertical entre las celdas */
+}
+
+
+/* Fondo del cuadro que indica la página actual */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button.current {
+    background: #007bff !important;
+    color: white !important;
+    border: 1px solid #007bff !important;
+    border-radius: 4px;
+}
+/* Borde para los botones "Anterior" y "Siguiente" */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button {
+    border: 1px solid #007bff !important;  /* Bordes azules */
+    padding: 5px 10px !important;  /* Ajusta el tamaño del borde si lo deseas */
+    border-radius: 4px;
+    
+}
+
+/* Estilo al pasar el ratón para el hover de los botones "Anterior" y "Siguiente" */
+div.dataTables_wrapper div.dataTables_paginate .paginate_button:hover {
+    background-color: #007bff67 !important;  /* Fondo más oscuro al pasar el ratón */
+    color: white !important;  /* Mantener el texto blanco */
+    background: #007bff !important;
+    
+}
+/* Aumentar el tamaño de los íconos dentro de los botones de exportar  */
+.dt-button i {
+    font-size: 20px;  /* Ajusta el tamaño del ícono */
+}
+/* Cambiar el tamaño de los botones de los botones de exportar*/
+.dt-button {
+    font-size: 16px;  /* Ajusta el tamaño del texto del botón */
+    padding: 6px 10px;  /* Ajusta el tamaño del botón */
+    border-radius: 5px;  /* Opcional, para redondear las esquinas */
+}
+
+/* Estilo personalizado para el modal de confirmación */
+#confirmationModal .modal-content {
+    border-radius: 10px;  /* Bordes redondeados */
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+#confirmationModal .modal-header {
+    background-color: #007bff15;
+    color: rgb(228, 29, 29);
+}
+
+#confirmationModal .modal-footer {
+    border-top: none;
+}
+
+#confirmationModal .modal-body {
+    font-size: 16px;
+    text-align: center;
+}
+/* Fin Estilo personalizado para el modal de confirmación */
+
+#confirmationGif {
+      max-width: 50%;      /* Ajusta el GIF al ancho del contenedor */
+      max-height: 200px;    /* Define la altura máxima */
+      width: auto;          /* Mantiene la relación de aspecto */
+      height: auto;         /* Mantiene la relación de aspecto */
+      border-radius: 10px;  /* Bordes redondeados, si se desea */
+      margin-bottom: 10px;  /* Espacio debajo del GIF */
+  }
+
+  #confirmationModal .modal-body {
+      padding: 5px; /* Padding alrededor del contenido del modal */
+      text-align: center; /* Centra el contenido */
+  }
+  /* Estilo para que no se desborde el nombre y apellido del contendor*/
+  .b-title {
+    white-space: nowrap; /* Evita el salto de línea */
+    overflow: hidden; /* Oculta el contenido que desborda */
+    text-overflow: ellipsis; /* Muestra "..." al final del contenido si se desborda */
+    max-width: 155px; /* Ajusta el ancho según lo que necesites */
+}
+
+
+/* Inicio Estilo para registro_inventario.php */
+
+/* Limitar el ancho de los select dentro del contenedor */
+    .select-container {
+        max-width: 400px; /* Ajustar el ancho máximo del select */
+        margin: 0 auto; /* Centrar el formulario en el contenedor */
+    }
+
+    /* Personalización de Select2 */
+    .select2-container .select2-selection--single {
+        height: 40px; /* Alto de la caja seleccionada */
+        border-radius: 5px; /* Bordes redondeados */
+        padding: 5px 12px; /* Relleno de la caja */
+        font-size: 16px; /* Tamaño de fuente más grande */
+        background-color: #f2f3f4; /* Fondo claro para el campo de selección */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 30px; /* Alineación vertical del texto */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 8px; /* Ajuste de la flecha */
+        right: 10px; /* Ajuste de la flecha */
+    }
+
+    /* Estilo del dropdown (lista de opciones) */
+    .select2-container--default .select2-dropdown {
+        border-radius: 5px; /* Bordes redondeados para el dropdown */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        background-color: #ffffff; /* Fondo blanco para la lista de opciones */
+    }
+
+    /* Opciones al pasar el ratón */
+    .select2-results__option[aria-selected] {
+        background-color: #007bff; /* Fondo azul al pasar el ratón */
+        color: #ffffff; /* Color del texto */
+    }
+
+    /* Estilo del placeholder */
+    .select2-selection__placeholder {
+        color: #6c757d; /* Color gris claro para el placeholder */
+        font-style: italic; /* Estilo de cursiva */
+    }
+
+    /* Fondo de la lista de opciones cuando el dropdown está abierto */
+    .select2-container--open .select2-dropdown {
+        background-color: #e9ecef; /* Fondo gris claro para la lista desplegable */
+    }
+
+    /* Fondo al hacer hover sobre las opciones */
+    .select2-results__option:hover {
+        background-color: #007bff; /* Fondo azul al pasar el ratón */
+        color: #ffffff; /* Color del texto */
+    }
+/* Fin de estilo para registro_inventario.php */
+
+
+.pcoded-main-container {
+    background-color: #f0f0f0; /* Gris claro */
+}
+
+
+    /* Estilos para el contenedor con fondo blanco */
+    .form-container {
+        background-color: white; /* Fondo blanco */
+        padding: 20px; /* Espaciado interno */
+        border-radius: 8px; /* Bordes redondeados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    }
+
+    /* Estilos para que los campos de texto ocupen todo el ancho dentro de sus columnas */
+    .form-control {
+        width: 100%; /* Campo de texto ocupa todo el ancho disponible */
+        padding: 10px; /* Espaciado interno del campo */
+        font-size: 16px; /* Tamaño de la fuente */
+    }
+
+    /* Estilos para que los campos de texto ocupen todo el ancho dentro de sus columnas */
+    .form-control1 {
+        width: 100%; /* Campo de texto ocupa todo el ancho disponible */
+        padding: 10px; /* Espaciado interno del campo */
+        font-size: 16px; /* Tamaño de la fuente */
+    }
+
+
+    .franja-azul {
+        background-color: #007BFF; /* Azul Bootstrap */
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+    .franja-naranja {
+        background-color: orange;
+        color: white;
+        text-align: right;
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 4px;
+        float: right;
+        font-weight: bold;
+    }
+
+    .franja-verde {
+        background-color: #36f48b; /* Azul Bootstrap */
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+
+    /* Espaciado y diseño de los checkboxes */
+.form-check {
+    margin-bottom: 0px;
+}
+
+
+/* Estilo cuando se pasa el mouse sobre la etiqueta */
+.form-check-label:hover {
+    color: #00ff2a;
+}
+/* Estilo cuando se pasa el mouse sobre la etiqueta */
+.form-check-label1:hover {
+    color: #00ff2a;
+}
+
+/*  la distancia entre los checkboxes */
+.form-check {
+    margin-right: 30px; /* Ajusta el valor según el espacio que desees */
+}
+/*  la distancia entre los checkboxes */
+.form-check1 {
+    margin-right: 0px; /* Ajusta el valor según el espacio que desees */
+}
+
+/* Espaciado adicional para el contenedor d-flex */
+.d-flex {
+    margin-bottom: 20px; /* Ajusta la distancia entre el bloque y otros elementos debajo */
+}
+
+/* Hacer el checkbox más grande */
+.custom-checkbox {
+    width: 20px;   /* Aumenta el tamaño del cuadro del checkbox */
+    height: 20px;  /* Aumenta la altura del cuadro del checkbox */
+    border-radius: 5px; /* Bordes redondeados */
+    transform: scale(1.3); /* Hace que el checkbox sea más grande */
+}
+
+/* Cambiar el color del checkbox cuando está seleccionado */
+.custom-checkbox:checked {
+    background-color: #00ff40b4; /* Color azul cuando está seleccionado */
+    border-color: #00ff40b4;     /* Color azul en el borde */
+}
+
+/* Estilo de la etiqueta */
+.form-check-label {
+    font-size: 18px; /* Aumenta el tamaño del texto */
+    color: #333;    /* Color del texto */
+    font-weight: bold; /* Hace el texto en negrita */
+    padding-left: 5px; /* Un poco de espacio entre el checkbox y el texto */
+}
+
+.error {
+    border: 2px solid red;
+    background-color: #fee;
+}
+    
+select.is-valid {
+  background-image: none !important;
+  border-color: #198754 !important; /* Verde Bootstrap */
+  padding-right: 0.75rem; /* para que no se sobreponga nada */
+}
+
+.select2-selection.is-valid {
+    border-color: #198754 !important; /* Bootstrap 5 green */
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+
+/* Contenedor navbar si necesitas centrar */
+.collapse.navbar-collapse {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Fondo degradado y centrado */
+.titulo-navbar-wrapper {
+     background: linear-gradient(-135deg, #1de9b6 0%, #1dc4e9 100%);
+    border-radius: 5px;
+    padding: 5px 15px;
+    margin-bottom: 15px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Texto estilizado */
+.titulo-navbar {
+    font-family: 'Roboto Slab', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+}
+/* Estilo para resaltar el número buscado en la tabla */
+.resaltado {
+        background-color: #ffff99 !important; /* amarillo suave */
+        font-weight: bold;
+      }
+
+/* Estilo para el botón que está seleccionado */
+/* Estilos base para el botón activo (puedes ajustar lo que quieras) */
+.boton-activo {
+  color: white;
+  font-weight: bold;
+}
+
+/* Inicio de Colores específicos para cada botón cuando está activo */
+#btnPendiente.boton-activo {
+  background-color: #f39c12; /* naranja */
+  border-color: #f39c12;
+}
+
+#btnAtendidos.boton-activo {
+  background-color: #36f48b; /* verde */
+  border-color: #36f48b;
+}
+#btnBajas.boton-activo {
+  background-color: #f43636; /* verde */
+  border-color: #f43636;
+}
+
+#btnTotal.boton-activo {
+  background-color: #2980b9; /* azul */
+  border-color: #2980b9;
+}
+/* Fin de Colores específicos para cada botón cuando está activo */
+
+
+
+.dropdown-container {
+  position: relative;
+  width: 100%;
+  height: 150%;
+}
+
+.dropdown-button {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  background-color: #f2f3f4;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  text-align: left;
+  height: 43px;  
+}
+
+.dropdown-list {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 10;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.checkbox-item {
+  margin-bottom: 1px;
+}
+.dropdown-arrow {
+  position: absolute;
+  right: 5px; /* más cerca del borde */
+  top: 15%;
+  transform: translateY(-15%);
+  pointer-events: none;
+
+}
+
+.modal-personalizado {
+  max-width: 600px; /* o el ancho que desees */
+}
+
+.modal-personalizado1 {
+  max-width: 800px; 
+}
