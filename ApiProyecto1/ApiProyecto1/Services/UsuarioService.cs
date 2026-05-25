@@ -75,28 +75,26 @@ namespace ApiProyecto1.Services
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 string query = @"INSERT INTO usuarios 
-                                (nombres, apellidos, usuario, password, perfil, estado, fecha_registro, usuario_actualiza, fecha_actualiza)
-                                VALUES
-                                (@nombres, @apellidos, @usuario, @password, @perfil, @estado, GETDATE(), @usuario_actualiza, GETDATE())";
+        (nombres, apellidos, usuario, password, perfil, estado, fecha_registro, usuario_actualiza)
+        VALUES
+        (@nombres, @apellidos, @usuario, @password, @perfil, @estado, GETDATE(), @usuario_actualiza)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@nombres", usuario.Nombres);
                 cmd.Parameters.AddWithValue("@apellidos", usuario.Apellidos);
                 cmd.Parameters.AddWithValue("@usuario", usuario.Usuario);
-                cmd.Parameters.AddWithValue("@password", usuario.Password);
+
+                // 🔐 AQUÍ CIFRAS LA CONTRASEÑA
+                string hash = HashPassword(usuario.Password);
+                cmd.Parameters.AddWithValue("@password", hash);
+
                 cmd.Parameters.AddWithValue("@perfil", usuario.Perfil);
-
-                // string: activo / desactivado
                 cmd.Parameters.AddWithValue("@estado", usuario.Estado);
-
-                cmd.Parameters.AddWithValue("@usuario_actualiza",
-                    usuario.Usuario_Actualiza ?? "system");
+                cmd.Parameters.AddWithValue("@usuario_actualiza", usuario.Usuario_Actualiza ?? "system");
 
                 conn.Open();
-                int rows = cmd.ExecuteNonQuery();
-
-                return rows > 0;
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
@@ -153,6 +151,16 @@ namespace ApiProyecto1.Services
                 int rows = cmd.ExecuteNonQuery();
 
                 return rows > 0;
+            }
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return BitConverter.ToString(hash).Replace("-", "");
             }
         }
     }
