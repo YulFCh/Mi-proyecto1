@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Proyecto1.Controllers
 {
@@ -16,29 +18,31 @@ namespace Proyecto1.Controllers
             _apiBaseUrl = config["ApiSettings:BaseUrl"];
         }
 
-
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Inicio");
         }
 
         [HttpPost]
         public async Task<IActionResult> Index(string Usuario, string Password)
         {
-
+            // 🔴 VALIDACIONES BÁSICAS
             if (string.IsNullOrWhiteSpace(Usuario))
-                ViewBag.UsuarioError = "Ingrese el nombre de usuario";
-
-            if (string.IsNullOrWhiteSpace(Password))
-                ViewBag.PasswordError = "Ingrese la contraseña";
-
-            if (ViewBag.UsuarioError != null || ViewBag.PasswordError != null)
             {
-                ViewBag.Usuario = Usuario;
-                return View();
+                TempData["LoginError"] = "Ingrese el nombre de usuario";
+                TempData["OpenLoginModal"] = "true";
+                return RedirectToAction("Index", "Inicio");
             }
 
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                TempData["LoginError"] = "Ingrese la contraseña";
+                TempData["OpenLoginModal"] = "true";
+                return RedirectToAction("Index", "Inicio");
+            }
+
+            // 🔵 ENVIAR A API
             var loginData = new
             {
                 usuario = Usuario,
@@ -52,50 +56,50 @@ namespace Proyecto1.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ViewBag.Error = "Error al conectar con la API";
-                return View();
+                TempData["LoginError"] = "Error al conectar con la API";
+                TempData["OpenLoginModal"] = "true";
+                return RedirectToAction("Index", "Inicio");
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            var result = JsonSerializer.Deserialize<LoginResponse>(responseBody, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var result = JsonSerializer.Deserialize<LoginResponse>(responseBody,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
+            // 🟢 LOGIN EXITOSO (AUTH REAL)
             if (result != null && result.success)
             {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, Usuario)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal
+                );
+
                 return RedirectToAction("Index", "Inicio");
             }
 
-            ViewBag.Usuario = Usuario;
+            // 🔴 LOGIN FALLIDO
+            TempData["LoginError"] = result?.mensaje ?? "Error desconocido";
+            TempData["OpenLoginModal"] = "true";
 
-            if (result != null && result.mensaje != null)
-            {
-                if (result.mensaje == "Usuario incorrecto")
-                {
-                    ViewBag.UsuarioError = result.mensaje;
-                }
-                else if (result.mensaje == "Contraseña incorrecta")
-                {
-                    ViewBag.PasswordError = result.mensaje;
-                }
-                else
-                {
-                    ViewBag.GeneralError = result.mensaje;
-                }
-            }
-            else
-            {
-                ViewBag.GeneralError = "Error desconocido";
-            }
-
-            return View();
+            return RedirectToAction("Index", "Inicio");
         }
 
-        public IActionResult Bienvenida()
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Inicio");
         }
     }
 

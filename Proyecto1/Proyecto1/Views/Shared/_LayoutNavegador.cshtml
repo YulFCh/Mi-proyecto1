@@ -1,0 +1,215 @@
+﻿@using System.Security.Claims
+@{
+    Layout = null;
+
+    var usuario = User.Identity?.Name;
+    var rol = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>Sistema de gestión de inventario</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Free Datta Able Admin Template come up with latest Bootstrap 4 framework with basic components, form elements and lots of pre-made layout options" />
+    <meta name="keywords" content="admin templates, bootstrap admin templates, bootstrap 4, dashboard, dashboard templets, sass admin templets, html admin templates, responsive, bootstrap admin templates free download,premium bootstrap admin templates, datta able, datta able bootstrap admin template, free admin theme, free dashboard template" />
+    <meta name="author" content="CodedThemes" />
+
+    <!-- Favicon icon -->
+    <link rel="icon" href="assets/images/gen.jpg" type="image/x-icon">
+    <!-- fontawesome icon -->
+    <link rel="stylesheet" href="assets/fonts/fontawesome/css/fontawesome-all.min.css">
+    <!-- animation css -->
+    <link rel="stylesheet" href="assets/plugins/animation/css/animate.min.css">
+    <!-- vendor css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style1.css">
+    <link rel="stylesheet" href="assets/css/style3.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+    <!-- PRELOADER -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav class="pcoded-navbar">
+        <div class="navbar-wrapper">
+            <div class="navbar-brand header-logo">
+                <a href="inicio.php" class="b-brand">
+                    <div class="b-bg">
+                        <img class="rounded-circle" style="width:40px;" src="assets/images/gen.jpg" alt="activity-user">
+                    </div>
+                    
+                </a>
+                <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+            </div>
+            <div class="navbar-content scroll-div">
+                <ul class="nav pcoded-inner-navbar">
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Navigation</label>
+                    </li>
+                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
+                        
+                    </li>
+
+                    <!-- Inicio de función que trae esta página solo para el rol Administrador-->
+                    
+                    <!-- Fin de función que trae esta página solo para el rol Administrador-->
+
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Inventario</label>
+                    </li>
+
+                    
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="navbar pcoded-header navbar-expand-lg navbar-light">
+        <div class="m-header">
+            <a class="mobile-menu" id="mobile-collapse1" href="javascript:"><span></span></a>
+            <a href="index.html" class="b-brand">
+                <div class="b-bg">
+                    <i class="feather icon-trending-up"></i>
+                </div>
+                <span class="b-title">Sistema de gestión de inventario</span>
+            </a>
+        </div>
+        <a class="mobile-menu" id="mobile-header" href="javascript:">
+            <i class="feather icon-more-horizontal"></i>
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i class="feather icon-maximize"></i></a></li>
+                <li class="nav-item dropdown">
+                    <!--
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">Dropdown</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="javascript:">Action</a></li>
+                            <li><a class="dropdown-item" href="javascript:">Another action</a></li>
+                            <li><a class="dropdown-item" href="javascript:">Something else here</a></li>
+                        </ul>
+                    -->
+                </li>
+                <li class="nav-item">
+                    <div class="main-search">
+                        <div class="input-group">
+                            <!--
+                                <input type="text" id="m-search" class="form-control" placeholder="Search . . .">
+                                <a href="javascript:" class="input-group-append search-close">
+                                    <i class="feather icon-x input-group-text"></i>
+                                </a>
+                                <span class="input-group-append search-btn btn btn-primary">
+                                    <i class="feather icon-search input-group-text"></i>
+                                </span>
+                            -->
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right notification">
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0">Notificaciones OTI</h6>
+
+                            </div>
+                            <ul class="noti-body">
+                                <li class="n-title">
+                                    <p class="m-b-0">NUEVO</p>
+                                </li>
+
+                            </ul>
+                            <div class="noti-footer">
+                                <a href="javascript:">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="dropdown drp-user">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon feather icon-settings"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-notification">
+                            <div class="pro-head">
+                                <img src="assets/images/user/avatar-1.jpg" class="img-radius" alt="User-Profile-Image">
+                                <span><?php echo htmlspecialchars($_SESSION["usuario"]); ?></span>
+
+                                <!-- Muestra el Rol del usuario -->
+                                <small style="display:block; color: #ffff; font-size: 12px;"><?php echo htmlspecialchars($_SESSION["rol"]); ?></small>
+
+                                <a href="logout.php" class="dud-logout" title="Logout">
+                                    <i class="feather icon-log-out"></i>
+                                </a>
+                            </div>
+                            <ul class="pro-body">
+                                <!-- <li><a href="javascript:" class="dropdown-item"><i class="feather icon-settings"></i>Ajustes</a></li> -->
+                                <!--<li><a href="javascript:" class="dropdown-item"><i class="feather icon-user"></i>Perfil</a></li>-->
+                                <!--<li><a href="message.html" class="dropdown-item"><i class="feather icon-mail"></i>Mensajes</a></li>-->
+                                <li><a href="reset_password.php" class="dropdown-item"><i class="feather icon-lock"></i> Cambiar contraseña</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- HEADER SUPERIOR -->
+  
+
+    <!-- CONTENIDO -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+
+                    @RenderBody()
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendor-all.min.js"></script>
+    <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/pcoded.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+
+</body>
+</html>

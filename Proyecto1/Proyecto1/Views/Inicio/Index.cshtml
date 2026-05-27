@@ -1,4 +1,10 @@
-﻿
-@model Proyecto1.Views.Inicio.IndexModel
+﻿@model Proyecto1.Views.Inicio.IndexModel
 @{
+    ViewData["Title"] = "Inicio";
+
+    var estaLogueado = User.Identity.IsAuthenticated;
+
+    Layout = estaLogueado
+        ? "~/Views/Shared/_LayoutNavegador.cshtml"
+        : "~/Views/Shared/_LayoutInicio.cshtml";
 }
