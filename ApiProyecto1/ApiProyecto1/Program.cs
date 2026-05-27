@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 // 👉 REGISTRAR SERVICES (IMPORTANTE)
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<RegistrosService>();
 
 var app = builder.Build();
 
