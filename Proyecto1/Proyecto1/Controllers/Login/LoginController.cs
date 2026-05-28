@@ -27,7 +27,7 @@ namespace Proyecto1.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string Usuario, string Password)
         {
-            // 🔴 VALIDACIONES BÁSICAS
+
             if (string.IsNullOrWhiteSpace(Usuario))
             {
                 TempData["LoginError"] = "Ingrese el nombre de usuario";
@@ -42,7 +42,6 @@ namespace Proyecto1.Controllers
                 return RedirectToAction("Index", "Inicio");
             }
 
-            // 🔵 ENVIAR A API
             var loginData = new
             {
                 usuario = Usuario,
@@ -69,7 +68,7 @@ namespace Proyecto1.Controllers
                     PropertyNameCaseInsensitive = true
                 });
 
-            // 🟢 LOGIN EXITOSO (AUTH REAL)
+ 
             if (result != null && result.success)
             {
                 var claims = new List<Claim>
@@ -87,9 +86,9 @@ namespace Proyecto1.Controllers
                 );
 
                 return RedirectToAction("Index", "Inicio");
+                //return RedirectToAction("Index", "Home");
             }
 
-            // 🔴 LOGIN FALLIDO
             TempData["LoginError"] = result?.mensaje ?? "Error desconocido";
             TempData["OpenLoginModal"] = "true";
 

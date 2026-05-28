@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Proyecto1.Views.Login
+namespace Proyecto1.Views.Home
 {
-    public class indexModel : PageModel
+    public class IndexUsuarioModel : PageModel
     {
         public void OnGet()
         {

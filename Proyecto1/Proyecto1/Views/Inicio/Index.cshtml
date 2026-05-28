@@ -8,3 +8,113 @@
         ? "~/Views/Shared/_LayoutNavegador.cshtml"
         : "~/Views/Shared/_LayoutInicio.cshtml";
 }
+
+<head>
+
+    <link rel="stylesheet" href="~/css/styleInicio.css" />
+
+</head>
+
+<div class="products-container">
+
+    <!-- ================= PRODUCTO 1 ================= -->
+    <div class="product-gallery">
+
+        <div class="main-image-container">
+            <img id="mainImage1"
+                 src="~/assets/img/producto1.jpg"
+                 class="main-product-image" />
+        </div>
+
+        <div class="thumbnail-container">
+
+            <img src="~/assets/img/producto1.jpg"
+                 class="thumbnail-image active-thumb"
+                 onclick="changeImage(this, 'mainImage1')" />
+
+            <img src="~/assets/img/producto2.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage1')" />
+
+            <img src="~/assets/img/producto3.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage1')" />
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PRODUCTO 2 ================= -->
+    <div class="product-gallery">
+
+        <div class="main-image-container">
+            <img id="mainImage2"
+                 src="~/assets/img/producto2.jpg"
+                 class="main-product-image" />
+        </div>
+
+        <div class="thumbnail-container">
+
+            <img src="~/assets/img/producto2.jpg"
+                 class="thumbnail-image active-thumb"
+                 onclick="changeImage(this, 'mainImage2')" />
+
+            <img src="~/assets/img/producto3.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage2')" />
+
+            <img src="~/assets/img/producto4.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage2')" />
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PRODUCTO 3 ================= -->
+    <div class="product-gallery">
+
+        <div class="main-image-container">
+            <img id="mainImage3"
+                 src="~/assets/img/producto3.jpg"
+                 class="main-product-image" />
+        </div>
+
+        <div class="thumbnail-container">
+
+            <img src="~/assets/img/producto1.jpg"
+                 class="thumbnail-image active-thumb"
+                 onclick="changeImage(this, 'mainImage3')" />
+
+            <img src="~/assets/img/producto2.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage3')" />
+
+            <img src="~/assets/img/producto3.jpg"
+                 class="thumbnail-image"
+                 onclick="changeImage(this, 'mainImage3')" />
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function changeImage(element, targetId) {
+
+        // Cambiar imagen principal
+        document.getElementById(targetId).src = element.src;
+
+        // Quitar active de todas las miniaturas del mismo producto
+        element.parentNode.querySelectorAll('.thumbnail-image')
+            .forEach(img => img.classList.remove('active-thumb'));
+
+        // Activar actual
+        element.classList.add('active-thumb');
+    }
+
+</script>

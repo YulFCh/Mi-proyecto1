@@ -1,0 +1,201 @@
+﻿:root {
+    /* ========= COLORES ========= */
+
+    --primary-purple: #7A1F87;
+    --primary-purple-dark: #681973;
+    --light-gray: #E5E7EB;
+    --card-gray: #F3F4F6;
+    --border-gray: #D1D5DB;
+    --text-gray: #374151;
+}
+
+
+/* ========= BODY ========= */
+
+body {
+    background: #F5F5F5;
+    color: var(--text-gray);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* ========= BACKDROP ========= */
+
+.modal-backdrop.show {
+    opacity: 0.7;
+    backdrop-filter: blur(5px);
+}
+
+
+/* ========= MODAL ========= */
+
+.modern-modal {
+    border: 1px solid var(--border-gray);
+    border-radius: 24px;
+    padding: 10px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    animation: modalFade .35s ease;
+}
+
+
+/* ========= ANIMACIÓN ========= */
+
+@keyframes modalFade {
+
+    from {
+        transform: translateY(20px) scale(.96);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ========= TITULO ========= */
+
+.modern-title {
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 0;
+    color: var(--text-gray);
+}
+
+
+/* ========= CLOSE ========= */
+
+.modern-close {
+    font-size: 28px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    transition: .2s;
+}
+
+    .modern-close:hover {
+        transform: rotate(90deg);
+        color: var(--primary-purple);
+    }
+
+
+/* ========= LABEL ========= */
+
+.modern-label {
+    font-weight: 600;
+    color: var(--text-gray);
+    margin-bottom: 8px;
+}
+
+
+/* ========= INPUT ========= */
+
+.modern-input {
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid var(--border-gray);
+    background: var(--card-gray);
+    padding-left: 16px;
+    transition: all .25s ease;
+}
+
+    .modern-input:focus {
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 0 4px rgba(122,31,135,0.15);
+        background: white;
+    }
+
+
+/* ========= BOTÓN MODAL ========= */
+
+.modern-btn {
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    background: var(--primary-purple);
+    color: white;
+    transition: all .3s ease;
+}
+
+    .modern-btn:hover {
+        transform: translateY(-2px);
+        background: var(--primary-purple-dark);
+        box-shadow: 0 10px 25px rgba(122,31,135,0.35);
+        color: white;
+    }
+
+
+/* ========= ALERT ========= */
+
+.modern-alert {
+    border-radius: 14px;
+    border: none;
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+
+/* ========= BOTÓN LOGIN HEADER ========= */
+
+.modern-login-btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 15px;
+    color: white;
+    background: var(--primary-purple);
+    box-shadow: 0 8px 20px rgba(122,31,135,0.25);
+    transition: all .3s ease;
+}
+
+
+    /* HOVER */
+
+    .modern-login-btn:hover {
+        transform: translateY(-2px);
+        background: var(--primary-purple-dark);
+        box-shadow: 0 12px 28px rgba(122,31,135,0.35);
+        color: white;
+    }
+
+
+    /* CLICK */
+
+    .modern-login-btn:active {
+        transform: scale(.98);
+    }
+
+
+    /* FOCUS */
+
+    .modern-login-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(122,31,135,0.2);
+    }
+
+
+/* ========= HEADER ========= */
+
+.modern-header {
+    background: var(--light-gray);
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border-gray);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+
+    /* TITULO HEADER */
+
+    .modern-header h2 {
+        margin: 0;
+        color: var(--text-gray);
+        font-weight: 700;
+        font-size: 28px;
+    }
