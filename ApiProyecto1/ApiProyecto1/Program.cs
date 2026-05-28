@@ -9,20 +9,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// 🚀 CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirTodo",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
 // 👉 REGISTRAR SERVICES (IMPORTANTE)
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
 
+
 var app = builder.Build();
 
-// 👉 Swagger solo en desarrollo (recomendado)
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+// 👉 Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+
+// 🚀 ACTIVAR CORS
+app.UseCors("PermitirTodo");
 
 app.UseAuthorization();
 
