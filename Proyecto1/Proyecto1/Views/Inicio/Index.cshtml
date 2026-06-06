@@ -9,112 +9,429 @@
         : "~/Views/Shared/_LayoutInicio.cshtml";
 }
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <head>
 
     <link rel="stylesheet" href="~/css/styleInicio.css" />
+    
 
 </head>
 
-<div class="products-container">
+@if (User.Identity.IsAuthenticated)
+{
+    <button type="button"
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#modalAgregar">
+        Agregar Foto
+    </button>
+}
 
-    <!-- ================= PRODUCTO 1 ================= -->
-    <div class="product-gallery">
+<div class="products-container" id="contenedorProductos">
+</div>
 
-        <div class="main-image-container">
-            <img id="mainImage1"
-                 src="~/assets/img/producto1.jpg"
-                 class="main-product-image" />
+<div class="modal fade"
+     id="modalAgregar"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Nuevo Equipo
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <form id="formNuevoEquipo" enctype="multipart/form-data">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label>Tipo Equipo</label>
+                        <select id="tipoEquipo" class="form-control">
+
+                            <option value="">Seleccione un tipo</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="CPU">CPU</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Impresora">Impresora</option>
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Color</label>
+                        <input type="text" id="color" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Modelo</label>
+                        <input type="text" id="modelo" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Descripción</label>
+                        <textarea id="descripcion" class="form-control"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Precio</label>
+                        <input type="number" id="precio" step="0.01" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Imágenes del equipo (máx 4)</label>
+                        <input type="file"
+                               id="fileImage"
+                               accept="image/*"
+                               multiple
+                               class="form-control" />
+                    </div>
+
+                    <!-- PREVIEW GRID -->
+                    <div id="previewContainer"
+                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-primary w-100"
+                            onclick="guardarEquipo()">
+                        Guardar Equipo
+                    </button>
+                </div>
+
+            </form>
+
         </div>
-
-        <div class="thumbnail-container">
-
-            <img src="~/assets/img/producto1.jpg"
-                 class="thumbnail-image active-thumb"
-                 onclick="changeImage(this, 'mainImage1')" />
-
-            <img src="~/assets/img/producto2.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage1')" />
-
-            <img src="~/assets/img/producto3.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage1')" />
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= PRODUCTO 2 ================= -->
-    <div class="product-gallery">
-
-        <div class="main-image-container">
-            <img id="mainImage2"
-                 src="~/assets/img/producto2.jpg"
-                 class="main-product-image" />
-        </div>
-
-        <div class="thumbnail-container">
-
-            <img src="~/assets/img/producto2.jpg"
-                 class="thumbnail-image active-thumb"
-                 onclick="changeImage(this, 'mainImage2')" />
-
-            <img src="~/assets/img/producto3.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage2')" />
-
-            <img src="~/assets/img/producto4.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage2')" />
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= PRODUCTO 3 ================= -->
-    <div class="product-gallery">
-
-        <div class="main-image-container">
-            <img id="mainImage3"
-                 src="~/assets/img/producto3.jpg"
-                 class="main-product-image" />
-        </div>
-
-        <div class="thumbnail-container">
-
-            <img src="~/assets/img/producto1.jpg"
-                 class="thumbnail-image active-thumb"
-                 onclick="changeImage(this, 'mainImage3')" />
-
-            <img src="~/assets/img/producto2.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage3')" />
-
-            <img src="~/assets/img/producto3.jpg"
-                 class="thumbnail-image"
-                 onclick="changeImage(this, 'mainImage3')" />
-
-        </div>
-
     </div>
 
 </div>
 
+
+<div class="modal fade" id="modalZoom" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Imagen</h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body text-center">
+                <img id="imgZoom"
+                     style="max-width:100%; border-radius:10px;" />
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    const estaLogueado = @User.Identity.IsAuthenticated.ToString().ToLower();
+</script>
+
 <script>
 
+    // =========================
+    // CAMBIAR IMAGEN GALERÍA
+    // =========================
     function changeImage(element, targetId) {
 
-        // Cambiar imagen principal
         document.getElementById(targetId).src = element.src;
 
-        // Quitar active de todas las miniaturas del mismo producto
         element.parentNode.querySelectorAll('.thumbnail-image')
             .forEach(img => img.classList.remove('active-thumb'));
 
-        // Activar actual
         element.classList.add('active-thumb');
     }
+
+
+    // =========================
+    // PREVIEW IMAGEN MODAL
+    // =========================
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const inputFile = document.getElementById("fileImage");
+
+        if (inputFile) {
+            inputFile.addEventListener("change", function () {
+
+                const container = document.getElementById("previewContainer");
+                container.innerHTML = "";
+
+                const files = this.files;
+
+                if (files.length > 4) {
+                    alert("Solo puedes subir máximo 4 imágenes");
+                    this.value = "";
+                    return;
+                }
+
+                for (let file of files) {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+
+                        const img = document.createElement("img");
+
+                        img.src = e.target.result;
+                        img.style.width = "80px";
+                        img.style.height = "80px";
+                        img.style.objectFit = "cover";
+                        img.style.borderRadius = "8px";
+                        img.style.border = "1px solid #ddd";
+
+                        container.appendChild(img);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        cargarProductos();
+    });
+
+
+    // =========================
+    // CARGAR PRODUCTOS DESDE API
+    // =========================
+    async function cargarProductos() {
+
+        const contenedor = document.getElementById("contenedorProductos");
+
+        if (!contenedor) return;
+
+        try {
+            const response = await fetch("https://mi-proyecto1-2.onrender.com/api/registros");
+            const data = await response.json();
+
+            contenedor.innerHTML = "";
+
+                data.forEach(item => {
+
+        contenedor.innerHTML += `
+            <div class="product-gallery">
+
+                <div class="main-image-container">
+                    <img id="main-${item.id}"
+                  src="${item.url_Equipo}"
+                  class="main-product-image"
+                  style="cursor:pointer"
+                  onclick="zoomImage(this.src)" />
+                </div>
+
+                <div class="thumbnail-container">
+
+                    ${item.url_Equipo ? `
+                        <img src="${item.url_Equipo}"
+                             class="thumbnail-image active-thumb"
+                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                    ` : ""}
+
+                    ${item.url1 ? `
+                        <img src="${item.url1}"
+                             class="thumbnail-image"
+                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                    ` : ""}
+
+                    ${item.url2 ? `
+                        <img src="${item.url2}"
+                             class="thumbnail-image"
+                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                    ` : ""}
+
+                    ${item.url3 ? `
+                        <img src="${item.url3}"
+                             class="thumbnail-image"
+                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                    ` : ""}
+
+                </div>
+
+                <h4>${item.modelo}</h4>
+                <p>${item.descripcion}</p>
+                <p>S/. ${item.precio}</p>
+
+
+                    ${estaLogueado ? `
+        <button class="btn btn-warning btn-sm w-100 mt-2"
+                onclick="editarEquipo(${item.id})">
+            Editar
+        </button>
+    ` : ``}
+
+
+            </div>
+        `;
+    });
+
+        } catch (error) {
+            console.error("Error cargando productos:", error);
+        }
+    }
+
+
+    // =========================
+    // GUARDAR EQUIPO (CLOUDINARY + API)
+    // =========================
+      async function guardarEquipo() {
+
+        const files = document.getElementById("fileImage").files;
+
+        if (files.length === 0) {
+            alert("Selecciona al menos una imagen");
+            return;
+        }
+
+        try {
+
+            let urls = [];
+
+            // =========================
+            // SUBIR IMÁGENES A CLOUDINARY
+            // =========================
+            for (let file of files) {
+
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", "inventario_preset");
+
+                const cloudResponse = await fetch(
+                    "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+                const cloudData = await cloudResponse.json();
+
+                urls.push(cloudData.secure_url);
+            }
+
+            // =========================
+            // ENVIAR A TU API
+            // =========================
+            await fetch("https://mi-proyecto1-2.onrender.com/api/registros", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    tipo_Equipo: document.getElementById("tipoEquipo").value,
+                    color: document.getElementById("color").value,
+                    modelo: document.getElementById("modelo").value,
+                    descripcion: document.getElementById("descripcion").value,
+                    precio: parseFloat(document.getElementById("precio").value),
+
+                    url_Equipo: urls[0] || "",
+                    url1: urls[1] || "",
+                    url2: urls[2] || "",
+                    url3: urls[3] || ""
+                })
+            });
+
+            alert("Equipo guardado correctamente");
+
+            document.getElementById("modalAgregar")
+                .querySelector(".btn-close")
+                .click();
+
+            cargarProductos();
+
+        } catch (error) {
+            console.error(error);
+            alert("Error al guardar el equipo");
+        }
+    }
+
+
+        function zoomImage(src) {
+
+        const img = document.getElementById("imgZoom");
+        img.src = src;
+
+        const modalEl = document.getElementById("modalZoom");
+
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+
+
+        async function editarEquipo(id) {
+
+        const response = await fetch(`https://mi-proyecto1-2.onrender.com/api/registros`);
+        const data = await response.json();
+
+        const item = data.find(x => x.id === id);
+
+        if (!item) return;
+
+        // llenar formulario
+        document.getElementById("tipoEquipo").value = item.tipo_Equipo;
+        document.getElementById("color").value = item.color;
+        document.getElementById("modelo").value = item.modelo;
+        document.getElementById("descripcion").value = item.descripcion;
+        document.getElementById("precio").value = item.precio;
+
+        // abrir modal
+        const modal = new bootstrap.Modal(document.getElementById("modalAgregar"));
+        modal.show();
+
+        // cambiar botón a modo editar
+        const btn = document.querySelector("#modalAgregar .btn-primary");
+
+        btn.innerText = "Actualizar";
+        btn.onclick = function () {
+            actualizarEquipo(id);
+        };
+    }
+
+        async function actualizarEquipo(id) {
+
+        await fetch(`https://mi-proyecto1-2.onrender.com/api/registros/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                tipo_Equipo: document.getElementById("tipoEquipo").value,
+                color: document.getElementById("color").value,
+                modelo: document.getElementById("modelo").value,
+                descripcion: document.getElementById("descripcion").value,
+                precio: parseFloat(document.getElementById("precio").value)
+            })
+        });
+
+        alert("Actualizado correctamente");
+
+        bootstrap.Modal.getInstance(document.getElementById("modalAgregar")).hide();
+
+        cargarProductos();
+    }
+       
 
 </script>
