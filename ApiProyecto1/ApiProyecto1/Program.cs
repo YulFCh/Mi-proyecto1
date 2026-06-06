@@ -26,6 +26,7 @@ builder.Services.AddCors(options =>
 // 👉 REGISTRAR SERVICES (IMPORTANTE)
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
+builder.Services.AddScoped<EditarEquiposService>();
 
 
 var app = builder.Build();

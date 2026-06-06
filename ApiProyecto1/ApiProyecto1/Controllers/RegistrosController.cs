@@ -30,5 +30,6 @@ namespace ApiProyecto1.Controllers
             _service.Insertar(model);
             return Ok(new { success = true, message = "Registro guardado" });
         }
+
     }
 }
