@@ -39,7 +39,11 @@ namespace ApiProyecto1.Services
                         Descripcion = dr["descripcion"].ToString(),
                         Precio = Convert.ToDecimal(dr["precio"]),
                         Fecha_Registro = Convert.ToDateTime(dr["fecha_registro"]),
-                        Url_Equipo = dr["url_equipo"].ToString()
+
+                        Url_Equipo = dr["url_equipo"].ToString(),
+                        Url1 = dr["url1"].ToString(),
+                        Url2 = dr["url2"].ToString(),
+                        Url3 = dr["url3"].ToString()
                     });
                 }
             }
@@ -53,10 +57,12 @@ namespace ApiProyecto1.Services
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 string query = @"
-                INSERT INTO equipos
-                (tipo_equipo, color, modelo, descripcion, precio, fecha_registro, url_equipo)
-                VALUES
-                (@tipo, @color, @modelo, @descripcion, @precio, GETDATE(), @url)";
+        INSERT INTO equipos
+        (tipo_equipo, color, modelo, descripcion, precio, fecha_registro,
+         url_equipo, url1, url2, url3)
+        VALUES
+        (@tipo, @color, @modelo, @descripcion, @precio, GETDATE(),
+         @url0, @url1, @url2, @url3)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
@@ -65,7 +71,11 @@ namespace ApiProyecto1.Services
                 cmd.Parameters.AddWithValue("@modelo", model.Modelo ?? "");
                 cmd.Parameters.AddWithValue("@descripcion", model.Descripcion ?? "");
                 cmd.Parameters.AddWithValue("@precio", model.Precio);
-                cmd.Parameters.AddWithValue("@url", model.Url_Equipo ?? "");
+
+                cmd.Parameters.AddWithValue("@url0", model.Url_Equipo ?? "");
+                cmd.Parameters.AddWithValue("@url1", model.Url1 ?? "");
+                cmd.Parameters.AddWithValue("@url2", model.Url2 ?? "");
+                cmd.Parameters.AddWithValue("@url3", model.Url3 ?? "");
 
                 con.Open();
                 cmd.ExecuteNonQuery();

@@ -10,5 +10,8 @@
         public decimal Precio { get; set; }
         public DateTime Fecha_Registro { get; set; }
         public string Url_Equipo { get; set; }
+        public string Url1 { get; set; }
+        public string Url2 { get; set; }
+        public string Url3 { get; set; }
     }
 }
