@@ -227,3 +227,10 @@ body {
     color: #991B1B;
     border: none;
 }
+
+.tipo-equipo-badge {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 10px auto;
+    font-weight: bold;
+}

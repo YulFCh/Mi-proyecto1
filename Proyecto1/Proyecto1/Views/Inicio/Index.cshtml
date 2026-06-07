@@ -59,11 +59,12 @@
                         <select id="tipoEquipo" class="form-control">
 
                             <option value="">Seleccione un tipo</option>
-                            <option value="Laptop">Laptop</option>
+                            <option value="LAPTOP">LAPTOP</option>
                             <option value="CPU">CPU</option>
-                            <option value="Monitor">Monitor</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Impresora">Impresora</option>
+                            <option value="MONITOR">MONITOR</option>
+                            <option value="TABLET">TABLET</option>
+                            <option value="IMPRESORA">IMPRESORA</option>
+                            <option value="ANTIVIRUS">ANTIVIRUS</option>
 
                         </select>
                     </div>
@@ -134,9 +135,26 @@
                 </button>
             </div>
 
-            <div class="modal-body text-center">
+            <div class="modal-body text-center position-relative"
+                 style="height:600px; display:flex; align-items:center; justify-content:center;">
+
+                <button id="btnPrev"
+                        onclick="prevImage()"
+                        style="position:absolute;left:10px;top:50%;transform:translateY(-50%);
+                   background:none;border:none;font-size:30px;z-index:10;">
+                    ◀
+                </button>
+
                 <img id="imgZoom"
-                     style="max-width:100%; border-radius:10px;" />
+                     style="max-width:100%; max-height:100%; object-fit:contain;" />
+
+                <button id="btnNext"
+                        onclick="nextImage()"
+                        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                   background:none;border:none;font-size:30px;z-index:10;">
+                    ▶
+                </button>
+
             </div>
 
         </div>
@@ -151,11 +169,21 @@
     const estaLogueado = @User.Identity.IsAuthenticated.ToString().ToLower();
 </script>
 
+
 <script>
 
+        let imagenesZoom = [];
+    let indexZoom = 0;
+    ///
+    ////////////////////////////////////////////////////
     // =========================
     // CAMBIAR IMAGEN GALERÍA
     // =========================
+
+    let imagenesEditando = [];
+    let indiceArrastrado = null;
+
+
     function changeImage(element, targetId) {
 
         document.getElementById(targetId).src = element.src;
@@ -170,44 +198,29 @@
     // =========================
     // PREVIEW IMAGEN MODAL
     // =========================
-        document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
 
         const inputFile = document.getElementById("fileImage");
 
         if (inputFile) {
-            inputFile.addEventListener("change", function () {
-
-                const container = document.getElementById("previewContainer");
-                container.innerHTML = "";
+            inputFile.addEventListener("change", function() {
 
                 const files = this.files;
-
-                if (files.length > 4) {
-                    alert("Solo puedes subir máximo 4 imágenes");
-                    this.value = "";
-                    return;
-                }
 
                 for (let file of files) {
 
                     const reader = new FileReader();
 
-                    reader.onload = function (e) {
-
-                        const img = document.createElement("img");
-
-                        img.src = e.target.result;
-                        img.style.width = "80px";
-                        img.style.height = "80px";
-                        img.style.objectFit = "cover";
-                        img.style.borderRadius = "8px";
-                        img.style.border = "1px solid #ddd";
-
-                        container.appendChild(img);
+                    reader.onload = function(e) {
+                        imagenesEditando.push(e.target.result);
+                        renderPreviewEditable();
                     };
 
                     reader.readAsDataURL(file);
                 }
+
+                this.value = "";
+
             });
         }
 
@@ -230,17 +243,26 @@
 
             contenedor.innerHTML = "";
 
-                data.forEach(item => {
+            data.forEach(item => {
 
-        contenedor.innerHTML += `
+                contenedor.innerHTML += `
             <div class="product-gallery">
+
+            <div class="tipo-equipo-badge">
+        ${item.tipo_Equipo}
+    </div>
 
                 <div class="main-image-container">
                     <img id="main-${item.id}"
                   src="${item.url_Equipo}"
                   class="main-product-image"
                   style="cursor:pointer"
-                  onclick="zoomImage(this.src)" />
+                      onclick="zoomImage([
+        '${item.url_Equipo}',
+        '${item.url1}',
+        '${item.url2}',
+        '${item.url3}'
+    ].filter(x => x), 0)" />
                 </div>
 
                 <div class="thumbnail-container">
@@ -248,25 +270,25 @@
                     ${item.url_Equipo ? `
                         <img src="${item.url_Equipo}"
                              class="thumbnail-image active-thumb"
-                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                              onclick="changeImage(this, 'main-${item.id}')" />
                     ` : ""}
 
                     ${item.url1 ? `
                         <img src="${item.url1}"
                              class="thumbnail-image"
-                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                              onclick="changeImage(this, 'main-${item.id}')"/>
                     ` : ""}
 
                     ${item.url2 ? `
                         <img src="${item.url2}"
                              class="thumbnail-image"
-                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                              onclick="changeImage(this, 'main-${item.id}')" />
                     ` : ""}
 
                     ${item.url3 ? `
                         <img src="${item.url3}"
                              class="thumbnail-image"
-                             onclick="document.getElementById('main-${item.id}').src=this.src" />
+                              onclick="changeImage(this, 'main-${item.id}')" />
                     ` : ""}
 
                 </div>
@@ -286,7 +308,7 @@
 
             </div>
         `;
-    });
+            });
 
         } catch (error) {
             console.error("Error cargando productos:", error);
@@ -297,7 +319,7 @@
     // =========================
     // GUARDAR EQUIPO (CLOUDINARY + API)
     // =========================
-      async function guardarEquipo() {
+    async function guardarEquipo() {
 
         const files = document.getElementById("fileImage").files;
 
@@ -308,7 +330,6 @@
 
         try {
 
-            let urls = [];
 
             // =========================
             // SUBIR IMÁGENES A CLOUDINARY
@@ -320,8 +341,7 @@
                 formData.append("upload_preset", "inventario_preset");
 
                 const cloudResponse = await fetch(
-                    "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload",
-                    {
+                    "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload", {
                         method: "POST",
                         body: formData
                     }
@@ -369,24 +389,37 @@
     }
 
 
-        function zoomImage(src) {
+        function zoomImage(lista, index) {
 
-        const img = document.getElementById("imgZoom");
-        img.src = src;
+        imagenesZoom = lista;
+        indexZoom = index;
+
+        actualizarZoom();
 
         const modalEl = document.getElementById("modalZoom");
-
         const modal = new bootstrap.Modal(modalEl);
         modal.show();
     }
 
 
-        async function editarEquipo(id) {
+    async function editarEquipo(id) {
+
+        imagenesEditando = [];
+
+        document.getElementById("fileImage").value = "";
+        document.getElementById("previewContainer").innerHTML = "";
 
         const response = await fetch(`https://mi-proyecto1-2.onrender.com/api/registros`);
         const data = await response.json();
 
         const item = data.find(x => x.id === id);
+
+        imagenesEditando = [
+            item.url_Equipo,
+            item.url1,
+            item.url2,
+            item.url3
+        ].filter(x => x);
 
         if (!item) return;
 
@@ -397,6 +430,8 @@
         document.getElementById("descripcion").value = item.descripcion;
         document.getElementById("precio").value = item.precio;
 
+        renderPreviewEditable();
+
         // abrir modal
         const modal = new bootstrap.Modal(document.getElementById("modalAgregar"));
         modal.show();
@@ -405,33 +440,196 @@
         const btn = document.querySelector("#modalAgregar .btn-primary");
 
         btn.innerText = "Actualizar";
-        btn.onclick = function () {
+        btn.onclick = function() {
             actualizarEquipo(id);
         };
     }
 
-        async function actualizarEquipo(id) {
 
-        await fetch(`https://mi-proyecto1-2.onrender.com/api/registros/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                tipo_Equipo: document.getElementById("tipoEquipo").value,
-                color: document.getElementById("color").value,
-                modelo: document.getElementById("modelo").value,
-                descripcion: document.getElementById("descripcion").value,
-                precio: parseFloat(document.getElementById("precio").value)
-            })
-        });
+    async function actualizarEquipo(id) {
+
+        let urls = [];
+
+        // 1. construir URLs primero
+        for (let img of imagenesEditando) {
+
+            if (img.startsWith("http")) {
+                urls.push(img);
+                continue;
+            }
+
+            const blob = await fetch(img).then(r => r.blob());
+
+            const formData = new FormData();
+            formData.append("file", blob);
+            formData.append("upload_preset", "inventario_preset");
+
+            const cloudResponse = await fetch(
+                "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload", {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const cloudData = await cloudResponse.json();
+            urls.push(cloudData.secure_url);
+        }
+
+        urls = urls.slice(0, 4);
+
+        // 2. ahora sí construir body
+        let body = {
+            tipo_Equipo: document.getElementById("tipoEquipo").value,
+            color: document.getElementById("color").value,
+            modelo: document.getElementById("modelo").value,
+            descripcion: document.getElementById("descripcion").value,
+            precio: parseFloat(document.getElementById("precio").value),
+
+            url_Equipo: urls[0] || "",
+            url1: urls[1] || "",
+            url2: urls[2] || "",
+            url3: urls[3] || ""
+        };
+
+        const response = await fetch(
+            `https://mi-proyecto1-2.onrender.com/api/EditarEquipos/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        if (!response.ok) {
+            console.error(await response.text());
+            alert("Error al actualizar");
+            return;
+        }
 
         alert("Actualizado correctamente");
 
-        bootstrap.Modal.getInstance(document.getElementById("modalAgregar")).hide();
+        bootstrap.Modal
+            .getInstance(document.getElementById("modalAgregar"))
+            .hide();
 
         cargarProductos();
     }
-       
 
+    ///
+
+
+    function renderPreviewEditable() {
+
+        const container = document.getElementById("previewContainer");
+        container.innerHTML = "";
+
+        imagenesEditando.forEach((url, index) => {
+
+
+            const div = document.createElement("div");
+            div.style.position = "relative";
+
+            div.draggable = true;
+
+                div.addEventListener("dragstart", () => {
+        indiceArrastrado = index;
+    });
+
+        div.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    });
+
+        div.addEventListener("drop", () => {
+
+        if (indiceArrastrado === null) return;
+
+        const temp = imagenesEditando[indiceArrastrado];
+
+        imagenesEditando[indiceArrastrado] =
+            imagenesEditando[index];
+
+        imagenesEditando[index] = temp;
+
+        renderPreviewEditable();
+    });
+
+            div.innerHTML = `
+                <img src="${url}"
+                     style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;" />
+
+                <button type="button"
+                    style="
+                        position:absolute;
+                        top:-8px;
+                        right:-8px;
+                        background:red;
+                        color:white;
+                        border:none;
+                        border-radius:50%;
+                        width:20px;
+                        height:20px;
+                        font-size:12px;
+                        cursor:pointer;">
+                    ×
+                </button>
+            `;
+
+            div.querySelector("button").onclick = () => {
+                imagenesEditando.splice(index, 1);
+                renderPreviewEditable();
+            };
+
+
+            container.appendChild(div);
+        });
+    }
+
+    document.getElementById("modalAgregar").addEventListener("show.bs.modal", function(event) {
+
+        // Solo si estás en modo "crear", no editar
+        const btn = document.querySelector("#modalAgregar .btn-primary");
+
+        if (btn.innerText === "Guardar Equipo") {
+
+            imagenesEditando = [];
+            document.getElementById("previewContainer").innerHTML = "";
+        }
+    });
+
+        function actualizarZoom() {
+
+        const img = document.getElementById("imgZoom");
+        img.src = imagenesZoom[indexZoom];
+
+        document.getElementById("btnPrev").style.display =
+            indexZoom > 0 ? "block" : "none";
+
+        document.getElementById("btnNext").style.display =
+            indexZoom < imagenesZoom.length - 1 ? "block" : "none";
+    }
+
+        function nextImage() {
+        if (indexZoom < imagenesZoom.length - 1) {
+            indexZoom++;
+            actualizarZoom();
+        }
+    }
+
+    function prevImage() {
+        if (indexZoom > 0) {
+            indexZoom--;
+            actualizarZoom();
+        }
+    }
+
+        document.addEventListener("keydown", function (e) {
+
+        const modal = document.getElementById("modalZoom");
+
+        if (!modal.classList.contains("show")) return;
+
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
+    });
 </script>
