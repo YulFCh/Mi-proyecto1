@@ -253,16 +253,13 @@
     </div>
 
                 <div class="main-image-container">
-                    <img id="main-${item.id}"
-                  src="${item.url_Equipo}"
-                  class="main-product-image"
-                  style="cursor:pointer"
-                      onclick="zoomImage([
-        '${item.url_Equipo}',
-        '${item.url1}',
-        '${item.url2}',
-        '${item.url3}'
-    ].filter(x => x), 0)" />
+
+                <img id="main-${item.id}"
+     src="${item.url_Equipo}"
+     class="main-product-image"
+     style="cursor:pointer"
+     onclick="abrirZoom(this)" />
+                    
                 </div>
 
                 <div class="thumbnail-container">
@@ -632,4 +629,18 @@
         if (e.key === "ArrowRight") nextImage();
         if (e.key === "ArrowLeft") prevImage();
     });
+
+        function abrirZoom(imgPrincipal) {
+
+        const galeria = imgPrincipal.closest(".product-gallery");
+
+        const thumbs = galeria.querySelectorAll(".thumbnail-image");
+
+        const imagenes = Array.from(thumbs).map(img => img.src);
+
+        const indiceActual = Array.from(thumbs)
+            .findIndex(img => img.classList.contains("active-thumb"));
+
+        zoomImage(imagenes, indiceActual);
+    }
 </script>
