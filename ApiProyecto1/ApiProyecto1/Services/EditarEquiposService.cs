@@ -1,5 +1,4 @@
-﻿using System.Data.SqlClient;
-using ApiProyecto1.Models;
+﻿using ApiProyecto1.Models;
 using Microsoft.Data.SqlClient;
 
 namespace ApiProyecto1.Services
@@ -75,10 +74,48 @@ namespace ApiProyecto1.Services
                     cmd.Parameters.AddWithValue("@url3", model.Url3);
                 }
 
+                if (model.Marca != null)
+                {
+                    campos.Add("marca = @marca");
+                    cmd.Parameters.AddWithValue("@marca", model.Marca);
+                }
+
+                if (model.Codigo_Producto != null)
+                {
+                    campos.Add("codigo_producto = @codigo_producto");
+                    cmd.Parameters.AddWithValue("@codigo_producto", model.Codigo_Producto);
+                }
+
+                if (model.Precio_Antes != null)
+                {
+                    campos.Add("precio_antes = @precio_antes");
+                    cmd.Parameters.AddWithValue("@precio_antes", model.Precio_Antes);
+                }
+
+                if (model.Descuento != null)
+                {
+                    campos.Add("descuento = @descuento");
+                    cmd.Parameters.AddWithValue("@descuento", model.Descuento);
+                }
+
+                if (model.Estado != null)
+                {
+                    campos.Add("estado = @estado");
+                    cmd.Parameters.AddWithValue("@estado", model.Estado);
+                }
+
+                if (model.Usuario_Modifica != null)
+                {
+                    campos.Add("usuario_modifica = @usuario_modifica");
+                    cmd.Parameters.AddWithValue("@usuario_modifica", model.Usuario_Modifica);
+                }
+
                 if (campos.Count == 0)
                     return;
 
-                string query = $"UPDATE equipos SET {string.Join(",", campos)} WHERE id = @id";
+                campos.Add("fecha_modifica = GETDATE()");
+
+                string query = $"UPDATE equipos SET {string.Join(", ", campos)} WHERE id = @id";
 
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.CommandText = query;

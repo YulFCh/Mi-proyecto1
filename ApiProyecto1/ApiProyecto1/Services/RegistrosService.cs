@@ -43,7 +43,14 @@ namespace ApiProyecto1.Services
                         Url_Equipo = dr["url_equipo"].ToString(),
                         Url1 = dr["url1"].ToString(),
                         Url2 = dr["url2"].ToString(),
-                        Url3 = dr["url3"].ToString()
+                        Url3 = dr["url3"].ToString(),
+                        Usuario_Registra = dr["usuario_registra"].ToString(),
+                        Marca = dr["marca"].ToString(),
+                        Codigo_Producto = dr["codigo_producto"].ToString(),
+                        Precio_Antes = dr["precio_antes"].ToString(),
+                        Descuento = dr["descuento"].ToString(),
+                        Estado = dr["estado"].ToString(),
+                        Fecha_Modifica = dr["fecha_modifica"].ToString()
                     });
                 }
             }
@@ -59,10 +66,12 @@ namespace ApiProyecto1.Services
                 string query = @"
         INSERT INTO equipos
         (tipo_equipo, color, modelo, descripcion, precio, fecha_registro,
-         url_equipo, url1, url2, url3)
+         url_equipo, url1, url2, url3, marca, codigo_producto, precio_antes,
+         descuento, estado, usuario_registra)
         VALUES
         (@tipo, @color, @modelo, @descripcion, @precio, GETDATE(),
-         @url0, @url1, @url2, @url3)";
+         @url0, @url1, @url2, @url3,  @marca, @codigo_producto, @precio_antes,
+         @descuento, @estado, @usuario_registra)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
@@ -71,11 +80,16 @@ namespace ApiProyecto1.Services
                 cmd.Parameters.AddWithValue("@modelo", model.Modelo ?? "");
                 cmd.Parameters.AddWithValue("@descripcion", model.Descripcion ?? "");
                 cmd.Parameters.AddWithValue("@precio", model.Precio);
-
                 cmd.Parameters.AddWithValue("@url0", model.Url_Equipo ?? "");
                 cmd.Parameters.AddWithValue("@url1", model.Url1 ?? "");
                 cmd.Parameters.AddWithValue("@url2", model.Url2 ?? "");
                 cmd.Parameters.AddWithValue("@url3", model.Url3 ?? "");
+                cmd.Parameters.AddWithValue("@marca", model.Marca ?? "");
+                cmd.Parameters.AddWithValue("@codigo_producto", model.Codigo_Producto ?? "");
+                cmd.Parameters.AddWithValue("@precio_antes", model.Precio_Antes ?? "");
+                cmd.Parameters.AddWithValue("@descuento", model.Descuento ?? "");
+                cmd.Parameters.AddWithValue("@estado", model.Estado ?? "");
+                cmd.Parameters.AddWithValue("@usuario_registra", model.Usuario_Registra ?? "");
 
                 con.Open();
                 cmd.ExecuteNonQuery();

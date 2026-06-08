@@ -13,5 +13,12 @@
         public string Url1 { get; set; }
         public string Url2 { get; set; }
         public string Url3 { get; set; }
+        public string Marca { get; set; }
+        public string Codigo_Producto { get; set; }
+        public string Precio_Antes { get; set; }
+        public string Descuento { get; set; }
+        public string Estado { get; set; }
+        public string Fecha_Modifica { get; set; }
+        public string? Usuario_Registra { get; set; }
     }
 }
