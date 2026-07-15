@@ -364,46 +364,88 @@
 
 </div>
 
-<div class="modal fade" id="modalZoom" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalZoom" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
 
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Imagen</h5>
-
-                <button type="button"
-                        class="close"
-                        data-dismiss="modal">
+            <div class="modal-header border-0 pb-0" style="padding: 15px 20px;">
+                <h5 class="modal-title" id="zoom-titulo-producto" style="font-weight: bold; color: #333; font-size: 1.15rem; max-width: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    Detalle del Producto
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 1.8rem; line-height: 1; padding: 10px 15px; margin: -10px -15px -10px auto;">
                     <span>&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body text-center position-relative"
-                 style="height:600px; display:flex; align-items:center; justify-content:center;">
+            <div class="modal-body" style="padding: 20px;">
+                <div class="row">
 
-                <button id="btnPrev"
-                        onclick="prevImage()"
-                        style="position:absolute;left:10px;top:50%;transform:translateY(-50%);
-                   background:none;border:none;font-size:30px;z-index:10;">
-                    ◀
-                </button>
+                    <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="border-right: 1px solid #f0f0f0;">
+                        <div style="width: 100%; height: 280px; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 8px; overflow: hidden; border: 1px solid #eaeaea;">
+                            <img id="zoom-imagen-principal" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                        </div>
 
-                <img id="imgZoom"
-                     style="max-width:100%; max-height:100%; object-fit:contain;" />
+                        <div id="zoom-galeria-miniaturas" style="display: flex; gap: 8px; margin-top: 12px; width: 100%; justify-content: center; overflow-x: auto; padding-bottom: 5px;">
+                        </div>
+                    </div>
 
-                <button id="btnNext"
-                        onclick="nextImage()"
-                        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
-                   background:none;border:none;font-size:30px;z-index:10;">
-                    ▶
-                </button>
+                    <div class="col-md-6 d-flex flex-column justify-content-between" style="padding-left: 25px; min-height: 320px;">
 
+                        <div style="line-height: 1.6;">
+                            <span id="zoom-tipo-badge" style="background: #eef2f7; color: #0056b3; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">TIPO</span>
+
+                            <h4 id="zoom-marca" style="font-weight: 800; margin-top: 8px; margin-bottom: 2px; color: #222;">MARCA</h4>
+                            <p id="zoom-modelo-desc" style="color: #555; font-size: 14px; margin-bottom: 12px;">Modelo y descripción detallada del equipo.</p>
+
+                            <div style="font-size: 13px; color: #777; margin-bottom: 15px;">
+                                <span>Código de producto: </span><strong id="zoom-codigo" style="color: #333;">N/A</strong>
+                            </div>
+
+                            <div style="background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px dashed #e5e5e5; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span id="zoom-precio-actual" style="font-size: 24px; font-weight: 800; color: #222;">S/. 0.00</span>
+                                    <span id="zoom-descuento-badge" style="background-color: #ff4d4d; color: white; font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: none;">-0%</span>
+                                </div>
+                                <div id="zoom-precio-antes-container" style="display: none; margin-top: 2px;">
+                                    <span style="color: #999; font-size: 13px; text-decoration: line-through;">Antes: </span>
+                                    <span id="zoom-precio-antes" style="color: #999; font-size: 13px; text-decoration: line-through;">S/. 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="zoom-acciones-compra" style="border-top: 1px solid #f0f0f0; padding-top: 15px;">
+                            <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+
+                                <div style="display: inline-flex; align-items: center; border: 1px solid #ced4da; border-radius: 6px; overflow: hidden; background: #fff; height: 40px;">
+                                    <button type="button" onclick="cambiarCantidadZoom(-1)"
+                                            style="border: none; background: #f8f9fa; width: 34px; height: 100%; cursor: pointer; font-weight: bold; font-size: 16px; color: #333; transition: background 0.2s;">
+                                        -
+                                    </button>
+                                    <span id="cant-display-zoom"
+                                          style="min-width: 34px; text-align: center; font-weight: bold; font-size: 14px; color: #333; line-height: 40px;">
+                                        1
+                                    </span>
+                                    <button type="button" onclick="cambiarCantidadZoom(1)"
+                                            style="border: none; background: #f8f9fa; width: 34px; height: 100%; cursor: pointer; font-weight: bold; font-size: 16px; color: #333; transition: background 0.2s;">
+                                        +
+                                    </button>
+                                </div>
+
+                                <button id="zoom-btn-agregar" class="btn btn-primary btn-agregar-carrito"
+                                        style="flex-grow: 1; height: 40px; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center;"
+                                        data-id="" data-nombre="" data-precio="" data-imagenes="">
+                                    Agregar al carrito
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
-
 </div>
 
 <div id="toastMensaje"

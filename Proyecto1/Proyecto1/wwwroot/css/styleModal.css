@@ -199,3 +199,88 @@ body {
         font-weight: 700;
         font-size: 28px;
     }
+
+
+/* 1. Ocultar los botones de acción por defecto dentro de la tarjeta */
+.product-gallery .btn-sm {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px); /* Pequeño efecto de desplazamiento hacia abajo */
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+/* 2. Mostrarlos de inmediato o con transición suave al pasar el cursor sobre la tarjeta */
+.product-gallery:hover .btn-sm {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0); /* Sube a su posición original */
+}
+
+
+/* Oculta los controles de acción del producto por defecto */
+.product-gallery .product-actions {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px);
+    transition: all 0.3s ease;
+}
+
+/* Los muestra suavemente cuando pasas el mouse por encima de la tarjeta */
+.product-gallery:hover .product-actions {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Efecto sutil para los botones - y + del cuadrito */
+.btn-cantidad:hover {
+    background-color: #e9ecef !important;
+}
+
+
+
+/* --- ANIMACIÓN PARA EL BLOQUE DE ACCIONES APILADO --- */
+
+/* Ocultamos el bloque por completo por defecto */
+.product-gallery .product-actions {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin-top: 0;
+    transform: translateY(15px);
+    transition: max-height 0.35s ease-out, opacity 0.3s ease-out, transform 0.35s ease-out, margin-top 0.35s ease-out;
+}
+
+/* Mostramos el bloque cuando el cursor pasa por encima de la tarjeta del producto */
+.product-gallery:hover .product-actions {
+    max-height: 90px; /* Altura suficiente para albergar la cantidad y el botón apilados */
+    opacity: 1;
+    margin-top: 15px; /* Crea el espacio y separación dinámica */
+    transform: translateY(0);
+}
+
+/* Evita movimientos bruscos en las tarjetas */
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    #modalZoom .row {
+        flex-direction: column;
+    }
+
+    #modalZoom .col-md-6 {
+        border-right: none !important;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 15px;
+        padding-left: 15px !important;
+    }
+
+        #modalZoom .col-md-6:last-child {
+            border-bottom: none;
+            padding-top: 15px;
+        }
+}
