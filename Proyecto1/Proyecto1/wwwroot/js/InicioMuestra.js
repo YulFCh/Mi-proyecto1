@@ -158,23 +158,49 @@ async function cargarProductos() {
                     ${item.url3 ? `<img src="${item.url3}" class="thumbnail-image" onclick="changeImage(this, 'main-${item.id}')" />` : ""}
                 </div>
 
-                <div class="product-info-block" style="text-align: left; margin-top: 10px; line-height: 1.5;">
-                    <strong>${item.marca || 'SIN MARCA'}</strong>
-                    ${estadoEquipo === "agotado" ? `<span style="color: #ff4d4d; font-style: italic; font-weight: bold; margin-left: 6px;">(Agotado)</span>` : ""}
-                    <br />
-                    <span>${item.modelo || ''} - ${item.descripcion || ''}</span><br />
-                    <small class="text-muted">Código: ${item.codigo_Producto || 'N/A'}</small><br />
-                    
-                    <div style="display: flex; align-items: stretch; gap: 8px; margin-top: 4px; line-height: 1.2;">
-                        <span style="font-size: 1.1em; font-weight: bold; display: flex; align-items: center;">
-                            S/. ${item.precio}
-                        </span>
-                        ${item.descuento && item.descuento > 0 ? `<span style="background-color: #ff4d4d; color: white; font-size: 0.85em; font-weight: bold; padding: 0px 6px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;">-${item.descuento}%</span>` : ""}
-                    </div>
-                    
-                    ${item.precio_Antes && item.descuento > 0 ? `<span style="text-decoration: line-through; color: #888; font-size: 0.9em;">S/. ${item.precio_Antes}</span><br />` : ""}
-                    ${estaLogueado && estadoEquipo === "inactivo" ? `<span style="color: #ff4d4d; font-weight: bold; font-size: 0.9em; display: inline-block; margin-top: 2px;">INACTIVO</span>` : ""}
-                </div>
+<div class="product-info-block" style="text-align: left; margin-top: 10px; line-height: 1.5;">
+
+    <!-- RECUADRO ESTILO MODAL ZOOM (Encierra desde la Marca hasta los Precios) -->
+    <div style="background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px dashed #e5e5e5; margin-bottom: 8px;">
+
+        <!-- Marca y Agotado -->
+        <strong>${item.marca || 'SIN MARCA'}</strong>
+        ${estadoEquipo === "agotado" ? `<span style="color: #ff4d4d; font-style: italic; font-weight: bold; margin-left: 6px;">(Agotado)</span>` : ""}
+        <br />
+        
+        <!-- Modelo y Descripción -->
+        <span>${item.modelo || ''} - ${item.descripcion || ''}</span><br />
+        
+        <!-- Código de Producto -->
+        <small class="text-muted">Código: ${item.codigo_Producto || 'N/A'}</small><br />
+        
+        <!-- Contenedor Flex de Precios (Precio antes al extremo derecho) -->
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; line-height: 1.2; flex-wrap: wrap; width: 100%;">
+            
+            <!-- Lado Izquierdo: Precio Actual y Badge Descuento -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.1em; font-weight: bold; color: #222;">
+                    S/. ${parseFloat(item.precio).toFixed(2)}
+                </span>
+                ${item.descuento && item.descuento > 0 ? `
+                    <span style="background-color: #ff4d4d; color: white; font-size: 0.85em; font-weight: bold; padding: 0px 6px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;">-${item.descuento}%</span>
+                ` : ""}
+            </div>
+
+            <!-- Lado Derecho: Precio Antes -->
+            ${item.precio_Antes && item.descuento > 0 ? `
+                <span style="text-decoration: line-through; color: #888; font-size: 0.9em; margin-left: auto;">
+                    S/. ${parseFloat(item.precio_Antes).toFixed(2)}
+                </span>
+            ` : ""}
+        </div>
+
+    </div>
+    
+    <!-- Indicador de Inactivo (Queda fuera del recuadro para mantener la estética limpia) -->
+    ${estaLogueado && estadoEquipo === "inactivo" ? `<span style="color: #ff4d4d; font-weight: bold; font-size: 0.9em; display: inline-block; margin-top: 2px;">INACTIVO</span>` : ""}
+</div>
+
 
                 <div class="product-actions">
                     ${estaLogueado ? `
@@ -203,6 +229,8 @@ async function cargarProductos() {
     } catch (error) {
         console.error("Error cargando productos:", error);
     }
+
+
 }
 
 async function guardarEquipo() {
@@ -376,10 +404,14 @@ document.getElementById("modalAgregar").addEventListener("show.bs.modal", functi
 });
 
 // --- NUEVA FUNCIÓN ABRIR ZOOM: CARGA LA INTEGRACIÓN DE LA FICHA TÉCNICA INTERACTIVA ---
+// Variables globales para el control de la galería
+let imagenesActualesZoom = [];
+let indiceActualZoom = 0;
+
 function abrirZoom(item) {
     if (!item) return;
 
-    // Resetear contador a 1 cada vez que se abra el modal
+    // Resetear contador de cantidad a 1
     cantidadActualZoom = 1;
     const displayZoom = document.getElementById("cant-display-zoom");
     if (displayZoom) displayZoom.innerText = cantidadActualZoom;
@@ -390,6 +422,90 @@ function abrirZoom(item) {
     document.getElementById("zoom-marca").innerText = item.marca || 'SIN MARCA';
     document.getElementById("zoom-modelo-desc").innerText = `${item.modelo || ''} ${item.descripcion ? ' - ' + item.descripcion : ''}`;
     document.getElementById("zoom-codigo").innerText = item.codigo_Producto || 'N/A';
+
+    // --- NUEVO: ASIGNAR TEXTO AL DESPLEGABLE DE MÁS CARACTERÍSTICAS ---
+    const txtCaracteristicas = document.getElementById('zoom-caracteristicas-texto');
+    if (txtCaracteristicas) {
+        txtCaracteristicas.innerText = item.caracteristicas || "No hay características detalladas adicionales disponibles para este equipo.";
+    }
+
+    // --- LÓGICA DE COLORES CORREGIDA USANDO TU CAMPO 'item.color' ---
+    const contenedorColores = document.getElementById('zoom-lista-colores');
+    const contenedorPadreColores = document.getElementById('zoom-color-container');
+
+    if (contenedorColores && contenedorPadreColores) {
+        contenedorColores.innerHTML = ''; // Limpiar círculos viejos
+
+        // Diccionario para traducir tus colores en español a valores web reales
+        const traductorColores = {
+            'negro': '#000000',
+            'blanco': '#ffffff',
+            'rojo': '#ff4d4d',
+            'azul': '#007bff',
+            'gris': '#888888',
+            'plomo': '#a6a6a6',
+            'plateado': '#e0e0e0',
+            'dorado': '#ffd700',
+            'verde': '#28a745'
+        };
+
+        let listaColores = [];
+        if (item.color && typeof item.color === 'string') {
+            // Separa por comas por si acaso guardes más de uno (ej: "Negro, Blanco")
+            listaColores = item.color.split(',').map(c => c.trim()).filter(Boolean);
+        }
+
+        if (listaColores.length > 0) {
+            contenedorPadreColores.style.display = 'block'; // Mostrar el contenedor
+
+            listaColores.forEach((colorNombre, index) => {
+                const btnColor = document.createElement('button');
+                btnColor.type = 'button';
+                btnColor.style.width = '24px';
+                btnColor.style.height = '24px';
+                btnColor.style.borderRadius = '50%';
+
+                // Buscamos el color en nuestro traductor, si no existe, usa el texto original
+                const colorLimpio = colorNombre.toLowerCase();
+                const colorFinal = traductorColores[colorLimpio] || colorNombre;
+
+                btnColor.style.backgroundColor = colorFinal;
+                btnColor.style.cursor = 'pointer';
+                btnColor.style.padding = '0';
+                btnColor.style.outline = 'none';
+                btnColor.style.transition = 'all 0.2s';
+                btnColor.title = colorNombre; // Muestra el nombre al pasar el mouse
+
+                // Estilo para el seleccionado por defecto (el primero)
+                if (index === 0) {
+                    btnColor.style.border = '2px solid #fff';
+                    btnColor.style.boxShadow = '0 0 0 2px #8a2be2';
+                    btnColor.classList.add('active');
+                } else {
+                    btnColor.style.border = '1px solid #ccc';
+                    btnColor.style.boxShadow = 'none';
+                }
+
+                // Evento click para alternar entre círculos
+                btnColor.onclick = function () {
+                    const hermanos = contenedorColores.querySelectorAll('button');
+                    hermanos.forEach(b => {
+                        b.style.border = '1px solid #ccc';
+                        b.style.boxShadow = 'none';
+                        b.classList.remove('active');
+                    });
+                    this.style.border = '2px solid #fff';
+                    this.style.boxShadow = '0 0 0 2px #8a2be2';
+                    this.classList.add('active');
+                };
+
+                contenedorColores.appendChild(btnColor);
+            });
+        } else {
+            // Si el producto no tiene color registrado en la DB, ocultamos el bloque
+            contenedorPadreColores.style.display = 'none';
+        }
+    }
 
     // Manejo de Precios y Descuentos dinámicos
     document.getElementById("zoom-precio-actual").innerText = `S/. ${parseFloat(item.precio).toFixed(2)}`;
@@ -413,19 +529,30 @@ function abrirZoom(item) {
         precioAntesCont.style.display = "none";
     }
 
-    // Configurar imagen de visualización principal
-    const imgPrincipal = document.getElementById("zoom-imagen-principal");
-    if (imgPrincipal) imgPrincipal.src = item.url_Equipo;
+    // --- LÓGICA DE GALERÍA Y IMÁGENES ---
+    imagenesActualesZoom = [item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean);
+    indiceActualZoom = 0;
 
-    // Generar miniaturas dinámicas interactivas
+    const prevBtn = document.getElementById("zoom-prev-btn");
+    const nextBtn = document.getElementById("zoom-next-btn");
+    if (prevBtn && nextBtn) {
+        const mostrarFlechas = imagenesActualesZoom.length > 1 ? "flex" : "none";
+        prevBtn.style.display = mostrarFlechas;
+        nextBtn.style.display = mostrarFlechas;
+    }
+
+    const imgPrincipal = document.getElementById("zoom-imagen-principal");
+    if (imgPrincipal) imgPrincipal.src = imagenesActualesZoom[indiceActualZoom];
+
+    // Generar miniaturas dinámicas
     const contenedorMiniaturas = document.getElementById("zoom-galeria-miniaturas");
     if (contenedorMiniaturas) {
         contenedorMiniaturas.innerHTML = "";
-        const listaImagenes = [item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean);
 
-        listaImagenes.forEach((url, index) => {
+        imagenesActualesZoom.forEach((url, index) => {
             const thumb = document.createElement("img");
             thumb.src = url;
+            thumb.id = `zoom-thumb-${index}`;
             thumb.style.cssText = "width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; transition: all 0.2s;";
 
             if (index === 0) {
@@ -434,30 +561,69 @@ function abrirZoom(item) {
             }
 
             thumb.onclick = function () {
-                if (imgPrincipal) imgPrincipal.src = url;
-                Array.from(contenedorMiniaturas.children).forEach(child => {
-                    child.style.borderColor = "#ddd";
-                    child.style.boxShadow = "none";
-                });
-                thumb.style.borderColor = "#007bff";
-                thumb.style.boxShadow = "0 0 4px rgba(0,123,255,0.5)";
+                seleccionarImagenZoom(index);
             };
 
             contenedorMiniaturas.appendChild(thumb);
         });
 
-        // Configurar los atributos data-* en el botón del carrito dentro del modal zoom
+        // Configurar los atributos data-* en el botón del carrito
         const btnAgregar = document.getElementById("zoom-btn-agregar");
         if (btnAgregar) {
             btnAgregar.setAttribute("data-id", item.id);
             btnAgregar.setAttribute("data-nombre", `${item.marca || 'SIN MARCA'} ${item.modelo || ''}`);
             btnAgregar.setAttribute("data-precio", item.precio);
-            btnAgregar.setAttribute("data-imagenes", JSON.stringify(listaImagenes));
+            btnAgregar.setAttribute("data-imagenes", JSON.stringify(imagenesActualesZoom));
         }
     }
 
     // Abrir modal usando jQuery compatible con Bootstrap 4/5
     $('#modalZoom').modal('show');
+}
+
+// Nueva función para actualizar la imagen y la miniatura activa por índice
+function seleccionarImagenZoom(index) {
+    if (index < 0 || index >= imagenesActualesZoom.length) return;
+
+    indiceActualZoom = index;
+    const url = imagenesActualesZoom[indiceActualZoom];
+
+    // Cambiar la imagen grande
+    const imgPrincipal = document.getElementById("zoom-imagen-principal");
+    if (imgPrincipal) imgPrincipal.src = url;
+
+    // Resetear bordes de las miniaturas
+    const contenedorMiniaturas = document.getElementById("zoom-galeria-miniaturas");
+    if (contenedorMiniaturas) {
+        Array.from(contenedorMiniaturas.children).forEach(child => {
+            child.style.borderColor = "#ddd";
+            child.style.boxShadow = "none";
+        });
+    }
+
+    // Resaltar la miniatura correspondiente
+    const thumbActiva = document.getElementById(`zoom-thumb-${index}`);
+    if (thumbActiva) {
+        thumbActiva.style.borderColor = "#007bff";
+        thumbActiva.style.boxShadow = "0 0 4px rgba(0,123,255,0.5)";
+        thumbActiva.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); // Auto scroll de miniaturas
+    }
+}
+
+// Nueva función asignada a los botones de las flechas (Soporta navegación infinita/bucle)
+function navegarImagenZoom(direccion) {
+    if (imagenesActualesZoom.length <= 1) return;
+
+    let nuevoIndice = indiceActualZoom + direccion;
+
+    // Efecto bucle: Si pasa del final va al principio, si baja de cero va al final
+    if (nuevoIndice >= imagenesActualesZoom.length) {
+        nuevoIndice = 0;
+    } else if (nuevoIndice < 0) {
+        nuevoIndice = imagenesActualesZoom.length - 1;
+    }
+
+    seleccionarImagenZoom(nuevoIndice);
 }
 
 function cambiarCantidadZoom(delta) {
