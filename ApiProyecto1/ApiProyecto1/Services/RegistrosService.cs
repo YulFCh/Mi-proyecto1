@@ -13,18 +13,39 @@ namespace ApiProyecto1.Services
         }
 
         // LISTAR EQUIPOS
+        // LISTAR EQUIPOS AGRUPADOS POR MODELO
         public List<RegistrosModel> Listar()
         {
             var lista = new List<RegistrosModel>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM equipos";
+                string query = @"
+            SELECT 
+                MIN(id) AS id,
+                marca,
+                modelo,
+                MIN(tipo_equipo) AS tipo_equipo,
+                MIN(descripcion) AS descripcion,
+                MIN(precio) AS precio,
+                MIN(fecha_registro) AS fecha_registro,
+                MIN(url_equipo) AS url_equipo,
+                MIN(url1) AS url1,
+                MIN(url2) AS url2,
+                MIN(url3) AS url3,
+                MIN(codigo_producto) AS codigo_producto,
+                MIN(precio_antes) AS precio_antes,
+                MIN(descuento) AS descuento,
+                MIN(estado) AS estado,
+                MIN(usuario_registra) AS usuario_registra,
+                MIN(descripcion1) AS descripcion1,
+                MIN(garantia) AS garantia,
+                STRING_AGG(color, ', ') WITHIN GROUP (ORDER BY color) AS color
+            FROM equipos
+            GROUP BY modelo, marca";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-
                 con.Open();
-
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -32,39 +53,23 @@ namespace ApiProyecto1.Services
                     lista.Add(new RegistrosModel
                     {
                         Id = Convert.ToInt32(dr["id"]),
-
                         Tipo_Equipo = dr["tipo_equipo"]?.ToString() ?? "",
-
                         Color = dr["color"]?.ToString(),
                         Modelo = dr["modelo"]?.ToString(),
                         Descripcion = dr["descripcion"]?.ToString(),
-
                         Precio = Convert.ToDecimal(dr["precio"]),
-
                         Fecha_Registro = Convert.ToDateTime(dr["fecha_registro"]),
-
                         Url_Equipo = dr["url_equipo"]?.ToString(),
                         Url1 = dr["url1"]?.ToString(),
                         Url2 = dr["url2"]?.ToString(),
                         Url3 = dr["url3"]?.ToString(),
-
                         Marca = dr["marca"]?.ToString(),
                         Codigo_Producto = dr["codigo_producto"]?.ToString(),
-
-                        Precio_Antes = dr["precio_antes"] == DBNull.Value
-                            ? null
-                            : Convert.ToDecimal(dr["precio_antes"]),
-
-                        Descuento = dr["descuento"] == DBNull.Value
-                            ? null
-                            : Convert.ToDecimal(dr["descuento"]),
-
+                        Precio_Antes = dr["precio_antes"] == DBNull.Value ? null : Convert.ToDecimal(dr["precio_antes"]),
+                        Descuento = dr["descuento"] == DBNull.Value ? null : Convert.ToDecimal(dr["descuento"]),
                         Estado = dr["estado"]?.ToString(),
-
                         Usuario_Registra = dr["usuario_registra"]?.ToString(),
-
                         Descripcion1 = dr["descripcion1"] == DBNull.Value ? null : dr["descripcion1"].ToString(),
-
                         Garantia = dr["garantia"] == DBNull.Value ? null : dr["garantia"].ToString()
                     });
                 }
