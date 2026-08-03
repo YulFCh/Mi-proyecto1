@@ -61,7 +61,11 @@ namespace ApiProyecto1.Services
 
                         Estado = dr["estado"]?.ToString(),
 
-                        Usuario_Registra = dr["usuario_registra"]?.ToString()
+                        Usuario_Registra = dr["usuario_registra"]?.ToString(),
+
+                        Descripcion1 = dr["descripcion1"] == DBNull.Value ? null : dr["descripcion1"].ToString(),
+
+                        Garantia = dr["garantia"] == DBNull.Value ? null : dr["garantia"].ToString()
                     });
                 }
             }
@@ -92,7 +96,9 @@ namespace ApiProyecto1.Services
                     precio_antes,
                     descuento,
                     estado,
-                    usuario_registra
+                    usuario_registra,
+                    descripcion1,
+                    garantia
                 )
                 VALUES
                 (
@@ -111,7 +117,9 @@ namespace ApiProyecto1.Services
                     @precio_antes,
                     @descuento,
                     @estado,
-                    @usuario_registra
+                    @usuario_registra,
+                    @descripcion1,
+                    @garantia
                 )";
 
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -158,6 +166,12 @@ namespace ApiProyecto1.Services
 
                 cmd.Parameters.AddWithValue("@usuario_registra",
                     (object?)model.Usuario_Registra ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@descripcion1",
+                    (object?)model.Descripcion1 ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@garantia",
+                    (object?)model.Garantia ?? DBNull.Value);
 
                 con.Open();
 
