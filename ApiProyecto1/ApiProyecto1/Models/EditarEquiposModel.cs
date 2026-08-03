@@ -23,5 +23,7 @@
         public string? Estado { get; set; }
 
         public string? Usuario_Modifica { get; set; }
+        public string? Descripcion1 { get; set; }
+        public string? Garantia { get; set; }
     }
 }

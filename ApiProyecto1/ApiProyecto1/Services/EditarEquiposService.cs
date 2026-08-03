@@ -44,6 +44,19 @@ namespace ApiProyecto1.Services
                 cmd.Parameters.Add("@descripcion", System.Data.SqlDbType.VarChar).Value = model.Descripcion;
             }
 
+            if (model.Descripcion1 != null)
+            {
+                campos.Add("descripcion1 = @descripcion1");
+                cmd.Parameters.Add("@descripcion1", System.Data.SqlDbType.VarChar).Value = model.Descripcion1;
+            }
+
+            
+            if (model.Garantia != null)
+            {
+                campos.Add("garantia = @garantia");
+                cmd.Parameters.Add("@garantia", System.Data.SqlDbType.VarChar).Value = model.Garantia;
+            }
+
             if (model.Precio.HasValue)
             {
                 campos.Add("precio = @precio");
