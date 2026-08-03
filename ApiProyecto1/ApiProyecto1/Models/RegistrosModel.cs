@@ -29,5 +29,20 @@
 
         public string? Descripcion1 { get; set; }
         public string? Garantia { get; set; }
+
+        public List<VarianteModel> Variantes { get; set; }
+    }
+
+    public class VarianteModel
+    {
+        public int Id { get; set; }
+        public string Color { get; set; }
+        public string Url_Equipo { get; set; }
+        public string Url1 { get; set; }
+        public string Url2 { get; set; }
+        public string Url3 { get; set; }
+        public decimal Precio { get; set; }
+        public string Codigo_Producto { get; set; }
+        public int Stock { get; set; }
     }
 }

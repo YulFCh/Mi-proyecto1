@@ -25,7 +25,7 @@ namespace ApiProyecto1.Services
                 MIN(id) AS id,
                 marca,
                 modelo,
-                MIN(tipo_equipo) AS tipo_equipo,
+                tipo_equipo,
                 MIN(descripcion) AS descripcion,
                 MIN(precio) AS precio,
                 MIN(fecha_registro) AS fecha_registro,
@@ -40,9 +40,17 @@ namespace ApiProyecto1.Services
                 MIN(usuario_registra) AS usuario_registra,
                 MIN(descripcion1) AS descripcion1,
                 MIN(garantia) AS garantia,
-                STRING_AGG(color, ', ') WITHIN GROUP (ORDER BY color) AS color
+                STRING_AGG(color, ', ') WITHIN GROUP (ORDER BY color) AS color,
+                (
+                    SELECT id, color, url_equipo, url1, url2, url3, precio, codigo_producto, stock
+                    FROM equipos e2 
+                    WHERE e2.marca = equipos.marca 
+                      AND e2.modelo = equipos.modelo 
+                      AND e2.tipo_equipo = equipos.tipo_equipo
+                    FOR JSON PATH
+                ) AS variantes_json
             FROM equipos
-            GROUP BY modelo, marca";
+            GROUP BY marca, modelo, tipo_equipo";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();
@@ -50,7 +58,7 @@ namespace ApiProyecto1.Services
 
                 while (dr.Read())
                 {
-                    lista.Add(new RegistrosModel
+                    var registro = new RegistrosModel
                     {
                         Id = Convert.ToInt32(dr["id"]),
                         Tipo_Equipo = dr["tipo_equipo"]?.ToString() ?? "",
@@ -71,7 +79,19 @@ namespace ApiProyecto1.Services
                         Usuario_Registra = dr["usuario_registra"]?.ToString(),
                         Descripcion1 = dr["descripcion1"] == DBNull.Value ? null : dr["descripcion1"].ToString(),
                         Garantia = dr["garantia"] == DBNull.Value ? null : dr["garantia"].ToString()
-                    });
+                    };
+
+                    // Parseamos el JSON de variantes usando el serializador nativo de C#
+                    string jsonVariantes = dr["variantes_json"]?.ToString();
+                    if (!string.IsNullOrEmpty(jsonVariantes))
+                    {
+                        registro.Variantes = System.Text.Json.JsonSerializer.Deserialize<List<VarianteModel>>(jsonVariantes, new System.Text.Json.JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                    }
+
+                    lista.Add(registro);
                 }
             }
 
