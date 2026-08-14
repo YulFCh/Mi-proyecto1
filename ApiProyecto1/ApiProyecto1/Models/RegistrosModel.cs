@@ -30,7 +30,7 @@
         public string? Descripcion1 { get; set; }
         public string? Garantia { get; set; }
 
-        public List<VarianteModel> Variantes { get; set; }
+        public List<VarianteModel> Variantes { get; set; } = new();
     }
 
     public class VarianteModel
