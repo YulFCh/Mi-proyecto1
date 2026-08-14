@@ -14,68 +14,202 @@ namespace ApiProyecto1.Services
 
         // LISTAR EQUIPOS
         // LISTAR EQUIPOS AGRUPADOS POR MODELO
+        // LISTAR EQUIPOS AGRUPADOS POR TIPO + MARCA + MODELO
         public List<RegistrosModel> Listar()
         {
-            var lista = new List<RegistrosModel>();
+            var registros = new List<RegistrosModel>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 string query = @"
-            SELECT 
-                MIN(id) AS id,
-                marca,
+            SELECT
+                id,
+                tipo_equipo,
+                color,
                 modelo,
-                MIN(tipo_equipo) AS tipo_equipo,
-                MIN(descripcion) AS descripcion,
-                MIN(precio) AS precio,
-                MIN(fecha_registro) AS fecha_registro,
-                MIN(url_equipo) AS url_equipo,
-                MIN(url1) AS url1,
-                MIN(url2) AS url2,
-                MIN(url3) AS url3,
-                MIN(codigo_producto) AS codigo_producto,
-                MIN(precio_antes) AS precio_antes,
-                MIN(descuento) AS descuento,
-                MIN(estado) AS estado,
-                MIN(usuario_registra) AS usuario_registra,
-                MIN(descripcion1) AS descripcion1,
-                MIN(garantia) AS garantia,
-                STRING_AGG(color, ', ') WITHIN GROUP (ORDER BY color) AS color
+                descripcion,
+                precio,
+                fecha_registro,
+                url_equipo,
+                url1,
+                url2,
+                url3,
+                marca,
+                codigo_producto,
+                precio_antes,
+                descuento,
+                estado,
+                usuario_registra,
+                descripcion1,
+                garantia
             FROM equipos
-            GROUP BY modelo, marca";
+            ORDER BY marca, modelo, id";
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-
-                while (dr.Read())
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    lista.Add(new RegistrosModel
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-                        Id = Convert.ToInt32(dr["id"]),
-                        Tipo_Equipo = dr["tipo_equipo"]?.ToString() ?? "",
-                        Color = dr["color"]?.ToString(),
-                        Modelo = dr["modelo"]?.ToString(),
-                        Descripcion = dr["descripcion"]?.ToString(),
-                        Precio = Convert.ToDecimal(dr["precio"]),
-                        Fecha_Registro = Convert.ToDateTime(dr["fecha_registro"]),
-                        Url_Equipo = dr["url_equipo"]?.ToString(),
-                        Url1 = dr["url1"]?.ToString(),
-                        Url2 = dr["url2"]?.ToString(),
-                        Url3 = dr["url3"]?.ToString(),
-                        Marca = dr["marca"]?.ToString(),
-                        Codigo_Producto = dr["codigo_producto"]?.ToString(),
-                        Precio_Antes = dr["precio_antes"] == DBNull.Value ? null : Convert.ToDecimal(dr["precio_antes"]),
-                        Descuento = dr["descuento"] == DBNull.Value ? null : Convert.ToDecimal(dr["descuento"]),
-                        Estado = dr["estado"]?.ToString(),
-                        Usuario_Registra = dr["usuario_registra"]?.ToString(),
-                        Descripcion1 = dr["descripcion1"] == DBNull.Value ? null : dr["descripcion1"].ToString(),
-                        Garantia = dr["garantia"] == DBNull.Value ? null : dr["garantia"].ToString()
-                    });
+                        while (dr.Read())
+                        {
+                            registros.Add(new RegistrosModel
+                            {
+                                Id = Convert.ToInt32(dr["id"]),
+
+                                Tipo_Equipo = dr["tipo_equipo"]?.ToString() ?? "",
+
+                                Color = dr["color"] == DBNull.Value
+                                    ? null
+                                    : dr["color"].ToString(),
+
+                                Modelo = dr["modelo"] == DBNull.Value
+                                    ? null
+                                    : dr["modelo"].ToString(),
+
+                                Descripcion = dr["descripcion"] == DBNull.Value
+                                    ? null
+                                    : dr["descripcion"].ToString(),
+
+                                Precio = dr["precio"] == DBNull.Value
+                                    ? 0
+                                    : Convert.ToDecimal(dr["precio"]),
+
+                                Fecha_Registro = dr["fecha_registro"] == DBNull.Value
+                                    ? null
+                                    : Convert.ToDateTime(dr["fecha_registro"]),
+
+                                Url_Equipo = dr["url_equipo"] == DBNull.Value
+                                    ? null
+                                    : dr["url_equipo"].ToString(),
+
+                                Url1 = dr["url1"] == DBNull.Value
+                                    ? null
+                                    : dr["url1"].ToString(),
+
+                                Url2 = dr["url2"] == DBNull.Value
+                                    ? null
+                                    : dr["url2"].ToString(),
+
+                                Url3 = dr["url3"] == DBNull.Value
+                                    ? null
+                                    : dr["url3"].ToString(),
+
+                                Marca = dr["marca"] == DBNull.Value
+                                    ? null
+                                    : dr["marca"].ToString(),
+
+                                Codigo_Producto = dr["codigo_producto"] == DBNull.Value
+                                    ? null
+                                    : dr["codigo_producto"].ToString(),
+
+                                Precio_Antes = dr["precio_antes"] == DBNull.Value
+                                    ? null
+                                    : Convert.ToDecimal(dr["precio_antes"]),
+
+                                Descuento = dr["descuento"] == DBNull.Value
+                                    ? null
+                                    : Convert.ToDecimal(dr["descuento"]),
+
+                                Estado = dr["estado"] == DBNull.Value
+                                    ? null
+                                    : dr["estado"].ToString(),
+
+                                Usuario_Registra = dr["usuario_registra"] == DBNull.Value
+                                    ? null
+                                    : dr["usuario_registra"].ToString(),
+
+                                Descripcion1 = dr["descripcion1"] == DBNull.Value
+                                    ? null
+                                    : dr["descripcion1"].ToString(),
+
+                                Garantia = dr["garantia"] == DBNull.Value
+                                    ? null
+                                    : dr["garantia"].ToString()
+                            });
+                        }
+                    }
                 }
             }
 
-            return lista;
+
+            // ============================================================
+            // AGRUPAR POR:
+            // TIPO_EQUIPO + MARCA + MODELO
+            // ============================================================
+
+            var agrupados = registros
+                .GroupBy(x => new
+                {
+                    Tipo = (x.Tipo_Equipo ?? "").Trim().ToLower(),
+                    Marca = (x.Marca ?? "").Trim().ToLower(),
+                    Modelo = (x.Modelo ?? "").Trim().ToLower()
+                })
+                .Select(grupo =>
+                {
+                    // Registro principal
+                    var primero = grupo.First();
+
+                    // Crear las variantes correspondientes a cada color
+                    primero.Variantes = grupo.Select(x => new VarianteModel
+                    {
+                        Id = x.Id,
+
+                        Color = x.Color,
+
+                        Url_Equipo = x.Url_Equipo,
+                        Url1 = x.Url1,
+                        Url2 = x.Url2,
+                        Url3 = x.Url3,
+
+                        Precio = x.Precio,
+                        Precio_Antes = x.Precio_Antes,
+                        Descuento = x.Descuento,
+
+                        Estado = x.Estado,
+
+                        Codigo_Producto = x.Codigo_Producto,
+
+                        // Si todavía no tienes Stock en tu tabla,
+                        // dejamos 0 por ahora.
+                        Stock = 0
+
+                    }).ToList();
+
+
+                    // ====================================================
+                    // LA PRIMERA VARIANTE ES LA QUE SE MUESTRA INICIALMENTE
+                    // ====================================================
+
+                    var varianteInicial = primero.Variantes.FirstOrDefault();
+
+                    if (varianteInicial != null)
+                    {
+                        primero.Id = varianteInicial.Id;
+
+                        primero.Color = varianteInicial.Color;
+
+                        primero.Url_Equipo = varianteInicial.Url_Equipo;
+                        primero.Url1 = varianteInicial.Url1;
+                        primero.Url2 = varianteInicial.Url2;
+                        primero.Url3 = varianteInicial.Url3;
+
+                        primero.Precio = varianteInicial.Precio;
+                        primero.Precio_Antes = varianteInicial.Precio_Antes;
+                        primero.Descuento = varianteInicial.Descuento;
+
+                        primero.Estado = varianteInicial.Estado;
+
+                        primero.Codigo_Producto =
+                            varianteInicial.Codigo_Producto;
+                    }
+
+                    return primero;
+                })
+                .ToList();
+
+
+            return agrupados;
         }
 
         // INSERTAR EQUIPO

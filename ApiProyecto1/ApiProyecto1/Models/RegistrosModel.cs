@@ -42,6 +42,9 @@
         public string Url2 { get; set; }
         public string Url3 { get; set; }
         public decimal Precio { get; set; }
+        public decimal? Precio_Antes { get; set; }
+        public decimal? Descuento { get; set; }
+        public string? Estado { get; set; }
         public string Codigo_Producto { get; set; }
         public int Stock { get; set; }
     }
