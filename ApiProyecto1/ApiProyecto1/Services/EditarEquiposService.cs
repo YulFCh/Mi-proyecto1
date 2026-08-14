@@ -12,6 +12,127 @@ namespace ApiProyecto1.Services
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
+        public List<EditarEquiposModel> ObtenerVariantes(int id)
+        {
+            var variantes = new List<EditarEquiposModel>();
+
+            using SqlConnection con =
+                new SqlConnection(_connectionString);
+
+            string query = @"
+    SELECT
+        e.id,
+        e.tipo_equipo,
+        e.color,
+        e.modelo,
+        e.descripcion,
+        e.descripcion1,
+        e.garantia,
+        e.precio,
+        e.url_equipo,
+        e.url1,
+        e.url2,
+        e.url3,
+        e.marca,
+        e.codigo_producto,
+        e.precio_antes,
+        e.descuento,
+        e.estado
+    FROM equipos e
+    INNER JOIN equipos base
+        ON e.tipo_equipo = base.tipo_equipo
+        AND e.marca = base.marca
+        AND e.modelo = base.modelo
+    WHERE base.id = @id
+    ORDER BY e.id;
+";
+
+            using SqlCommand cmd =
+                new SqlCommand(query, con);
+
+            cmd.Parameters.Add(
+                "@id",
+                System.Data.SqlDbType.Int
+            ).Value = id;
+
+            con.Open();
+
+            using SqlDataReader reader =
+                cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                variantes.Add(new EditarEquiposModel
+                {
+                    Id = Convert.ToInt32(
+                        reader["id"]
+                    ),
+
+                    Tipo_Equipo =
+                        reader["tipo_equipo"]?.ToString(),
+
+                    Color =
+                        reader["color"]?.ToString(),
+
+                    Modelo =
+                        reader["modelo"]?.ToString(),
+
+                    Descripcion =
+                        reader["descripcion"]?.ToString(),
+
+                    Descripcion1 =
+                        reader["descripcion1"]?.ToString(),
+
+                    Garantia =
+                        reader["garantia"]?.ToString(),
+
+                    Precio =
+                        reader["precio"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(
+                                reader["precio"]
+                            ),
+
+                    Url_Equipo =
+                        reader["url_equipo"]?.ToString(),
+
+                    Url1 =
+                        reader["url1"]?.ToString(),
+
+                    Url2 =
+                        reader["url2"]?.ToString(),
+
+                    Url3 =
+                        reader["url3"]?.ToString(),
+
+                    Marca =
+                        reader["marca"]?.ToString(),
+
+                    Codigo_Producto =
+                        reader["codigo_producto"]?.ToString(),
+
+                    Precio_Antes =
+                        reader["precio_antes"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(
+                                reader["precio_antes"]
+                            ),
+
+                    Descuento =
+                        reader["descuento"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(
+                                reader["descuento"]
+                            ),
+
+                    Estado =
+                        reader["estado"]?.ToString()
+                });
+            }
+
+            return variantes;
+        }
+
         public void Patch(int id, EditarEquiposModel model)
         {
             using SqlConnection con = new SqlConnection(_connectionString);

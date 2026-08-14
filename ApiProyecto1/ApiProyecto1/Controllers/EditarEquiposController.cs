@@ -15,6 +15,14 @@ namespace ApiProyecto1.Controllers
             _service = service;
         }
 
+        [HttpGet("variantes/{id}")]
+        public IActionResult ObtenerVariantes(int id)
+        {
+            var variantes = _service.ObtenerVariantes(id);
+
+            return Ok(variantes);
+        }
+
         [HttpPatch("{id}")]
         public IActionResult Patch(int id, [FromBody] EditarEquiposModel model)
         {

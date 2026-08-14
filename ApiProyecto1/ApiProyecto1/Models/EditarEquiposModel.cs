@@ -2,6 +2,7 @@
 {
     public class EditarEquiposModel
     {
+        public int Id { get; set; }
         public string? Tipo_Equipo { get; set; }
         public string? Color { get; set; }
         public string? Modelo { get; set; }
