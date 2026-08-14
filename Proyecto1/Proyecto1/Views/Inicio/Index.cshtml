@@ -57,7 +57,6 @@
 
                     <!-- Tipo y Color -->
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label>Tipo Equipo</label>
                             <select id="tipoEquipo" class="form-control">
@@ -77,12 +76,10 @@
                                    id="color"
                                    class="form-control" />
                         </div>
-
                     </div>
 
                     <!-- Marca y Modelo -->
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label>Marca</label>
                             <input type="text"
@@ -96,12 +93,10 @@
                                    id="modelo"
                                    class="form-control" />
                         </div>
-
                     </div>
 
-                    <!-- Código y Descripción -->
+                    <!-- Código y Descripción Corta -->
                     <div class="row">
-
                         <div class="col-md-4 mb-3">
                             <label>Código Producto</label>
                             <input type="text"
@@ -110,24 +105,56 @@
                         </div>
 
                         <div class="col-md-8 mb-3">
-                            <label>Descripción</label>
+                            <label>Descripción corta</label>
                             <textarea id="descripcion"
                                       class="form-control"
                                       rows="1"></textarea>
                         </div>
+                    </div>
 
+                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label>Descripción detallada</label>
+                            <textarea id="descripcion1"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Garantía y Estado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Garantía</label>
+                            <select id="garantia" class="form-control">
+                                <option value="">Seleccione garantía...</option>
+                                <option value="3 Meses">3 Meses</option>
+                                <option value="6 Meses">6 Meses</option>
+                                <option value="12 Meses">12 Meses</option>
+                                <option value="24 Meses">24 Meses</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Estado</label>
+                            <select id="estado" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                                <option value="AGOTADO">AGOTADO</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Precios -->
-                    
                     <div class="row">
-
                         <div class="col-md-4 mb-3">
                             <label>Precio actual</label>
                             <input type="number"
                                    id="precio"
                                    step="0.01"
-                                   class="form-control" readonly/>
+                                   class="form-control" />
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -137,6 +164,7 @@
                                    step="0.01"
                                    class="form-control" />
                         </div>
+
                         <div class="col-md-4 mb-3">
                             <label>Descuento</label>
                             <input type="number"
@@ -145,23 +173,6 @@
                                    class="form-control"
                                    placeholder="20" />
                         </div>
-                   
-
-                    </div>
-
-                    <!-- Estado -->
-                    <div class="row">
-
-                        <div class="col-12 mb-3">
-                            <label>Estado</label>
-                            <select id="estado" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="ACTIVO">ACTIVO</option>
-                                <option value="INACTIVO">INACTIVO</option>
-                                <option value="AGOTADO">AGOTADO</option>
-                            </select>
-                        </div>
-
                     </div>
 
                     <!-- Imágenes -->
@@ -191,8 +202,6 @@
 
             </form>
 
-
-
         </div>
     </div>
 
@@ -220,12 +229,12 @@
             </div>
 
             <form id="formEditarEquipo" enctype="multipart/form-data">
+                <input type="hidden" id="editar_id" />
 
                 <div class="modal-body">
 
                     <!-- Tipo y Color -->
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label>Tipo Equipo</label>
                             <select id="editar_tipoEquipo" class="form-control">
@@ -241,16 +250,16 @@
 
                         <div class="col-md-6 mb-3">
                             <label>Color</label>
-                            <input type="text"
-                                   id="editar_color"
-                                   class="form-control" />
-                        </div>
 
+                            <select id="editar_color"
+                                    class="form-control">
+                                <option value="">Seleccione un color</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Marca y Modelo -->
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label>Marca</label>
                             <input type="text"
@@ -264,12 +273,10 @@
                                    id="editar_modelo"
                                    class="form-control" />
                         </div>
-
                     </div>
 
-                    <!-- Código y Descripción -->
+                    <!-- Código y Descripción Corta -->
                     <div class="row">
-
                         <div class="col-md-4 mb-3">
                             <label>Código Producto</label>
                             <input type="text"
@@ -283,13 +290,45 @@
                                       class="form-control"
                                       rows="1"></textarea>
                         </div>
+                    </div>
 
+                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label>Descripción detallada</label>
+                            <textarea id="editar_descripcion1"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Garantía y Estado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Garantía</label>
+                            <select id="editar_garantia" class="form-control">
+                                <option value="">Seleccione garantía...</option>
+                                <option value="3 Meses">3 Meses</option>
+                                <option value="6 Meses">6 Meses</option>
+                                <option value="12 Meses">12 Meses</option>
+                                <option value="24 Meses">24 Meses</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Estado</label>
+                            <select id="editar_estado" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                                <option value="AGOTADO">AGOTADO</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Precios -->
-
                     <div class="row">
-
                         <div class="col-md-4 mb-3">
                             <label>Precio actual</label>
                             <input type="number"
@@ -314,22 +353,6 @@
                                    class="form-control"
                                    placeholder="20" />
                         </div>
-
-                    </div>
-
-                    <!-- Estado -->
-                    <div class="row">
-
-                        <div class="col-12 mb-3">
-                            <label>Estado</label>
-                            <select id="editar_estado" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="ACTIVO">ACTIVO</option>
-                                <option value="INACTIVO">INACTIVO</option>
-                                <option value="AGOTADO">AGOTADO</option>
-                            </select>
-                        </div>
-
                     </div>
 
                     <!-- Imágenes -->
@@ -481,10 +504,10 @@
                         <!-- BLOQUES INFORMATIVOS -->
                         <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 22px; width: 100%; flex-wrap: nowrap;">
                             <!-- Recuadro 1: Garantía -->
-                            <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
+                            <div id="zoom-garantia-container"  style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
                                 <span style="font-size: 16px; margin-bottom: 2px;">🛡️</span>
                                 <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Garantía</strong>
-                                <span style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">12 Meses</span>
+                                <span id="zoom-garantia"  style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">12 Meses</span>
                             </div>
                             <!-- Recuadro 2: Formas de Pago -->
                             <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">

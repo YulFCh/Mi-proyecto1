@@ -120,117 +120,931 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+const traductorColores = {
+    negro: "#000000",
+    blanco: "#ffffff",
+    rojo: "#ff4d4d",
+    azul: "#007bff",
+    gris: "#888888",
+    plomo: "#a6a6a6",
+    plateado: "#e0e0e0",
+    dorado: "#ffd700",
+    verde: "#28a745",
+    amarillo: "#ffc107",
+    naranja: "#fd7e14",
+    morado: "#6f42c1",
+    violeta: "#8a2be2",
+    rosado: "#ff69b4",
+    rosa: "#ff69b4",
+    marron: "#8b4513",
+    cafe: "#8b4513",
+    café: "#8b4513"
+};
+
+
+function obtenerColorCSS(nombre) {
+
+    if (!nombre) {
+        return "#cccccc";
+    }
+
+    const limpio = nombre
+        .toString()
+        .trim()
+        .toLowerCase();
+
+    return traductorColores[limpio] || limpio;
+}
+
+function seleccionarColorProducto(productoId, varianteIndex) {
+
+    const producto = window.productosAgrupados?.find(
+        p => p.id === productoId
+    );
+
+    if (!producto) {
+        console.error("Producto no encontrado:", productoId);
+        return;
+    }
+
+    const variantes =
+        producto.variantes ||
+        producto.Variantes ||
+        [];
+
+    const variante = variantes[varianteIndex];
+
+    if (!variante) {
+        console.error(
+            "Variante no encontrada:",
+            varianteIndex
+        );
+        return;
+    }
+
+    const card = document.getElementById(
+        `producto-${productoId}`
+    );
+
+    if (!card) return;
+
+
+    // ==================================================
+    // GUARDAR VARIANTE SELECCIONADA
+    // ==================================================
+
+    card.dataset.varianteIndex = varianteIndex;
+
+
+    // ==================================================
+    // IMAGEN PRINCIPAL
+    // ==================================================
+
+    const imagenPrincipal =
+        card.querySelector(".main-product-image");
+
+    if (imagenPrincipal) {
+
+        imagenPrincipal.src =
+            variante.url_Equipo || "";
+
+    }
+
+
+    // ==================================================
+    // MINIATURAS
+    // ==================================================
+
+    const thumbnailContainer =
+        card.querySelector(".thumbnail-container");
+
+    if (thumbnailContainer) {
+
+        const imagenes = [
+            variante.url_Equipo,
+            variante.url1,
+            variante.url2,
+            variante.url3
+        ].filter(Boolean);
+
+        thumbnailContainer.innerHTML =
+            imagenes.map((url, index) => `
+                <img
+                    src="${url}"
+                    class="thumbnail-image ${index === 0
+                    ? "active-thumb"
+                    : ""
+                }"
+                    onclick="seleccionarMiniaturaProducto(
+                        this,
+                        '${url}',
+                        ${productoId}
+                    )"
+                />
+            `).join("");
+    }
+
+
+    // ==================================================
+    // COLOR SELECCIONADO
+    // ==================================================
+
+    const nombreColor =
+        card.querySelector(
+            ".color-nombre-seleccionado"
+        );
+
+    if (nombreColor) {
+
+        nombreColor.innerText =
+            variante.color || "";
+
+    }
+
+    // ==================================================
+    // DESCRIPCIÓN CORTA
+    // ==================================================
+
+    const descripcion =
+        card.querySelector(".producto-descripcion");
+
+    if (descripcion) {
+        descripcion.innerText =
+            variante.descripcion || "";
+    }
+
+
+    // ==================================================
+    // DESCRIPCIÓN DETALLADA
+    // ==================================================
+
+    const descripcionDetallada =
+        card.querySelector(".producto-descripcion-detallada");
+
+    if (descripcionDetallada) {
+        descripcionDetallada.innerText =
+            variante.descripcion1 || "";
+    }
+
+
+    // ==================================================
+    // GARANTÍA
+    // ==================================================
+
+    const garantia =
+        card.querySelector(".producto-garantia");
+
+    if (garantia) {
+        garantia.innerText =
+            variante.garantia || "";
+    }
+
+
+    // ==================================================
+    // PRECIO ACTUAL
+    // ==================================================
+
+    const precio =
+        card.querySelector(".producto-precio");
+
+    if (precio) {
+
+        precio.innerText =
+            `S/. ${parseFloat(
+                variante.precio || 0
+            ).toFixed(2)}`;
+
+    }
+
+
+    // ==================================================
+    // DESCUENTO
+    // ==================================================
+
+    const descuento =
+        card.querySelector(".producto-descuento");
+
+    if (descuento) {
+
+        const descuentoValor =
+            parseFloat(
+                variante.descuento || 0
+            );
+
+        if (descuentoValor > 0) {
+
+            descuento.innerText =
+                `-${descuentoValor}%`;
+
+            descuento.style.display =
+                "inline-flex";
+
+        } else {
+
+            descuento.innerText = "";
+
+            descuento.style.display =
+                "none";
+        }
+    }
+
+
+    // ==================================================
+    // PRECIO ANTES
+    // ==================================================
+
+    const precioAntes =
+        card.querySelector(
+            ".producto-precio-antes"
+        );
+
+    if (precioAntes) {
+
+        const precioAntesValor =
+            parseFloat(
+                variante.precio_Antes || 0
+            );
+
+        const descuentoValor =
+            parseFloat(
+                variante.descuento || 0
+            );
+
+        if (
+            precioAntesValor > 0 &&
+            descuentoValor > 0
+        ) {
+
+            precioAntes.innerText =
+                `S/. ${precioAntesValor.toFixed(2)}`;
+
+            precioAntes.style.display =
+                "inline";
+
+        } else {
+
+            precioAntes.innerText = "";
+
+            precioAntes.style.display =
+                "none";
+        }
+    }
+
+
+    // ==================================================
+    // CÓDIGO
+    // ==================================================
+
+    const codigo =
+        card.querySelector(
+            ".producto-codigo"
+        );
+
+    if (codigo) {
+
+        codigo.innerText =
+            variante.codigo_Producto ||
+            "N/A";
+
+    }
+
+
+    // ==================================================
+    // MARCAR COLOR ACTIVO
+    // ==================================================
+
+    card.querySelectorAll(
+        ".color-selector"
+    ).forEach(btn => {
+
+        const indice =
+            parseInt(
+                btn.dataset.variante
+            );
+
+        if (indice === varianteIndex) {
+
+            btn.classList.add(
+                "color-activo"
+            );
+
+            btn.style.border =
+                "2px solid #fff";
+
+            btn.style.boxShadow =
+                "0 0 0 2px #8a2be2";
+
+        } else {
+
+            btn.classList.remove(
+                "color-activo"
+            );
+
+            btn.style.border =
+                "2px solid #ccc";
+
+            btn.style.boxShadow =
+                "none";
+        }
+
+    });
+
+
+    // ==================================================
+    // ACTUALIZAR BOTÓN CARRITO
+    // ==================================================
+
+    const botonCarrito =
+        card.querySelector(
+            ".btn-agregar-carrito"
+        );
+
+    if (botonCarrito) {
+
+        const imagenes = [
+            variante.url_Equipo,
+            variante.url1,
+            variante.url2,
+            variante.url3
+        ].filter(Boolean);
+
+
+        botonCarrito.setAttribute(
+            "data-id",
+            variante.id
+        );
+
+
+        botonCarrito.setAttribute(
+            "data-nombre",
+            `${producto.marca || "SIN MARCA"} ${producto.modelo || ""} - ${variante.color || ""}`
+        );
+
+
+        botonCarrito.setAttribute(
+            "data-precio",
+            variante.precio
+        );
+
+
+        botonCarrito.setAttribute(
+            "data-imagenes",
+            JSON.stringify(imagenes)
+        );
+    }
+}
+
+function seleccionarMiniaturaProducto(
+    elemento,
+    url,
+    productoId
+) {
+
+    const card = document.getElementById(
+        `producto-${productoId}`
+    );
+
+    if (!card) return;
+
+    const imagenPrincipal =
+        card.querySelector(
+            ".main-product-image"
+        );
+
+    if (imagenPrincipal) {
+        imagenPrincipal.src = url;
+    }
+
+    card.querySelectorAll(
+        ".thumbnail-image"
+    ).forEach(img => {
+
+        img.classList.remove(
+            "active-thumb"
+        );
+
+    });
+
+    elemento.classList.add(
+        "active-thumb"
+    );
+}
+
+function abrirZoomProductoSeleccionado(productoId) {
+
+    const producto = window.productosAgrupados?.find(
+        p => p.id === productoId
+    );
+
+    if (!producto) {
+        console.error("Producto no encontrado:", productoId);
+        return;
+    }
+
+    const card = document.getElementById(`producto-${productoId}`);
+
+    let varianteIndex = 0;
+
+    if (card) {
+        varianteIndex = parseInt(
+            card.dataset.varianteIndex || "0"
+        );
+    }
+
+    const variantes =
+        producto.variantes ||
+        producto.Variantes ||
+        [];
+
+    const variante = variantes[varianteIndex];
+
+    if (!variante) {
+        console.error("Variante no encontrada:", varianteIndex);
+        return;
+    }
+
+    // Creamos el objeto de la variante seleccionada
+    const itemZoom = {
+        ...producto,
+
+        id: variante.id,
+
+        color: variante.color,
+
+        precio: variante.precio,
+
+        precio_Antes: variante.precio_Antes,
+
+        descuento: variante.descuento,
+
+        estado: variante.estado,
+
+        descripcion: variante.descripcion,
+
+        descripcion1: variante.descripcion1,
+
+        garantia: variante.garantia,
+
+        url_Equipo: variante.url_Equipo,
+
+        url1: variante.url1,
+
+        url2: variante.url2,
+
+        url3: variante.url3,
+
+        codigo_Producto:
+            variante.codigo_Producto ||
+            producto.codigo_Producto,
+
+        // IMPORTANTE:
+        // enviamos todas las variantes al Zoom
+        variantes: variantes,
+
+        varianteSeleccionadaIndex: varianteIndex
+    };
+
+    abrirZoom(itemZoom);
+}
+
 async function cargarProductos() {
     const contenedor = document.getElementById("contenedorProductos");
     if (!contenedor) return;
 
     try {
-        const response = await fetch("https://mi-proyecto1-2.onrender.com/api/registros");
+        const response = await fetch(
+            "https://mi-proyecto1-2.onrender.com/api/registros"
+        );
+
         const data = await response.json();
+
+        window.productosAgrupados = data;
 
         contenedor.innerHTML = "";
 
         data.forEach(item => {
-            const estadoEquipo = item.estado ? item.estado.toLowerCase().trim() : "";
+
+            const estadoEquipo = item.estado
+                ? item.estado.toLowerCase().trim()
+                : "";
 
             if (estadoEquipo === "inactivo" && !estaLogueado) {
                 return;
             }
 
-            contenedor.innerHTML += `
-            <div class="product-gallery">
-                <div class="tipo-equipo-badge">
-                    ${item.tipo_Equipo}
-                </div>
+            // =====================================================
+            // OBTENER VARIANTES
+            // =====================================================
 
-                <div class="main-image-container">
-                    <img id="main-${item.id}"
-                         src="${item.url_Equipo}"
-                         class="main-product-image"
-                         style="cursor:pointer"
-                         onclick="abrirZoom(${JSON.stringify(item).replace(/"/g, '&quot;')})" />
-                </div>
+            const variantes =
+                item.variantes ||
+                item.Variantes ||
+                [];
 
-                <div class="thumbnail-container">
-                    ${item.url_Equipo ? `<img src="${item.url_Equipo}" class="thumbnail-image active-thumb" onclick="changeImage(this, 'main-${item.id}')" />` : ""}
-                    ${item.url1 ? `<img src="${item.url1}" class="thumbnail-image" onclick="changeImage(this, 'main-${item.id}')"/>` : ""}
-                    ${item.url2 ? `<img src="${item.url2}" class="thumbnail-image" onclick="changeImage(this, 'main-${item.id}')" />` : ""}
-                    ${item.url3 ? `<img src="${item.url3}" class="thumbnail-image" onclick="changeImage(this, 'main-${item.id}')" />` : ""}
-                </div>
+            if (variantes.length === 0) {
+                console.warn(
+                    "Producto sin variantes:",
+                    item.id
+                );
+                return;
+            }
 
-<div class="product-info-block" style="text-align: left; margin-top: 10px; line-height: 1.5;">
+            // Primera variante seleccionada por defecto
+            const varianteInicial = variantes[0];
 
-    <!-- RECUADRO ESTILO MODAL ZOOM (Encierra desde la Marca hasta los Precios) -->
-    <div style="background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px dashed #e5e5e5; margin-bottom: 8px;">
+            // =====================================================
+            // COLORES ÚNICOS
+            // =====================================================
 
-        <!-- Marca y Agotado -->
-        <strong>${item.marca || 'SIN MARCA'}</strong>
-        ${estadoEquipo === "agotado" ? `<span style="color: #ff4d4d; font-style: italic; font-weight: bold; margin-left: 6px;">(Agotado)</span>` : ""}
-        <br />
-        
-        <!-- Modelo y Descripción -->
-        <span>${item.modelo || ''} - ${item.descripcion || ''}</span><br />
-        
-        <!-- Código de Producto -->
-        <small class="text-muted">Código: ${item.codigo_Producto || 'N/A'}</small><br />
-        
-        <!-- Contenedor Flex de Precios (Precio antes al extremo derecho) -->
-        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; line-height: 1.2; flex-wrap: wrap; width: 100%;">
             
-            <!-- Lado Izquierdo: Precio Actual y Badge Descuento -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.1em; font-weight: bold; color: #222;">
-                    S/. ${parseFloat(item.precio).toFixed(2)}
-                </span>
-                ${item.descuento && item.descuento > 0 ? `
-                    <span style="background-color: #ff4d4d; color: white; font-size: 0.85em; font-weight: bold; padding: 0px 6px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;">-${item.descuento}%</span>
-                ` : ""}
-            </div>
 
-            <!-- Lado Derecho: Precio Antes -->
-            ${item.precio_Antes && item.descuento > 0 ? `
-                <span style="text-decoration: line-through; color: #888; font-size: 0.9em; margin-left: auto;">
-                    S/. ${parseFloat(item.precio_Antes).toFixed(2)}
-                </span>
-            ` : ""}
-        </div>
+            // =====================================================
+            // IMÁGENES DE LA VARIANTE INICIAL
+            // =====================================================
 
-    </div>
-    
-    <!-- Indicador de Inactivo (Queda fuera del recuadro para mantener la estética limpia) -->
-    ${estaLogueado && estadoEquipo === "inactivo" ? `<span style="color: #ff4d4d; font-weight: bold; font-size: 0.9em; display: inline-block; margin-top: 2px;">INACTIVO</span>` : ""}
-</div>
+            const imagenesIniciales = [
+                varianteInicial.url_Equipo,
+                varianteInicial.url1,
+                varianteInicial.url2,
+                varianteInicial.url3
+            ].filter(Boolean);
+
+            // =====================================================
+            // GENERAR MINIATURAS
+            // =====================================================
+
+            const miniaturasHTML = imagenesIniciales
+                .map((url, index) => `
+                    <img
+                        src="${url}"
+                        class="thumbnail-image ${index === 0 ? "active-thumb" : ""}"
+                        onclick="seleccionarMiniaturaProducto(
+                            this,
+                            '${url}',
+                            ${item.id}
+                        )"
+                    />
+                `)
+                .join("");
 
 
-                <div class="product-actions">
-                    ${estaLogueado ? `
-                        <button class="btn btn-warning btn-sm w-100" onclick="editarEquipo(${item.id})">Editar</button>
-                    ` : `
-                        <div class="cantidad-container" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="font-size: 13px; font-weight: 600; color: #555;">Cantidad:</span>
-                            <div style="display: inline-flex; align-items: center; border: 1px solid #ced4da; border-radius: 4px; overflow: hidden; background: #fff;">
-                                <button type="button" class="btn-cantidad" onclick="cambiarCantidadHTML(${item.id}, -1)" style="border: none; background: #f8f9fa; width: 28px; height: 28px; cursor: pointer; font-weight: bold; color: #333; padding: 0;">-</button>
-                                <span id="cant-display-${item.id}" style="min-width: 30px; text-align: center; font-weight: bold; font-size: 13px; color: #333; line-height: 28px;">1</span>
-                                <button type="button" class="btn-cantidad" onclick="cambiarCantidadHTML(${item.id}, 1)" style="border: none; background: #f8f9fa; width: 28px; height: 28px; cursor: pointer; font-weight: bold; color: #333; padding: 0;">+</button>
+            contenedor.innerHTML += `
+
+                <div
+                    class="product-gallery"
+                    id="producto-${item.id}"
+                    data-variante-index="0"
+                >
+
+                    <!-- TIPO -->
+                    <div class="tipo-equipo-badge">
+                        ${item.tipo_Equipo || ""}
+                    </div>
+
+
+                    <!-- IMAGEN PRINCIPAL -->
+                    <div class="main-image-container">
+
+                        <img
+                            id="main-${item.id}"
+                            src="${varianteInicial.url_Equipo || ""}"
+                            class="main-product-image"
+                            style="cursor:pointer"
+                            onclick="abrirZoomProductoSeleccionado(${item.id})"
+                        />
+
+                    </div>
+
+
+                    <!-- MINIATURAS -->
+                    <div class="thumbnail-container">
+
+                        ${miniaturasHTML}
+
+                    </div>
+
+
+                    <!-- INFORMACIÓN -->
+                    <div
+                        class="product-info-block"
+                        style="
+                            text-align:left;
+                            margin-top:10px;
+                            line-height:1.5;
+                        "
+                    >
+
+                        <div
+                            style="
+                                background:#fbfbfb;
+                                padding:12px;
+                                border-radius:8px;
+                                border:1px dashed #e5e5e5;
+                                margin-bottom:8px;
+                            "
+                        >
+
+                            <!-- MARCA -->
+                            <strong class="producto-marca">
+                                ${item.marca || "SIN MARCA"}
+                            </strong>
+
+                            ${estadoEquipo === "agotado"
+                    ? `
+                                    <span
+                                        style="
+                                            color:#ff4d4d;
+                                            font-style:italic;
+                                            font-weight:bold;
+                                            margin-left:6px;
+                                        "
+                                    >
+                                        (Agotado)
+                                    </span>
+                                `
+                    : ""
+                }
+
+                            <br />
+
+
+                            <!-- MODELO -->
+                            <span class="producto-modelo">
+    ${item.modelo || ""}
+</span>
+
+<span class="producto-descripcion">
+    ${varianteInicial.descripcion || ""}
+</span>
+
+                            <br />
+
+                            
+
+
+
+
+                            <!-- CÓDIGO -->
+                            <small class="text-muted producto-codigo">
+                                ${varianteInicial.codigo_Producto || "N/A"}
+                            </small>
+
+
+                           
+
+
+                            <!-- PRECIOS -->
+                            <div
+                                style="
+                                    display:flex;
+                                    align-items:baseline;
+                                    justify-content:space-between;
+                                    margin-top:8px;
+                                    line-height:1.2;
+                                    flex-wrap:wrap;
+                                    width:100%;
+                                "
+                            >
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        gap:8px;
+                                    "
+                                >
+
+                                    <span
+                                        class="producto-precio"
+                                        style="
+                                            font-size:1.1em;
+                                            font-weight:bold;
+                                            color:#222;
+                                        "
+                                    >
+                                        S/. ${parseFloat(
+                    varianteInicial.precio || 0
+                ).toFixed(2)}
+                                    </span>
+
+
+                                    <span
+                                        class="producto-descuento"
+                                        style="
+                                            background-color:#ff4d4d;
+                                            color:white;
+                                            font-size:.85em;
+                                            font-weight:bold;
+                                            padding:0 6px;
+                                            border-radius:4px;
+                                            display:${parseFloat(
+                    varianteInicial.descuento || 0
+                ) > 0
+                    ? "inline-flex"
+                    : "none"
+                };
+                                            align-items:center;
+                                            justify-content:center;
+                                        "
+                                    >
+                                        ${parseFloat(
+                    varianteInicial.descuento || 0
+                ) > 0
+                    ? "-" + varianteInicial.descuento + "%"
+                    : ""
+                }
+                                    </span>
+
+                                </div>
+
+
+                                <span
+                                    class="producto-precio-antes"
+                                    style="
+                                        text-decoration:line-through;
+                                        color:#888;
+                                        font-size:.9em;
+                                        margin-left:auto;
+                                        display:${parseFloat(
+                    varianteInicial.precio_Antes || 0
+                ) > 0 &&
+                    parseFloat(
+                        varianteInicial.descuento || 0
+                    ) > 0
+                    ? "inline"
+                    : "none"
+                };
+                                    "
+                                >
+                                    ${parseFloat(
+                    varianteInicial.precio_Antes || 0
+                ) > 0 &&
+                    parseFloat(
+                        varianteInicial.descuento || 0
+                    ) > 0
+                    ? "S/. " +
+                    parseFloat(
+                        varianteInicial.precio_Antes
+                    ).toFixed(2)
+                    : ""
+                }
+                                </span>
+
                             </div>
+
                         </div>
-                        <button class="btn btn-primary btn-sm w-100 btn-agregar-carrito"
-                                data-id="${item.id}"
-                                data-nombre="${item.marca || 'SIN MARCA'} ${item.modelo || ''}"
-                                data-precio="${item.precio}"
-                                data-imagenes='${JSON.stringify([item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean))}'>
-                            Agregar al carrito
-                        </button>
-                    `}
+
+
+                        <!-- INACTIVO -->
+                        ${estaLogueado &&
+                    estadoEquipo === "inactivo"
+                    ? `
+                                <span
+                                    style="
+                                        color:#ff4d4d;
+                                        font-weight:bold;
+                                        font-size:.9em;
+                                        display:inline-block;
+                                        margin-top:2px;
+                                    "
+                                >
+                                    INACTIVO
+                                </span>
+                            `
+                    : ""
+                }
+
+                    </div>
+
+
+                    <!-- ACCIONES -->
+                    <div class="product-actions">
+
+                        ${estaLogueado
+                    ? `
+                                <button
+                                    class="btn btn-warning btn-sm w-100"
+                                    onclick="editarEquipo(${item.id})"
+                                >
+                                    Editar
+                                </button>
+                            `
+                    : `
+                                <div
+                                    class="cantidad-container"
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:space-between;
+                                        margin-bottom:8px;
+                                    "
+                                >
+
+                                    <span
+                                        style="
+                                            font-size:13px;
+                                            font-weight:600;
+                                            color:#555;
+                                        "
+                                    >
+                                        Cantidad:
+                                    </span>
+
+
+                                    <div
+                                        style="
+                                            display:inline-flex;
+                                            align-items:center;
+                                            border:1px solid #ced4da;
+                                            border-radius:4px;
+                                            overflow:hidden;
+                                            background:#fff;
+                                        "
+                                    >
+
+                                        <button
+                                            type="button"
+                                            class="btn-cantidad"
+                                            onclick="cambiarCantidadHTML(${item.id}, -1)"
+                                            style="
+                                                border:none;
+                                                background:#f8f9fa;
+                                                width:28px;
+                                                height:28px;
+                                                cursor:pointer;
+                                                font-weight:bold;
+                                                color:#333;
+                                                padding:0;
+                                            "
+                                        >
+                                            -
+                                        </button>
+
+
+                                        <span
+                                            id="cant-display-${item.id}"
+                                            style="
+                                                min-width:30px;
+                                                text-align:center;
+                                                font-weight:bold;
+                                                font-size:13px;
+                                                color:#333;
+                                                line-height:28px;
+                                            "
+                                        >
+                                            1
+                                        </span>
+
+
+                                        <button
+                                            type="button"
+                                            class="btn-cantidad"
+                                            onclick="cambiarCantidadHTML(${item.id}, 1)"
+                                            style="
+                                                border:none;
+                                                background:#f8f9fa;
+                                                width:28px;
+                                                height:28px;
+                                                cursor:pointer;
+                                                font-weight:bold;
+                                                color:#333;
+                                                padding:0;
+                                            "
+                                        >
+                                            +
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-primary btn-sm w-100 btn-agregar-carrito"
+                                    data-id="${varianteInicial.id}"
+                                    data-nombre="${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${varianteInicial.color || ""}"
+                                    data-precio="${varianteInicial.precio}"
+                                    data-imagenes='${JSON.stringify(imagenesIniciales)}'
+                                >
+                                    Agregar al carrito
+                                </button>
+                            `
+                }
+
+                    </div>
+
                 </div>
-            </div>
-        `;
+            `;
         });
+
     } catch (error) {
-        console.error("Error cargando productos:", error);
+
+        console.error(
+            "Error cargando productos:",
+            error
+        );
+
     }
-
-
 }
 
 async function guardarEquipo() {
@@ -271,6 +1085,8 @@ async function guardarEquipo() {
                 modelo: document.getElementById("modelo").value,
                 codigo_Producto: document.getElementById("codigoProducto").value,
                 descripcion: document.getElementById("descripcion").value,
+                descripcion1: document.getElementById("descripcion1").value, 
+                garantia: document.getElementById("garantia").value,
                 precio: parseFloat(document.getElementById("precio").value) || 0,
                 precio_Antes: document.getElementById("precioAntes").value !== "" ? parseFloat(document.getElementById("precioAntes").value) : null,
                 descuento: document.getElementById("descuento").value !== "" ? parseFloat(document.getElementById("descuento").value) : 0,
@@ -284,6 +1100,7 @@ async function guardarEquipo() {
 
         mostrarToast("Equipo guardado correctamente");
         document.getElementById("fileImage").value = "";
+        document.getElementById("formNuevoEquipo").reset();
         imagenesAgregar = [];
         document.getElementById("previewContainer").innerHTML = "";
         $('#modalAgregar').modal('hide');
@@ -294,14 +1111,32 @@ async function guardarEquipo() {
     }
 }
 
-async function editarEquipo(id) {
-    try {
-        imagenesEditar = [];
-        document.getElementById("editar_fileImage").value = "";
-        document.getElementById("editar_previewContainer").innerHTML = "";
+let varianteEditandoId = null;
+let variantesEquipoEditando = [];
 
-        const response = await fetch(`https://mi-proyecto1-2.onrender.com/api/registros`);
+
+async function editarEquipo(id) {
+
+    try {
+
+        imagenesEditar = [];
+
+        const inputImagenes = document.getElementById("editar_fileImage");
+        const preview = document.getElementById("editar_previewContainer");
+
+        if (inputImagenes) inputImagenes.value = "";
+        if (preview) preview.innerHTML = "";
+
+        const response = await fetch(
+            "https://mi-proyecto1-2.onrender.com/api/registros"
+        );
+
+        if (!response.ok) {
+            throw new Error("Error al obtener los equipos");
+        }
+
         const data = await response.json();
+
         const item = data.find(x => x.id === id);
 
         if (!item) {
@@ -309,29 +1144,390 @@ async function editarEquipo(id) {
             return;
         }
 
-        imagenesEditar = [item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean);
+        // ============================================
+        // GUARDAR TODAS LAS VARIANTES
+        // ============================================
 
-        document.getElementById("editar_tipoEquipo").value = item.tipo_Equipo || "";
-        document.getElementById("editar_color").value = item.color || "";
-        document.getElementById("editar_marca").value = item.marca || "";
-        document.getElementById("editar_modelo").value = item.modelo || "";
-        document.getElementById("editar_codigoProducto").value = item.codigo_Producto || "";
-        document.getElementById("editar_descripcion").value = item.descripcion || "";
-        document.getElementById("editar_precio").value = item.precio || 0;
-        document.getElementById("editar_precioAntes").value = item.precio_Antes || "";
-        document.getElementById("editar_descuento").value = item.descuento || "";
-        document.getElementById("editar_estado").value = item.estado || "";
+        variantesEquipoEditando =
+            item.variantes ||
+            item.Variantes ||
+            [];
 
-        renderPreview("editar_previewContainer", imagenesEditar);
+        if (variantesEquipoEditando.length === 0) {
+            alert("Este equipo no tiene colores/variantes registrados.");
+            return;
+        }
+
+        // ============================================
+        // DATOS GENERALES DEL EQUIPO
+        // ============================================
+
+        document.getElementById("editar_tipoEquipo").value =
+            item.tipo_Equipo || "";
+
+        document.getElementById("editar_marca").value =
+            item.marca || "";
+
+        document.getElementById("editar_modelo").value =
+            item.modelo || "";
+
+        // ============================================
+        // SELECT DE COLORES
+        // ============================================
+
+        const selectColor =
+            document.getElementById("editar_color");
+
+        if (!selectColor) {
+            console.error("No existe #editar_color");
+            return;
+        }
+
+        selectColor.innerHTML =
+            '<option value="">Seleccione un color...</option>';
+
+        variantesEquipoEditando.forEach((variante, index) => {
+
+            const option = document.createElement("option");
+
+            // IMPORTANTE:
+            // El value es el índice interno de la variante
+            option.value = index;
+
+            // Lo que ve el usuario es el nombre del color
+            option.textContent =
+                variante.color || `Color ${index + 1}`;
+
+            selectColor.appendChild(option);
+        });
+
+        // ============================================
+        // CAMBIAR COLOR
+        // ============================================
+
+        selectColor.onchange = function () {
+
+            const indice = parseInt(this.value);
+
+            if (
+                isNaN(indice) ||
+                !variantesEquipoEditando[indice]
+            ) {
+                limpiarDatosVarianteEditar();
+                return;
+            }
+
+            cargarVarianteEnFormularioEditar(indice);
+        };
+
+        // ============================================
+        // CARGAR PRIMER COLOR
+        // ============================================
+
+        selectColor.value = "0";
+
+        cargarVarianteEnFormularioEditar(0);
+
+        // ============================================
+        // BOTÓN ACTUALIZAR
+        // ============================================
+
+        const btnActualizar =
+            document.getElementById("btnActualizar");
+
+        if (btnActualizar) {
+            btnActualizar.onclick = function () {
+                actualizarEquipo(varianteEditandoId);
+            };
+        }
+
+        // ============================================
+        // MOSTRAR MODAL
+        // ============================================
+
         $('#modalEditar').modal('show');
-        document.getElementById("btnActualizar").onclick = () => actualizarEquipo(id);
+
     } catch (error) {
+
         console.error("Error editarEquipo:", error);
+
         alert("Error al cargar equipo");
     }
 }
 
+function cargarVarianteEnFormularioEditar(indice) {
+
+    const variante =
+        variantesEquipoEditando[indice];
+
+    if (!variante) {
+        console.error(
+            "Variante no encontrada:",
+            indice
+        );
+        return;
+    }
+
+    console.log(
+        "Cargando variante:",
+        indice,
+        variante
+    );
+
+    // ============================================
+    // GUARDAR ID REAL DE LA VARIANTE
+    // ============================================
+
+    varianteEditandoId = variante.id;
+
+    // ============================================
+    // COLOR
+    // ============================================
+
+    const selectColor =
+        document.getElementById("editar_color");
+
+    if (selectColor) {
+        selectColor.value = indice;
+    }
+
+    // ============================================
+    // CÓDIGO
+    // ============================================
+
+    const codigo =
+        document.getElementById("editar_codigoProducto");
+
+    if (codigo) {
+        codigo.value =
+            variante.codigo_Producto || "";
+    }
+
+    // ============================================
+    // DESCRIPCIÓN CORTA
+    // ============================================
+
+    const descripcion =
+        document.getElementById("editar_descripcion");
+
+    if (descripcion) {
+        descripcion.value =
+            variante.descripcion || "";
+    }
+
+    // ============================================
+    // DESCRIPCIÓN DETALLADA
+    // ============================================
+
+    const descripcion1 =
+        document.getElementById("editar_descripcion1");
+
+    if (descripcion1) {
+        descripcion1.value =
+            variante.descripcion1 || "";
+    }
+
+    // ============================================
+    // GARANTÍA
+    // ============================================
+
+    const garantia =
+        document.getElementById("editar_garantia");
+
+    if (garantia) {
+        garantia.value =
+            variante.garantia || "";
+    }
+
+    // ============================================
+    // PRECIO
+    // ============================================
+
+    const precio =
+        document.getElementById("editar_precio");
+
+    if (precio) {
+        precio.value =
+            variante.precio ?? "";
+    }
+
+    // ============================================
+    // PRECIO ANTES
+    // ============================================
+
+    const precioAntes =
+        document.getElementById("editar_precioAntes");
+
+    if (precioAntes) {
+        precioAntes.value =
+            variante.precio_Antes ?? "";
+    }
+
+    // ============================================
+    // DESCUENTO
+    // ============================================
+
+    const descuento =
+        document.getElementById("editar_descuento");
+
+    if (descuento) {
+        descuento.value =
+            variante.descuento ?? "";
+    }
+
+    // ============================================
+    // ESTADO
+    // ============================================
+
+    const estado =
+        document.getElementById("editar_estado");
+
+    if (estado) {
+        estado.value =
+            variante.estado || "";
+    }
+
+    // ============================================
+    // IMÁGENES DE ESTA VARIANTE
+    // ============================================
+
+    imagenesEditar = [
+        variante.url_Equipo,
+        variante.url1,
+        variante.url2,
+        variante.url3
+    ].filter(Boolean);
+
+    renderPreview(
+        "editar_previewContainer",
+        imagenesEditar
+    );
+
+    // ============================================
+    // RECALCULAR PRECIO
+    // ============================================
+
+    calcularPrecioEditar();
+
+    console.log(
+        "Variante cargada correctamente:",
+        {
+            indice: indice,
+            id: variante.id,
+            color: variante.color,
+            codigo: variante.codigo_Producto,
+            precio: variante.precio,
+            imagenes: imagenesEditar
+        }
+    );
+}
+
+function calcularPrecioEditar() {
+
+    const precioAntesInput =
+        document.getElementById("editar_precioAntes");
+
+    const descuentoInput =
+        document.getElementById("editar_descuento");
+
+    const precioInput =
+        document.getElementById("editar_precio");
+
+    if (
+        !precioAntesInput ||
+        !descuentoInput ||
+        !precioInput
+    ) {
+        return;
+    }
+
+    const precioAntes =
+        parseFloat(precioAntesInput.value) || 0;
+
+    const descuento =
+        parseFloat(descuentoInput.value) || 0;
+
+    if (
+        precioAntes > 0 &&
+        descuento > 0
+    ) {
+
+        const precioCalculado =
+            precioAntes -
+            (
+                precioAntes *
+                descuento /
+                100
+            );
+
+        precioInput.value =
+            precioCalculado.toFixed(2);
+
+    } else {
+
+        precioInput.value =
+            precioAntes > 0
+                ? precioAntes.toFixed(2)
+                : "";
+    }
+}
+
+function limpiarDatosVarianteEditar() {
+
+    varianteEditandoId = null;
+
+    document.getElementById(
+        "editar_codigoProducto"
+    ).value = "";
+
+    document.getElementById(
+        "editar_descripcion"
+    ).value = "";
+
+    document.getElementById(
+        "editar_descripcion1"
+    ).value = "";
+
+    document.getElementById(
+        "editar_garantia"
+    ).value = "";
+
+    document.getElementById(
+        "editar_precio"
+    ).value = "";
+
+    document.getElementById(
+        "editar_precioAntes"
+    ).value = "";
+
+    document.getElementById(
+        "editar_descuento"
+    ).value = "";
+
+    document.getElementById(
+        "editar_estado"
+    ).value = "";
+
+    imagenesEditar = [];
+
+    renderPreview(
+        "editar_previewContainer",
+        imagenesEditar
+    );
+}
+
 async function actualizarEquipo(id) {
+
+    const varianteActual =
+        variantesEquipoEditando.find(
+            v => v.id === id
+        );
+
+    if (!varianteActual) {
+        alert("No se encontró la variante que se está editando.");
+        return;
+    }
+
     try {
         let urls = [];
         for (let img of imagenesEditar) {
@@ -360,11 +1556,13 @@ async function actualizarEquipo(id) {
 
         const body = {
             tipo_Equipo: document.getElementById("editar_tipoEquipo").value,
-            color: document.getElementById("editar_color").value,
+            color: varianteActual.color || "",
             marca: document.getElementById("editar_marca").value,
             modelo: document.getElementById("editar_modelo").value,
             codigo_Producto: document.getElementById("editar_codigoProducto").value,
             descripcion: document.getElementById("editar_descripcion").value,
+            descripcion1: document.getElementById("editar_descripcion1").value,
+            garantia: document.getElementById("editar_garantia").value,
             precio: parseFloat(document.getElementById("editar_precio").value) || 0,
             precio_Antes: document.getElementById("editar_precioAntes").value !== "" ? parseFloat(document.getElementById("editar_precioAntes").value) : null,
             descuento: document.getElementById("editar_descuento").value !== "" ? parseFloat(document.getElementById("editar_descuento").value) : 0,
@@ -403,111 +1601,454 @@ document.getElementById("modalAgregar").addEventListener("show.bs.modal", functi
     }
 });
 
-// --- NUEVA FUNCIÓN ABRIR ZOOM: CARGA LA INTEGRACIÓN DE LA FICHA TÉCNICA INTERACTIVA ---
-// Variables globales para el control de la galería
+
 let imagenesActualesZoom = [];
 let indiceActualZoom = 0;
 
 function abrirZoom(item) {
     if (!item) return;
 
-    // Resetear contador de cantidad a 1
     cantidadActualZoom = 1;
     const displayZoom = document.getElementById("cant-display-zoom");
     if (displayZoom) displayZoom.innerText = cantidadActualZoom;
 
-    // Poblar títulos y textos informativos
     document.getElementById("zoom-titulo-producto").innerText = `${item.marca || ''} ${item.modelo || ''}`;
     document.getElementById("zoom-tipo-badge").innerText = item.tipo_Equipo || 'Producto';
     document.getElementById("zoom-marca").innerText = item.marca || 'SIN MARCA';
     document.getElementById("zoom-modelo-desc").innerText = `${item.modelo || ''} ${item.descripcion ? ' - ' + item.descripcion : ''}`;
     document.getElementById("zoom-codigo").innerText = item.codigo_Producto || 'N/A';
 
-    // --- NUEVO: ASIGNAR TEXTO AL DESPLEGABLE DE MÁS CARACTERÍSTICAS ---
+    const contenedorGarantia = document.getElementById("zoom-garantia-container");
+    const spanGarantia = document.getElementById("zoom-garantia");
+
+    if (item.garantia && item.garantia.toString().trim() !== "") {
+        if (spanGarantia) spanGarantia.innerText = item.garantia;
+        if (contenedorGarantia) contenedorGarantia.style.display = "flex";
+    } else {
+        if (contenedorGarantia) contenedorGarantia.style.display = "none";
+    }
+
     const txtCaracteristicas = document.getElementById('zoom-caracteristicas-texto');
     if (txtCaracteristicas) {
-        txtCaracteristicas.innerText = item.caracteristicas || "No hay características detalladas adicionales disponibles para este equipo.";
+        txtCaracteristicas.innerText = item.descripcion1 || "No hay características detalladas adicionales disponibles para este equipo.";
     }
 
-    // --- LÓGICA DE COLORES CORREGIDA USANDO TU CAMPO 'item.color' ---
-    const contenedorColores = document.getElementById('zoom-lista-colores');
-    const contenedorPadreColores = document.getElementById('zoom-color-container');
+
+    const contenedorColores =
+        document.getElementById("zoom-lista-colores");
+
+    const contenedorPadreColores =
+        document.getElementById("zoom-color-container");
 
     if (contenedorColores && contenedorPadreColores) {
-        contenedorColores.innerHTML = ''; // Limpiar círculos viejos
 
-        // Diccionario para traducir tus colores en español a valores web reales
-        const traductorColores = {
-            'negro': '#000000',
-            'blanco': '#ffffff',
-            'rojo': '#ff4d4d',
-            'azul': '#007bff',
-            'gris': '#888888',
-            'plomo': '#a6a6a6',
-            'plateado': '#e0e0e0',
-            'dorado': '#ffd700',
-            'verde': '#28a745'
-        };
+        contenedorColores.innerHTML = "";
 
-        let listaColores = [];
-        if (item.color && typeof item.color === 'string') {
-            // Separa por comas por si acaso guardes más de uno (ej: "Negro, Blanco")
-            listaColores = item.color.split(',').map(c => c.trim()).filter(Boolean);
-        }
+        const variantes =
+            item.variantes ||
+            item.Variantes ||
+            [];
 
-        if (listaColores.length > 0) {
-            contenedorPadreColores.style.display = 'block'; // Mostrar el contenedor
+        if (variantes.length > 0) {
 
-            listaColores.forEach((colorNombre, index) => {
-                const btnColor = document.createElement('button');
-                btnColor.type = 'button';
-                btnColor.style.width = '24px';
-                btnColor.style.height = '24px';
-                btnColor.style.borderRadius = '50%';
+            contenedorPadreColores.style.display = "block";
 
-                // Buscamos el color en nuestro traductor, si no existe, usa el texto original
-                const colorLimpio = colorNombre.toLowerCase();
-                const colorFinal = traductorColores[colorLimpio] || colorNombre;
+            variantes.forEach((variante, index) => {
 
-                btnColor.style.backgroundColor = colorFinal;
-                btnColor.style.cursor = 'pointer';
-                btnColor.style.padding = '0';
-                btnColor.style.outline = 'none';
-                btnColor.style.transition = 'all 0.2s';
-                btnColor.title = colorNombre; // Muestra el nombre al pasar el mouse
+                const colorNombre =
+                    variante.color ||
+                    "Sin color";
 
-                // Estilo para el seleccionado por defecto (el primero)
-                if (index === 0) {
-                    btnColor.style.border = '2px solid #fff';
-                    btnColor.style.boxShadow = '0 0 0 2px #8a2be2';
-                    btnColor.classList.add('active');
+                const btnColor =
+                    document.createElement("button");
+
+                btnColor.type = "button";
+
+                btnColor.style.width = "26px";
+                btnColor.style.height = "26px";
+                btnColor.style.borderRadius = "50%";
+                btnColor.style.padding = "0";
+                btnColor.style.cursor = "pointer";
+
+                btnColor.style.backgroundColor =
+                    obtenerColorCSS(colorNombre);
+
+                btnColor.title =
+                    `${colorNombre} - ${variante.codigo_Producto || ""}`;
+
+                btnColor.dataset.varianteIndex = index;
+
+
+                const varianteActual =
+                    item.varianteSeleccionadaIndex ?? 0;
+
+                if (index === varianteActual) {
+
+                    btnColor.style.border =
+                        "2px solid #fff";
+
+                    btnColor.style.boxShadow =
+                        "0 0 0 2px #8a2be2";
+
+                    btnColor.classList.add("active");
+
                 } else {
-                    btnColor.style.border = '1px solid #ccc';
-                    btnColor.style.boxShadow = 'none';
+
+                    btnColor.style.border =
+                        "1px solid #ccc";
+
+                    btnColor.style.boxShadow =
+                        "none";
                 }
 
-                // Evento click para alternar entre círculos
+
                 btnColor.onclick = function () {
-                    const hermanos = contenedorColores.querySelectorAll('button');
-                    hermanos.forEach(b => {
-                        b.style.border = '1px solid #ccc';
-                        b.style.boxShadow = 'none';
-                        b.classList.remove('active');
-                    });
-                    this.style.border = '2px solid #fff';
-                    this.style.boxShadow = '0 0 0 2px #8a2be2';
-                    this.classList.add('active');
+
+                    const varianteSeleccionada =
+                        variantes[index];
+
+                    if (!varianteSeleccionada) return;
+
+                    item.varianteSeleccionadaIndex = index;
+
+                    item.id =
+                        varianteSeleccionada.id;
+
+                    item.color =
+                        varianteSeleccionada.color;
+
+                    item.precio =
+                        varianteSeleccionada.precio;
+
+                    item.precio_Antes =
+                        varianteSeleccionada.precio_Antes;
+
+                    item.descuento =
+                        varianteSeleccionada.descuento;
+
+                    item.estado =
+                        varianteSeleccionada.estado;
+
+                    item.descripcion =
+                        varianteSeleccionada.descripcion;
+
+                    item.descripcion1 =
+                        varianteSeleccionada.descripcion1;
+
+              
+
+                    item.garantia =
+                        varianteSeleccionada.garantia;
+
+                    item.codigo_Producto =
+                        varianteSeleccionada.codigo_Producto;
+
+                    item.url_Equipo =
+                        varianteSeleccionada.url_Equipo;
+
+                    item.url1 =
+                        varianteSeleccionada.url1;
+
+                    item.url2 =
+                        varianteSeleccionada.url2;
+
+                    item.url3 =
+                        varianteSeleccionada.url3;
+
+
+                    const zoomModeloDesc =
+                        document.getElementById("zoom-modelo-desc");
+
+                    if (zoomModeloDesc) {
+
+                        zoomModeloDesc.innerText =
+                            `${item.modelo || ""}${varianteSeleccionada.descripcion
+                                ? " - " + varianteSeleccionada.descripcion
+                                : ""
+                            }`;
+                    }
+
+
+                    // ==========================================
+                    // ACTUALIZAR DESCRIPCIÓN DETALLADA
+                    // ==========================================
+
+                    const txtCaracteristicas =
+                        document.getElementById("zoom-caracteristicas-texto");
+
+                    if (txtCaracteristicas) {
+
+                        txtCaracteristicas.innerText =
+                            varianteSeleccionada.descripcion1 ||
+                            "No hay descripción detallada disponible para este equipo.";
+                    }
+
+
+                    const zoomCodigo =
+                        document.getElementById("zoom-codigo");
+
+                    if (zoomCodigo) {
+                        zoomCodigo.innerText =
+                            varianteSeleccionada.codigo_Producto || "N/A";
+                    }
+
+                    document.getElementById(
+                        "zoom-precio-actual"
+                    ).innerText =
+                        `S/. ${parseFloat(
+                            varianteSeleccionada.precio || 0
+                        ).toFixed(2)}`;
+
+
+                    const descuentoBadge =
+                        document.getElementById(
+                            "zoom-descuento-badge"
+                        );
+
+                    const precioAntesCont =
+                        document.getElementById(
+                            "zoom-precio-antes-container"
+                        );
+
+                    const precioAntesText =
+                        document.getElementById(
+                            "zoom-precio-antes"
+                        );
+
+
+                    // ==========================================
+                    // ACTUALIZAR GARANTÍA
+                    // ==========================================
+
+                    const contenedorGarantia =
+                        document.getElementById(
+                            "zoom-garantia-container"
+                        );
+
+                    const spanGarantia =
+                        document.getElementById(
+                            "zoom-garantia"
+                        );
+
+                    if (
+                        varianteSeleccionada.garantia &&
+                        varianteSeleccionada.garantia
+                            .toString()
+                            .trim() !== ""
+                    ) {
+
+                        if (spanGarantia) {
+                            spanGarantia.innerText =
+                                varianteSeleccionada.garantia;
+                        }
+
+                        if (contenedorGarantia) {
+                            contenedorGarantia.style.display =
+                                "flex";
+                        }
+
+                    } else {
+
+                        if (contenedorGarantia) {
+                            contenedorGarantia.style.display =
+                                "none";
+                        }
+                    }
+
+
+
+                    if (
+                        varianteSeleccionada.descuento &&
+                        parseFloat(
+                            varianteSeleccionada.descuento
+                        ) > 0
+                    ) {
+
+                        descuentoBadge.innerText =
+                            `-${varianteSeleccionada.descuento}%`;
+
+                        descuentoBadge.style.display =
+                            "inline-flex";
+
+
+                        if (
+                            varianteSeleccionada.precio_Antes
+                        ) {
+
+                            precioAntesText.innerText =
+                                `S/. ${parseFloat(
+                                    varianteSeleccionada.precio_Antes
+                                ).toFixed(2)}`;
+
+                            precioAntesCont.style.display =
+                                "block";
+
+                        } else {
+
+                            precioAntesCont.style.display =
+                                "none";
+                        }
+
+                    } else {
+
+                        descuentoBadge.style.display =
+                            "none";
+
+                        precioAntesCont.style.display =
+                            "none";
+                    }
+
+                    imagenesActualesZoom = [
+                        varianteSeleccionada.url_Equipo,
+                        varianteSeleccionada.url1,
+                        varianteSeleccionada.url2,
+                        varianteSeleccionada.url3
+                    ].filter(Boolean);
+
+                    indiceActualZoom = 0;
+
+
+                    // Imagen principal
+                    const imgPrincipal =
+                        document.getElementById(
+                            "zoom-imagen-principal"
+                        );
+
+                    if (imgPrincipal) {
+
+                        imgPrincipal.src =
+                            imagenesActualesZoom[0] || "";
+                    }
+
+
+
+                    const contenedorMiniaturas =
+                        document.getElementById(
+                            "zoom-galeria-miniaturas"
+                        );
+
+                    if (contenedorMiniaturas) {
+
+                        contenedorMiniaturas.innerHTML = "";
+
+                        imagenesActualesZoom.forEach(
+                            (url, imgIndex) => {
+
+                                const thumb =
+                                    document.createElement("img");
+
+                                thumb.src = url;
+
+                                thumb.id =
+                                    `zoom-thumb-${imgIndex}`;
+
+                                thumb.style.cssText =
+                                    `
+                                width:45px;
+                                height:45px;
+                                object-fit:cover;
+                                border-radius:4px;
+                                border:1px solid #ddd;
+                                cursor:pointer;
+                                transition:all .2s;
+                                `;
+
+                                if (imgIndex === 0) {
+
+                                    thumb.style.borderColor =
+                                        "#007bff";
+
+                                    thumb.style.boxShadow =
+                                        "0 0 4px rgba(0,123,255,.5)";
+                                }
+
+                                thumb.onclick = function () {
+
+                                    seleccionarImagenZoom(
+                                        imgIndex
+                                    );
+                                };
+
+                                contenedorMiniaturas.appendChild(
+                                    thumb
+                                );
+                            }
+                        );
+                    }
+
+                    const btnAgregar =
+                        document.getElementById(
+                            "zoom-btn-agregar"
+                        );
+
+                    if (btnAgregar) {
+
+                        const imagenes = [
+                            varianteSeleccionada.url_Equipo,
+                            varianteSeleccionada.url1,
+                            varianteSeleccionada.url2,
+                            varianteSeleccionada.url3
+                        ].filter(Boolean);
+
+                        btnAgregar.setAttribute(
+                            "data-id",
+                            varianteSeleccionada.id
+                        );
+
+                        btnAgregar.setAttribute(
+                            "data-nombre",
+                            `${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${varianteSeleccionada.color || ""}`
+                        );
+
+                        btnAgregar.setAttribute(
+                            "data-precio",
+                            varianteSeleccionada.precio
+                        );
+
+                        btnAgregar.setAttribute(
+                            "data-imagenes",
+                            JSON.stringify(imagenes)
+                        );
+                    }
+
+
+                    contenedorColores
+                        .querySelectorAll("button")
+                        .forEach(btn => {
+
+                            btn.style.border =
+                                "1px solid #ccc";
+
+                            btn.style.boxShadow =
+                                "none";
+
+                            btn.classList.remove("active");
+                        });
+
+
+                    this.style.border =
+                        "2px solid #fff";
+
+                    this.style.boxShadow =
+                        "0 0 0 2px #8a2be2";
+
+                    this.classList.add("active");
                 };
 
-                contenedorColores.appendChild(btnColor);
+
+                contenedorColores.appendChild(
+                    btnColor
+                );
             });
+
         } else {
-            // Si el producto no tiene color registrado en la DB, ocultamos el bloque
-            contenedorPadreColores.style.display = 'none';
+
+            contenedorPadreColores.style.display =
+                "none";
         }
+    
     }
 
-    // Manejo de Precios y Descuentos dinámicos
     document.getElementById("zoom-precio-actual").innerText = `S/. ${parseFloat(item.precio).toFixed(2)}`;
 
     const descuentoBadge = document.getElementById("zoom-descuento-badge");
@@ -529,7 +2070,7 @@ function abrirZoom(item) {
         precioAntesCont.style.display = "none";
     }
 
-    // --- LÓGICA DE GALERÍA Y IMÁGENES ---
+
     imagenesActualesZoom = [item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean);
     indiceActualZoom = 0;
 
@@ -544,7 +2085,6 @@ function abrirZoom(item) {
     const imgPrincipal = document.getElementById("zoom-imagen-principal");
     if (imgPrincipal) imgPrincipal.src = imagenesActualesZoom[indiceActualZoom];
 
-    // Generar miniaturas dinámicas
     const contenedorMiniaturas = document.getElementById("zoom-galeria-miniaturas");
     if (contenedorMiniaturas) {
         contenedorMiniaturas.innerHTML = "";
@@ -567,7 +2107,6 @@ function abrirZoom(item) {
             contenedorMiniaturas.appendChild(thumb);
         });
 
-        // Configurar los atributos data-* en el botón del carrito
         const btnAgregar = document.getElementById("zoom-btn-agregar");
         if (btnAgregar) {
             btnAgregar.setAttribute("data-id", item.id);
@@ -577,22 +2116,19 @@ function abrirZoom(item) {
         }
     }
 
-    // Abrir modal usando jQuery compatible con Bootstrap 4/5
     $('#modalZoom').modal('show');
 }
 
-// Nueva función para actualizar la imagen y la miniatura activa por índice
+
 function seleccionarImagenZoom(index) {
     if (index < 0 || index >= imagenesActualesZoom.length) return;
 
     indiceActualZoom = index;
     const url = imagenesActualesZoom[indiceActualZoom];
 
-    // Cambiar la imagen grande
     const imgPrincipal = document.getElementById("zoom-imagen-principal");
     if (imgPrincipal) imgPrincipal.src = url;
 
-    // Resetear bordes de las miniaturas
     const contenedorMiniaturas = document.getElementById("zoom-galeria-miniaturas");
     if (contenedorMiniaturas) {
         Array.from(contenedorMiniaturas.children).forEach(child => {
@@ -601,22 +2137,20 @@ function seleccionarImagenZoom(index) {
         });
     }
 
-    // Resaltar la miniatura correspondiente
     const thumbActiva = document.getElementById(`zoom-thumb-${index}`);
     if (thumbActiva) {
         thumbActiva.style.borderColor = "#007bff";
         thumbActiva.style.boxShadow = "0 0 4px rgba(0,123,255,0.5)";
-        thumbActiva.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); // Auto scroll de miniaturas
+        thumbActiva.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); 
     }
 }
 
-// Nueva función asignada a los botones de las flechas (Soporta navegación infinita/bucle)
 function navegarImagenZoom(direccion) {
     if (imagenesActualesZoom.length <= 1) return;
 
     let nuevoIndice = indiceActualZoom + direccion;
 
-    // Efecto bucle: Si pasa del final va al principio, si baja de cero va al final
+
     if (nuevoIndice >= imagenesActualesZoom.length) {
         nuevoIndice = 0;
     } else if (nuevoIndice < 0) {
@@ -678,7 +2212,7 @@ function renderPreview(containerId, imagenes) {
     });
 }
 
-// --- SISTEMA DEL CARRITO DE COMPRAS ---
+
 let carrito = JSON.parse(localStorage.getItem("carrito_fractalica")) || [];
 
 function cambiarCantidadHTML(id, delta) {
@@ -718,26 +2252,22 @@ function agregarAlCarrito(id, nombre, precio) {
     agregarAlCarritoDirecto(id, nombre, precio, [], 1);
 }
 
-// Guardar en LocalStorage y actualizar la UI
 function guardarYActualizarCarrito() {
     localStorage.setItem("carrito_fractalica", JSON.stringify(carrito));
     actualizarBadgeYDropdown();
 }
 
-// Actualizar la insignia roja y el contenido del desplegable del carrito
 function actualizarBadgeYDropdown() {
     const badge = document.getElementById("cart-badge");
     const container = document.getElementById("carrito-items");
     const totalSpan = document.getElementById("carrito-total");
 
-    // NUEVO: Capturar elementos del modal del carrito que está en _LayoutInicio.cshtml
     const containerModal = document.getElementById("carrito-items-modal");
     const totalSpanModal = document.getElementById("carrito-total-modal");
 
     const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     const totalPrecio = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
-    // Actualizar Badge
     if (badge) {
         if (totalCantidad > 0) {
             badge.innerText = totalCantidad;
@@ -755,7 +2285,6 @@ function actualizarBadgeYDropdown() {
         cantSpan.innerText = `${totalCantidad} ${totalCantidad === 1 ? 'producto' : 'productos'}`;
     }
 
-    // 3. Actualizar Totales y Cantidad de Productos en el Modal
     if (totalSpanModal) {
         totalSpanModal.innerText = `S/. ${totalPrecio.toFixed(2)}`;
     }
@@ -764,22 +2293,16 @@ function actualizarBadgeYDropdown() {
         cantSpanModal.innerText = `${totalCantidad} ${totalCantidad === 1 ? 'producto' : 'productos'}`;
     }
 
-    // HTML del Listado de Productos (Dropdown y Modal)
-    // HTML del Listado de Productos (Dropdown y Modal) con botones de cantidad
-    // HTML del Listado de Productos (Dropdown y Modal) con P/U y subtotal por item
     const generarHTMLItem = (item, esModal = false) => {
-        // Usamos la primera imagen de Cloudinary si existe, de lo contrario un placeholder limpio
+
         const imagenUrl = (item.imagenes && item.imagenes.length > 0) ? item.imagenes[0] : 'https://images.placeholders.dev/?width=150&height=150&text=Sin+Imagen&bgColor=%23f0f0f0';
 
-        // Determinar qué función de zoom llamará al hacer click en la imagen
         const clickZoomAction = esModal
             ? `onclick="abrirZoomDesdeCarrito(${item.id})"`
             : `onclick="abrirZoomDesdeCarrito(${item.id})"; event.stopPropagation();`;
 
-        // Para evitar que hacer click en los botones del selector cierre el dropdown (si no es modal)
         const stopProp = !esModal ? 'event.stopPropagation();' : '';
 
-        // Cálculo del subtotal por este producto específico
         const subtotalItem = item.precio * item.cantidad;
 
         return `
