@@ -172,7 +172,11 @@ namespace ApiProyecto1.Services
 
                         // Si todavía no tienes Stock en tu tabla,
                         // dejamos 0 por ahora.
-                        Stock = 0
+                        Stock = 0,
+
+                        Descripcion = x.Descripcion,
+                        Descripcion1 = x.Descripcion1,
+                        Garantia = x.Garantia
 
                     }).ToList();
 

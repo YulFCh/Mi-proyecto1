@@ -47,5 +47,8 @@
         public string? Estado { get; set; }
         public string Codigo_Producto { get; set; }
         public int Stock { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Descripcion1 { get; set; }
+        public string? Garantia { get; set; }
     }
 }
