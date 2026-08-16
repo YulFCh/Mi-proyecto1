@@ -234,3 +234,184 @@ body {
     margin: 0 auto 10px auto;
     font-weight: bold;
 }
+
+
+
+
+
+
+
+/* ==========================================
+   VISOR DE IMAGEN GRANDE
+   ========================================== */
+
+/* ==========================================
+   VISOR DE IMAGEN GRANDE
+   ========================================== */
+
+.visor-imagen-grande {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.97);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+    .visor-imagen-grande.activo {
+        display: flex;
+    }
+
+
+    /* ==========================================
+   IMAGEN
+   ========================================== */
+
+    .visor-imagen-grande img {
+        max-width: 92vw;
+        max-height: 92vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 4px;
+        user-select: none;
+        -webkit-user-drag: none;
+        animation: aparecerImagenGrande 0.2s ease;
+    }
+
+
+/* ==========================================
+   BOTÓN X
+   ========================================== */
+
+.visor-cerrar {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 34px;
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background .2s, transform .2s;
+}
+
+    .visor-cerrar:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.08);
+    }
+
+
+/* ==========================================
+   FLECHAS
+   ========================================== */
+
+.visor-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 70px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background .2s, transform .2s;
+}
+
+    .visor-flecha:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
+
+/* ==========================================
+   FLECHA IZQUIERDA
+   ========================================== */
+
+.visor-flecha-izquierda {
+    left: 25px;
+}
+
+
+/* ==========================================
+   FLECHA DERECHA
+   ========================================== */
+
+.visor-flecha-derecha {
+    right: 25px;
+}
+
+
+/* ==========================================
+   ANIMACIÓN
+   ========================================== */
+
+@keyframes aparecerImagenGrande {
+
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* ==========================================
+   MÓVIL
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .visor-imagen-grande {
+        padding: 10px;
+    }
+
+        .visor-imagen-grande img {
+            max-width: 94vw;
+            max-height: 88vh;
+        }
+
+    .visor-flecha {
+        width: 40px;
+        height: 55px;
+        font-size: 30px;
+        background: rgba(255,255,255,0.12);
+    }
+
+    .visor-flecha-izquierda {
+        left: 8px;
+    }
+
+    .visor-flecha-derecha {
+        right: 8px;
+    }
+
+    .visor-cerrar {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+    }
+}

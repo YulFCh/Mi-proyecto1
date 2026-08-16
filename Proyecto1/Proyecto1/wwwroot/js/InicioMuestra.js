@@ -499,110 +499,239 @@ function seleccionarMiniaturaProducto(
     url,
     productoId
 ) {
-
     const card = document.getElementById(
         `producto-${productoId}`
     );
 
     if (!card) return;
 
+    // ==========================================
+    // GUARDAR ÍNDICE DE LA IMAGEN SELECCIONADA
+    // ==========================================
+
+    const miniaturas = Array.from(
+        card.querySelectorAll(".thumbnail-image")
+    );
+
+    const indiceImagen = miniaturas.indexOf(elemento);
+
+    card.dataset.imagenIndex = indiceImagen >= 0
+        ? indiceImagen
+        : 0;
+
+
+    // ==========================================
+    // CAMBIAR IMAGEN PRINCIPAL
+    // ==========================================
+
     const imagenPrincipal =
-        card.querySelector(
-            ".main-product-image"
-        );
+        card.querySelector(".main-product-image");
 
     if (imagenPrincipal) {
         imagenPrincipal.src = url;
     }
 
+
+    // ==========================================
+    // MARCAR MINIATURA ACTIVA
+    // ==========================================
+
     card.querySelectorAll(
         ".thumbnail-image"
     ).forEach(img => {
-
-        img.classList.remove(
-            "active-thumb"
-        );
-
+        img.classList.remove("active-thumb");
     });
 
-    elemento.classList.add(
-        "active-thumb"
-    );
+    elemento.classList.add("active-thumb");
 }
 
 function abrirZoomProductoSeleccionado(productoId) {
 
-    const producto = window.productosAgrupados?.find(
-        p => p.id === productoId
-    );
+    const producto =
+        window.productosAgrupados?.find(
+            p => p.id === productoId
+        );
 
     if (!producto) {
-        console.error("Producto no encontrado:", productoId);
+        console.error(
+            "Producto no encontrado:",
+            productoId
+        );
         return;
     }
 
-    const card = document.getElementById(`producto-${productoId}`);
+    const card =
+        document.getElementById(
+            `producto-${productoId}`
+        );
 
-    let varianteIndex = 0;
+    if (!card) {
+        console.error(
+            "No se encontró la tarjeta:",
+            productoId
+        );
+        return;
+    }
 
-    if (card) {
-        varianteIndex = parseInt(
+
+    // ==========================================
+    // VARIANTE SELECCIONADA
+    // ==========================================
+
+    const varianteIndex =
+        parseInt(
             card.dataset.varianteIndex || "0"
         );
-    }
 
     const variantes =
         producto.variantes ||
         producto.Variantes ||
         [];
 
-    const variante = variantes[varianteIndex];
+    const variante =
+        variantes[varianteIndex];
 
     if (!variante) {
-        console.error("Variante no encontrada:", varianteIndex);
+        console.error(
+            "Variante no encontrada:",
+            varianteIndex
+        );
         return;
     }
 
-    // Creamos el objeto de la variante seleccionada
+
+    // ==========================================
+    // IMÁGENES DE LA VARIANTE
+    // ==========================================
+
+    const imagenes = [
+        variante.url_Equipo,
+        variante.url1,
+        variante.url2,
+        variante.url3
+    ].filter(Boolean);
+
+
+    // ==========================================
+    // OBTENER LA IMAGEN QUE SE VE ACTUALMENTE
+    // ==========================================
+
+    const imagenPrincipal =
+        card.querySelector(
+            ".main-product-image"
+        );
+
+    let imagenSeleccionada = null;
+
+    if (imagenPrincipal) {
+        imagenSeleccionada =
+            imagenPrincipal.src;
+    }
+
+
+    // ==========================================
+    // BUSCAR QUÉ POSICIÓN TIENE ESA IMAGEN
+    // ==========================================
+
+    let indiceImagen = imagenes.findIndex(
+        url => url === imagenSeleccionada
+    );
+
+
+    // ==========================================
+    // SI NO SE ENCUENTRA, USAMOS DATASET
+    // ==========================================
+
+    if (indiceImagen === -1) {
+
+        indiceImagen =
+            parseInt(
+                card.dataset.imagenIndex || "0"
+            );
+
+    }
+
+
+    // ==========================================
+    // SEGURIDAD
+    // ==========================================
+
+    if (
+        indiceImagen < 0 ||
+        indiceImagen >= imagenes.length
+    ) {
+        indiceImagen = 0;
+    }
+
+
+    // ==========================================
+    // CREAR OBJETO PARA EL ZOOM
+    // ==========================================
+
     const itemZoom = {
+
         ...producto,
 
         id: variante.id,
 
-        color: variante.color,
+        color:
+            variante.color,
 
-        precio: variante.precio,
+        precio:
+            variante.precio,
 
-        precio_Antes: variante.precio_Antes,
+        precio_Antes:
+            variante.precio_Antes,
 
-        descuento: variante.descuento,
+        descuento:
+            variante.descuento,
 
-        estado: variante.estado,
+        estado:
+            variante.estado,
 
-        descripcion: variante.descripcion,
+        descripcion:
+            variante.descripcion,
 
-        descripcion1: variante.descripcion1,
+        descripcion1:
+            variante.descripcion1,
 
-        garantia: variante.garantia,
+        garantia:
+            variante.garantia,
 
-        url_Equipo: variante.url_Equipo,
+        url_Equipo:
+            variante.url_Equipo,
 
-        url1: variante.url1,
+        url1:
+            variante.url1,
 
-        url2: variante.url2,
+        url2:
+            variante.url2,
 
-        url3: variante.url3,
+        url3:
+            variante.url3,
 
         codigo_Producto:
             variante.codigo_Producto ||
             producto.codigo_Producto,
 
-        // IMPORTANTE:
-        // enviamos todas las variantes al Zoom
-        variantes: variantes,
+        variantes:
+            variantes,
 
-        varianteSeleccionadaIndex: varianteIndex
+        varianteSeleccionadaIndex:
+            varianteIndex,
+
+        // ======================================
+        // ESTA ES LA IMAGEN QUE DEBE ABRIRSE
+        // ======================================
+
+        indiceImagenSeleccionada:
+            indiceImagen,
+
+        imagenSeleccionada:
+            imagenes[indiceImagen]
     };
+
+
 
     abrirZoom(itemZoom);
 }
@@ -655,7 +784,43 @@ async function cargarProductos() {
             // =====================================================
             // COLORES ÚNICOS
             // =====================================================
+            // =====================================================
+            // COLORES / VARIANTES
+            // =====================================================
 
+            const coloresHTML = variantes.map((variante, index) => {
+
+                const colorNombre =
+                    variante.color || "Sin color";
+
+                const colorCSS =
+                    obtenerColorCSS(colorNombre);
+
+                return `
+        <button
+            type="button"
+            class="color-selector ${index === 0 ? "color-activo" : ""}"
+            data-variante="${index}"
+            title="${colorNombre}"
+            onclick="seleccionarColorProducto(${item.id}, ${index})"
+            style="
+                width:20px;
+                height:20px;
+                border-radius:50%;
+                padding:0;
+                cursor:pointer;
+                background-color:${colorCSS};
+                border:${index === 0
+                        ? "2px solid #fff"
+                        : "1px solid #ccc"};
+                box-shadow:${index === 0
+                        ? "0 0 0 2px #8a2be2"
+                        : "none"};
+                transition:all .2s;
+            "
+        ></button>
+    `;
+            }).join("");
             
 
             // =====================================================
@@ -722,6 +887,51 @@ async function cargarProductos() {
                         ${miniaturasHTML}
 
                     </div>
+
+                    <!-- COLORES -->
+<div
+    class="producto-colores-container"
+    style="
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-top:10px;
+        margin-bottom:8px;
+        flex-wrap:wrap;
+    "
+>
+    <span
+        style="
+            font-size:13px;
+            color:#666;
+            font-weight:600;
+        "
+    >
+    </span>
+
+    <div
+        class="producto-colores"
+        style="
+            display:flex;
+            align-items:center;
+            gap:7px;
+            flex-wrap:wrap;
+        "
+    >
+        ${coloresHTML}
+    </div>
+
+    <span
+        class="color-nombre-seleccionado"
+        style="
+            font-size:13px;
+            color:#555;
+            margin-left:2px;
+        "
+    >
+        ${varianteInicial.color || ""}
+    </span>
+</div>
 
 
                     <!-- INFORMACIÓN -->
@@ -1268,11 +1478,6 @@ function cargarVarianteEnFormularioEditar(indice) {
         return;
     }
 
-    console.log(
-        "Cargando variante:",
-        indice,
-        variante
-    );
 
     // ============================================
     // GUARDAR ID REAL DE LA VARIANTE
@@ -1409,17 +1614,6 @@ function cargarVarianteEnFormularioEditar(indice) {
 
     calcularPrecioEditar();
 
-    console.log(
-        "Variante cargada correctamente:",
-        {
-            indice: indice,
-            id: variante.id,
-            color: variante.color,
-            codigo: variante.codigo_Producto,
-            precio: variante.precio,
-            imagenes: imagenesEditar
-        }
-    );
 }
 
 function calcularPrecioEditar() {
@@ -1606,41 +1800,463 @@ let imagenesActualesZoom = [];
 let indiceActualZoom = 0;
 
 function abrirZoom(item) {
+
     if (!item) return;
 
+    // =====================================================
+    // CANTIDAD
+    // =====================================================
+
     cantidadActualZoom = 1;
-    const displayZoom = document.getElementById("cant-display-zoom");
-    if (displayZoom) displayZoom.innerText = cantidadActualZoom;
 
-    document.getElementById("zoom-titulo-producto").innerText = `${item.marca || ''} ${item.modelo || ''}`;
-    document.getElementById("zoom-tipo-badge").innerText = item.tipo_Equipo || 'Producto';
-    document.getElementById("zoom-marca").innerText = item.marca || 'SIN MARCA';
-    document.getElementById("zoom-modelo-desc").innerText = `${item.modelo || ''} ${item.descripcion ? ' - ' + item.descripcion : ''}`;
-    document.getElementById("zoom-codigo").innerText = item.codigo_Producto || 'N/A';
+    const displayZoom =
+        document.getElementById("cant-display-zoom");
 
-    const contenedorGarantia = document.getElementById("zoom-garantia-container");
-    const spanGarantia = document.getElementById("zoom-garantia");
+    if (displayZoom) {
+        displayZoom.innerText = cantidadActualZoom;
+    }
 
-    if (item.garantia && item.garantia.toString().trim() !== "") {
-        if (spanGarantia) spanGarantia.innerText = item.garantia;
-        if (contenedorGarantia) contenedorGarantia.style.display = "flex";
+
+    // =====================================================
+    // INFORMACIÓN DEL PRODUCTO
+    // =====================================================
+
+    const titulo =
+        document.getElementById("zoom-titulo-producto");
+
+    if (titulo) {
+        titulo.innerText =
+            `${item.marca || ""} ${item.modelo || ""}`;
+    }
+
+    const tipoBadge =
+        document.getElementById("zoom-tipo-badge");
+
+    if (tipoBadge) {
+        tipoBadge.innerText =
+            item.tipo_Equipo || "Producto";
+    }
+
+    const marca =
+        document.getElementById("zoom-marca");
+
+    if (marca) {
+        marca.innerText =
+            item.marca || "SIN MARCA";
+    }
+
+    const modeloDesc =
+        document.getElementById("zoom-modelo-desc");
+
+    if (modeloDesc) {
+        modeloDesc.innerText =
+            `${item.modelo || ""}${item.descripcion
+                ? " - " + item.descripcion
+                : ""
+            }`;
+    }
+
+    const codigo =
+        document.getElementById("zoom-codigo");
+
+    if (codigo) {
+        codigo.innerText =
+            item.codigo_Producto || "N/A";
+    }
+
+
+    // =====================================================
+    // GARANTÍA
+    // =====================================================
+
+    const contenedorGarantia =
+        document.getElementById(
+            "zoom-garantia-container"
+        );
+
+    const spanGarantia =
+        document.getElementById(
+            "zoom-garantia"
+        );
+
+    if (
+        item.garantia &&
+        item.garantia.toString().trim() !== ""
+    ) {
+
+        if (spanGarantia) {
+            spanGarantia.innerText =
+                item.garantia;
+        }
+
+        if (contenedorGarantia) {
+            contenedorGarantia.style.display =
+                "flex";
+        }
+
     } else {
-        if (contenedorGarantia) contenedorGarantia.style.display = "none";
+
+        if (contenedorGarantia) {
+            contenedorGarantia.style.display =
+                "none";
+        }
     }
 
-    const txtCaracteristicas = document.getElementById('zoom-caracteristicas-texto');
+
+    // =====================================================
+    // CARACTERÍSTICAS
+    // =====================================================
+
+    const txtCaracteristicas =
+        document.getElementById(
+            "zoom-caracteristicas-texto"
+        );
+
     if (txtCaracteristicas) {
-        txtCaracteristicas.innerText = item.descripcion1 || "No hay características detalladas adicionales disponibles para este equipo.";
+
+        txtCaracteristicas.innerText =
+            item.descripcion1 ||
+            "No hay características detalladas adicionales disponibles para este equipo.";
     }
 
+
+    // =====================================================
+    // PRECIOS
+    // =====================================================
+
+    const precioActual =
+        document.getElementById(
+            "zoom-precio-actual"
+        );
+
+    if (precioActual) {
+
+        precioActual.innerText =
+            `S/. ${parseFloat(
+                item.precio || 0
+            ).toFixed(2)}`;
+    }
+
+
+    const descuentoBadge =
+        document.getElementById(
+            "zoom-descuento-badge"
+        );
+
+    const precioAntesCont =
+        document.getElementById(
+            "zoom-precio-antes-container"
+        );
+
+    const precioAntesText =
+        document.getElementById(
+            "zoom-precio-antes"
+        );
+
+
+    const descuento =
+        parseFloat(item.descuento || 0);
+
+    if (descuento > 0) {
+
+        if (descuentoBadge) {
+
+            descuentoBadge.innerText =
+                `-${descuento}%`;
+
+            descuentoBadge.style.display =
+                "inline-flex";
+        }
+
+        if (
+            precioAntesText &&
+            precioAntesCont &&
+            item.precio_Antes
+        ) {
+
+            precioAntesText.innerText =
+                `S/. ${parseFloat(
+                    item.precio_Antes
+                ).toFixed(2)}`;
+
+            precioAntesCont.style.display =
+                "block";
+
+        } else if (precioAntesCont) {
+
+            precioAntesCont.style.display =
+                "none";
+        }
+
+    } else {
+
+        if (descuentoBadge) {
+            descuentoBadge.style.display =
+                "none";
+        }
+
+        if (precioAntesCont) {
+            precioAntesCont.style.display =
+                "none";
+        }
+    }
+
+
+    // =====================================================
+    // OBTENER IMÁGENES
+    // =====================================================
+
+    imagenesActualesZoom = [
+        item.url_Equipo,
+        item.url1,
+        item.url2,
+        item.url3
+    ].filter(Boolean);
+
+
+    if (imagenesActualesZoom.length === 0) {
+        console.warn(
+            "El producto no tiene imágenes."
+        );
+        return;
+    }
+
+
+    // =====================================================
+    // ⭐ DETERMINAR LA IMAGEN QUE SELECCIONÓ EL USUARIO
+    // =====================================================
+
+    let indiceInicial = 0;
+
+
+    // Primero intentamos usar la URL exacta
+    if (
+        item.imagenSeleccionada &&
+        imagenesActualesZoom.includes(
+            item.imagenSeleccionada
+        )
+    ) {
+
+        indiceInicial =
+            imagenesActualesZoom.indexOf(
+                item.imagenSeleccionada
+            );
+
+    }
+
+    // Si no existe URL, usamos el índice
+    else if (
+        item.indiceImagenSeleccionada !== undefined &&
+        item.indiceImagenSeleccionada !== null
+    ) {
+
+        indiceInicial =
+            parseInt(
+                item.indiceImagenSeleccionada
+            ) || 0;
+    }
+
+
+    // =====================================================
+    // SEGURIDAD
+    // =====================================================
+
+    if (
+        indiceInicial < 0 ||
+        indiceInicial >= imagenesActualesZoom.length
+    ) {
+        indiceInicial = 0;
+    }
+
+
+    // =====================================================
+    // ⭐ GUARDAR ÍNDICE CORRECTO
+    // =====================================================
+
+    indiceActualZoom = indiceInicial;
+
+
+
+
+
+    // =====================================================
+    // MOSTRAR IMAGEN PRINCIPAL DEL MODAL
+    // =====================================================
+
+    const imgPrincipal =
+        document.getElementById(
+            "zoom-imagen-principal"
+        );
+
+    if (imgPrincipal) {
+
+        imgPrincipal.src =
+            imagenesActualesZoom[
+            indiceActualZoom
+            ];
+
+        imgPrincipal.style.cursor = "zoom-in";
+
+        imgPrincipal.onclick = function () {
+
+            abrirImagenGrandeZoom(
+                imagenesActualesZoom[indiceActualZoom],
+                imagenesActualesZoom,
+                indiceActualZoom
+            );
+
+        };
+    }
+
+
+    // =====================================================
+    // FLECHAS
+    // =====================================================
+
+    const prevBtn =
+        document.getElementById(
+            "zoom-prev-btn"
+        );
+
+    const nextBtn =
+        document.getElementById(
+            "zoom-next-btn"
+        );
+
+    if (prevBtn && nextBtn) {
+
+        const mostrarFlechas =
+            imagenesActualesZoom.length > 1
+                ? "flex"
+                : "none";
+
+        prevBtn.style.display =
+            mostrarFlechas;
+
+        nextBtn.style.display =
+            mostrarFlechas;
+    }
+
+
+    // =====================================================
+    // MINIATURAS DEL ZOOM
+    // =====================================================
+
+    const contenedorMiniaturas =
+        document.getElementById(
+            "zoom-galeria-miniaturas"
+        );
+
+    if (contenedorMiniaturas) {
+
+        contenedorMiniaturas.innerHTML = "";
+
+        imagenesActualesZoom.forEach(
+            (url, index) => {
+
+                const thumb =
+                    document.createElement("img");
+
+                thumb.src = url;
+
+                thumb.id =
+                    `zoom-thumb-${index}`;
+
+                thumb.style.cssText = `
+                    width:45px;
+                    height:45px;
+                    object-fit:cover;
+                    border-radius:4px;
+                    border:1px solid #ddd;
+                    cursor:pointer;
+                    transition:all .2s;
+                `;
+
+
+                // ⭐ MARCAR LA IMAGEN CORRECTA
+                if (
+                    index === indiceActualZoom
+                ) {
+
+                    thumb.style.borderColor =
+                        "#007bff";
+
+                    thumb.style.boxShadow =
+                        "0 0 4px rgba(0,123,255,.5)";
+                }
+
+
+                thumb.onclick =
+                    function () {
+
+                        seleccionarImagenZoom(
+                            index
+                        );
+                    };
+
+
+                contenedorMiniaturas.appendChild(
+                    thumb
+                );
+            }
+        );
+    }
+
+
+    // =====================================================
+    // BOTÓN AGREGAR AL CARRITO
+    // =====================================================
+
+    const btnAgregar =
+        document.getElementById(
+            "zoom-btn-agregar"
+        );
+
+    if (btnAgregar) {
+
+        btnAgregar.setAttribute(
+            "data-id",
+            item.id
+        );
+
+        btnAgregar.setAttribute(
+            "data-nombre",
+            `${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${item.color || ""}`
+        );
+
+        btnAgregar.setAttribute(
+            "data-precio",
+            item.precio || 0
+        );
+
+        btnAgregar.setAttribute(
+            "data-imagenes",
+            JSON.stringify(
+                imagenesActualesZoom
+            )
+        );
+    }
+
+
+    // =====================================================
+    // COLORES / VARIANTES
+    // =====================================================
 
     const contenedorColores =
-        document.getElementById("zoom-lista-colores");
+        document.getElementById(
+            "zoom-lista-colores"
+        );
 
     const contenedorPadreColores =
-        document.getElementById("zoom-color-container");
+        document.getElementById(
+            "zoom-color-container"
+        );
 
-    if (contenedorColores && contenedorPadreColores) {
+
+    if (
+        contenedorColores &&
+        contenedorPadreColores
+    ) {
 
         contenedorColores.innerHTML = "";
 
@@ -1649,474 +2265,312 @@ function abrirZoom(item) {
             item.Variantes ||
             [];
 
+
         if (variantes.length > 0) {
 
-            contenedorPadreColores.style.display = "block";
-
-            variantes.forEach((variante, index) => {
-
-                const colorNombre =
-                    variante.color ||
-                    "Sin color";
-
-                const btnColor =
-                    document.createElement("button");
-
-                btnColor.type = "button";
-
-                btnColor.style.width = "26px";
-                btnColor.style.height = "26px";
-                btnColor.style.borderRadius = "50%";
-                btnColor.style.padding = "0";
-                btnColor.style.cursor = "pointer";
-
-                btnColor.style.backgroundColor =
-                    obtenerColorCSS(colorNombre);
-
-                btnColor.title =
-                    `${colorNombre} - ${variante.codigo_Producto || ""}`;
-
-                btnColor.dataset.varianteIndex = index;
+            contenedorPadreColores.style.display =
+                "block";
 
 
-                const varianteActual =
-                    item.varianteSeleccionadaIndex ?? 0;
+            variantes.forEach(
+                (variante, index) => {
 
-                if (index === varianteActual) {
-
-                    btnColor.style.border =
-                        "2px solid #fff";
-
-                    btnColor.style.boxShadow =
-                        "0 0 0 2px #8a2be2";
-
-                    btnColor.classList.add("active");
-
-                } else {
-
-                    btnColor.style.border =
-                        "1px solid #ccc";
-
-                    btnColor.style.boxShadow =
-                        "none";
-                }
+                    const colorNombre =
+                        variante.color ||
+                        "Sin color";
 
 
-                btnColor.onclick = function () {
-
-                    const varianteSeleccionada =
-                        variantes[index];
-
-                    if (!varianteSeleccionada) return;
-
-                    item.varianteSeleccionadaIndex = index;
-
-                    item.id =
-                        varianteSeleccionada.id;
-
-                    item.color =
-                        varianteSeleccionada.color;
-
-                    item.precio =
-                        varianteSeleccionada.precio;
-
-                    item.precio_Antes =
-                        varianteSeleccionada.precio_Antes;
-
-                    item.descuento =
-                        varianteSeleccionada.descuento;
-
-                    item.estado =
-                        varianteSeleccionada.estado;
-
-                    item.descripcion =
-                        varianteSeleccionada.descripcion;
-
-                    item.descripcion1 =
-                        varianteSeleccionada.descripcion1;
-
-              
-
-                    item.garantia =
-                        varianteSeleccionada.garantia;
-
-                    item.codigo_Producto =
-                        varianteSeleccionada.codigo_Producto;
-
-                    item.url_Equipo =
-                        varianteSeleccionada.url_Equipo;
-
-                    item.url1 =
-                        varianteSeleccionada.url1;
-
-                    item.url2 =
-                        varianteSeleccionada.url2;
-
-                    item.url3 =
-                        varianteSeleccionada.url3;
-
-
-                    const zoomModeloDesc =
-                        document.getElementById("zoom-modelo-desc");
-
-                    if (zoomModeloDesc) {
-
-                        zoomModeloDesc.innerText =
-                            `${item.modelo || ""}${varianteSeleccionada.descripcion
-                                ? " - " + varianteSeleccionada.descripcion
-                                : ""
-                            }`;
-                    }
-
-
-                    // ==========================================
-                    // ACTUALIZAR DESCRIPCIÓN DETALLADA
-                    // ==========================================
-
-                    const txtCaracteristicas =
-                        document.getElementById("zoom-caracteristicas-texto");
-
-                    if (txtCaracteristicas) {
-
-                        txtCaracteristicas.innerText =
-                            varianteSeleccionada.descripcion1 ||
-                            "No hay descripción detallada disponible para este equipo.";
-                    }
-
-
-                    const zoomCodigo =
-                        document.getElementById("zoom-codigo");
-
-                    if (zoomCodigo) {
-                        zoomCodigo.innerText =
-                            varianteSeleccionada.codigo_Producto || "N/A";
-                    }
-
-                    document.getElementById(
-                        "zoom-precio-actual"
-                    ).innerText =
-                        `S/. ${parseFloat(
-                            varianteSeleccionada.precio || 0
-                        ).toFixed(2)}`;
-
-
-                    const descuentoBadge =
-                        document.getElementById(
-                            "zoom-descuento-badge"
+                    const btnColor =
+                        document.createElement(
+                            "button"
                         );
 
-                    const precioAntesCont =
-                        document.getElementById(
-                            "zoom-precio-antes-container"
+                    btnColor.type =
+                        "button";
+
+                    btnColor.style.width =
+                        "26px";
+
+                    btnColor.style.height =
+                        "26px";
+
+                    btnColor.style.borderRadius =
+                        "50%";
+
+                    btnColor.style.padding =
+                        "0";
+
+                    btnColor.style.cursor =
+                        "pointer";
+
+                    btnColor.style.backgroundColor =
+                        obtenerColorCSS(
+                            colorNombre
                         );
 
-                    const precioAntesText =
-                        document.getElementById(
-                            "zoom-precio-antes"
-                        );
+                    btnColor.title =
+                        `${colorNombre} - ${variante.codigo_Producto || ""}`;
 
 
-                    // ==========================================
-                    // ACTUALIZAR GARANTÍA
-                    // ==========================================
-
-                    const contenedorGarantia =
-                        document.getElementById(
-                            "zoom-garantia-container"
-                        );
-
-                    const spanGarantia =
-                        document.getElementById(
-                            "zoom-garantia"
-                        );
-
-                    if (
-                        varianteSeleccionada.garantia &&
-                        varianteSeleccionada.garantia
-                            .toString()
-                            .trim() !== ""
-                    ) {
-
-                        if (spanGarantia) {
-                            spanGarantia.innerText =
-                                varianteSeleccionada.garantia;
-                        }
-
-                        if (contenedorGarantia) {
-                            contenedorGarantia.style.display =
-                                "flex";
-                        }
-
-                    } else {
-
-                        if (contenedorGarantia) {
-                            contenedorGarantia.style.display =
-                                "none";
-                        }
-                    }
-
+                    const varianteActual =
+                        item.varianteSeleccionadaIndex ??
+                        0;
 
 
                     if (
-                        varianteSeleccionada.descuento &&
-                        parseFloat(
-                            varianteSeleccionada.descuento
-                        ) > 0
+                        index === varianteActual
                     ) {
 
-                        descuentoBadge.innerText =
-                            `-${varianteSeleccionada.descuento}%`;
+                        btnColor.style.border =
+                            "2px solid #fff";
 
-                        descuentoBadge.style.display =
-                            "inline-flex";
-
-
-                        if (
-                            varianteSeleccionada.precio_Antes
-                        ) {
-
-                            precioAntesText.innerText =
-                                `S/. ${parseFloat(
-                                    varianteSeleccionada.precio_Antes
-                                ).toFixed(2)}`;
-
-                            precioAntesCont.style.display =
-                                "block";
-
-                        } else {
-
-                            precioAntesCont.style.display =
-                                "none";
-                        }
+                        btnColor.style.boxShadow =
+                            "0 0 0 2px #8a2be2";
 
                     } else {
 
-                        descuentoBadge.style.display =
-                            "none";
+                        btnColor.style.border =
+                            "1px solid #ccc";
 
-                        precioAntesCont.style.display =
+                        btnColor.style.boxShadow =
                             "none";
                     }
 
-                    imagenesActualesZoom = [
-                        varianteSeleccionada.url_Equipo,
-                        varianteSeleccionada.url1,
-                        varianteSeleccionada.url2,
-                        varianteSeleccionada.url3
-                    ].filter(Boolean);
 
-                    indiceActualZoom = 0;
+                    btnColor.onclick =
+                        function () {
 
+                            const nuevaVariante =
+                                variantes[index];
 
-                    // Imagen principal
-                    const imgPrincipal =
-                        document.getElementById(
-                            "zoom-imagen-principal"
-                        );
-
-                    if (imgPrincipal) {
-
-                        imgPrincipal.src =
-                            imagenesActualesZoom[0] || "";
-                    }
+                            if (!nuevaVariante)
+                                return;
 
 
+                            // Actualizar información
+                            item.varianteSeleccionadaIndex =
+                                index;
 
-                    const contenedorMiniaturas =
-                        document.getElementById(
-                            "zoom-galeria-miniaturas"
-                        );
+                            item.id =
+                                nuevaVariante.id;
 
-                    if (contenedorMiniaturas) {
+                            item.color =
+                                nuevaVariante.color;
 
-                        contenedorMiniaturas.innerHTML = "";
+                            item.precio =
+                                nuevaVariante.precio;
 
-                        imagenesActualesZoom.forEach(
-                            (url, imgIndex) => {
+                            item.precio_Antes =
+                                nuevaVariante.precio_Antes;
 
-                                const thumb =
-                                    document.createElement("img");
+                            item.descuento =
+                                nuevaVariante.descuento;
 
-                                thumb.src = url;
+                            item.estado =
+                                nuevaVariante.estado;
 
-                                thumb.id =
-                                    `zoom-thumb-${imgIndex}`;
+                            item.descripcion =
+                                nuevaVariante.descripcion;
 
-                                thumb.style.cssText =
-                                    `
-                                width:45px;
-                                height:45px;
-                                object-fit:cover;
-                                border-radius:4px;
-                                border:1px solid #ddd;
-                                cursor:pointer;
-                                transition:all .2s;
-                                `;
+                            item.descripcion1 =
+                                nuevaVariante.descripcion1;
 
-                                if (imgIndex === 0) {
+                            item.garantia =
+                                nuevaVariante.garantia;
 
-                                    thumb.style.borderColor =
-                                        "#007bff";
+                            item.codigo_Producto =
+                                nuevaVariante.codigo_Producto;
 
-                                    thumb.style.boxShadow =
-                                        "0 0 4px rgba(0,123,255,.5)";
-                                }
+                            item.url_Equipo =
+                                nuevaVariante.url_Equipo;
 
-                                thumb.onclick = function () {
+                            item.url1 =
+                                nuevaVariante.url1;
 
-                                    seleccionarImagenZoom(
-                                        imgIndex
+                            item.url2 =
+                                nuevaVariante.url2;
+
+                            item.url3 =
+                                nuevaVariante.url3;
+
+
+                            // Al cambiar de variante,
+                            // empezamos por la primera imagen
+                            imagenesActualesZoom = [
+                                nuevaVariante.url_Equipo,
+                                nuevaVariante.url1,
+                                nuevaVariante.url2,
+                                nuevaVariante.url3
+                            ].filter(Boolean);
+
+                            indiceActualZoom = 0;
+
+
+                            // Imagen principal
+                            if (imgPrincipal) {
+
+                                imgPrincipal.src =
+                                    imagenesActualesZoom[0];
+
+                                imgPrincipal.style.cursor =
+                                    "zoom-in";
+
+                                imgPrincipal.onclick = function () {
+
+                                    abrirImagenGrandeZoom(
+                                        imagenesActualesZoom[
+                                        indiceActualZoom
+                                        ],
+                                        imagenesActualesZoom,
+                                        indiceActualZoom
                                     );
-                                };
 
-                                contenedorMiniaturas.appendChild(
-                                    thumb
+                                };
+                            }
+
+
+                            // Actualizar miniaturas
+                            if (contenedorMiniaturas) {
+
+                                contenedorMiniaturas.innerHTML =
+                                    "";
+
+                                imagenesActualesZoom.forEach(
+                                    (url, imgIndex) => {
+
+                                        const thumb =
+                                            document.createElement(
+                                                "img"
+                                            );
+
+                                        thumb.src =
+                                            url;
+
+                                        thumb.id =
+                                            `zoom-thumb-${imgIndex}`;
+
+                                        thumb.style.cssText = `
+                                            width:45px;
+                                            height:45px;
+                                            object-fit:cover;
+                                            border-radius:4px;
+                                            border:1px solid #ddd;
+                                            cursor:pointer;
+                                        `;
+
+                                        if (
+                                            imgIndex === 0
+                                        ) {
+
+                                            thumb.style.borderColor =
+                                                "#007bff";
+
+                                            thumb.style.boxShadow =
+                                                "0 0 4px rgba(0,123,255,.5)";
+                                        }
+
+                                        thumb.onclick =
+                                            function () {
+
+                                                seleccionarImagenZoom(
+                                                    imgIndex
+                                                );
+                                            };
+
+                                        contenedorMiniaturas.appendChild(
+                                            thumb
+                                        );
+                                    }
                                 );
                             }
-                        );
-                    }
-
-                    const btnAgregar =
-                        document.getElementById(
-                            "zoom-btn-agregar"
-                        );
-
-                    if (btnAgregar) {
-
-                        const imagenes = [
-                            varianteSeleccionada.url_Equipo,
-                            varianteSeleccionada.url1,
-                            varianteSeleccionada.url2,
-                            varianteSeleccionada.url3
-                        ].filter(Boolean);
-
-                        btnAgregar.setAttribute(
-                            "data-id",
-                            varianteSeleccionada.id
-                        );
-
-                        btnAgregar.setAttribute(
-                            "data-nombre",
-                            `${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${varianteSeleccionada.color || ""}`
-                        );
-
-                        btnAgregar.setAttribute(
-                            "data-precio",
-                            varianteSeleccionada.precio
-                        );
-
-                        btnAgregar.setAttribute(
-                            "data-imagenes",
-                            JSON.stringify(imagenes)
-                        );
-                    }
 
 
-                    contenedorColores
-                        .querySelectorAll("button")
-                        .forEach(btn => {
+                            // Actualizar datos visuales
+                            const zoomModeloDesc =
+                                document.getElementById(
+                                    "zoom-modelo-desc"
+                                );
 
-                            btn.style.border =
-                                "1px solid #ccc";
+                            if (zoomModeloDesc) {
 
-                            btn.style.boxShadow =
-                                "none";
-
-                            btn.classList.remove("active");
-                        });
-
-
-                    this.style.border =
-                        "2px solid #fff";
-
-                    this.style.boxShadow =
-                        "0 0 0 2px #8a2be2";
-
-                    this.classList.add("active");
-                };
+                                zoomModeloDesc.innerText =
+                                    `${item.modelo || ""}${nuevaVariante.descripcion
+                                        ? " - " +
+                                        nuevaVariante.descripcion
+                                        : ""
+                                    }`;
+                            }
 
 
-                contenedorColores.appendChild(
-                    btnColor
-                );
-            });
+                            const zoomCodigo =
+                                document.getElementById(
+                                    "zoom-codigo"
+                                );
+
+                            if (zoomCodigo) {
+
+                                zoomCodigo.innerText =
+                                    nuevaVariante.codigo_Producto ||
+                                    "N/A";
+                            }
+
+
+                            const zoomPrecio =
+                                document.getElementById(
+                                    "zoom-precio-actual"
+                                );
+
+                            if (zoomPrecio) {
+
+                                zoomPrecio.innerText =
+                                    `S/. ${parseFloat(
+                                        nuevaVariante.precio || 0
+                                    ).toFixed(2)}`;
+                            }
+
+
+                            // Actualizar colores activos
+                            contenedorColores
+                                .querySelectorAll("button")
+                                .forEach(btn => {
+
+                                    btn.style.border =
+                                        "1px solid #ccc";
+
+                                    btn.style.boxShadow =
+                                        "none";
+                                });
+
+
+                            this.style.border =
+                                "2px solid #fff";
+
+                            this.style.boxShadow =
+                                "0 0 0 2px #8a2be2";
+                        };
+
+
+                    contenedorColores.appendChild(
+                        btnColor
+                    );
+                }
+            );
 
         } else {
 
             contenedorPadreColores.style.display =
                 "none";
         }
-    
-    }
-
-    document.getElementById("zoom-precio-actual").innerText = `S/. ${parseFloat(item.precio).toFixed(2)}`;
-
-    const descuentoBadge = document.getElementById("zoom-descuento-badge");
-    const precioAntesCont = document.getElementById("zoom-precio-antes-container");
-    const precioAntesText = document.getElementById("zoom-precio-antes");
-
-    if (item.descuento && item.descuento > 0) {
-        descuentoBadge.innerText = `-${item.descuento}%`;
-        descuentoBadge.style.display = "inline-flex";
-
-        if (item.precio_Antes) {
-            precioAntesText.innerText = `S/. ${parseFloat(item.precio_Antes).toFixed(2)}`;
-            precioAntesCont.style.display = "block";
-        } else {
-            precioAntesCont.style.display = "none";
-        }
-    } else {
-        descuentoBadge.style.display = "none";
-        precioAntesCont.style.display = "none";
     }
 
 
-    imagenesActualesZoom = [item.url_Equipo, item.url1, item.url2, item.url3].filter(Boolean);
-    indiceActualZoom = 0;
+    // =====================================================
+    // MOSTRAR MODAL
+    // =====================================================
 
-    const prevBtn = document.getElementById("zoom-prev-btn");
-    const nextBtn = document.getElementById("zoom-next-btn");
-    if (prevBtn && nextBtn) {
-        const mostrarFlechas = imagenesActualesZoom.length > 1 ? "flex" : "none";
-        prevBtn.style.display = mostrarFlechas;
-        nextBtn.style.display = mostrarFlechas;
-    }
-
-    const imgPrincipal = document.getElementById("zoom-imagen-principal");
-    if (imgPrincipal) imgPrincipal.src = imagenesActualesZoom[indiceActualZoom];
-
-    const contenedorMiniaturas = document.getElementById("zoom-galeria-miniaturas");
-    if (contenedorMiniaturas) {
-        contenedorMiniaturas.innerHTML = "";
-
-        imagenesActualesZoom.forEach((url, index) => {
-            const thumb = document.createElement("img");
-            thumb.src = url;
-            thumb.id = `zoom-thumb-${index}`;
-            thumb.style.cssText = "width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; transition: all 0.2s;";
-
-            if (index === 0) {
-                thumb.style.borderColor = "#007bff";
-                thumb.style.boxShadow = "0 0 4px rgba(0,123,255,0.5)";
-            }
-
-            thumb.onclick = function () {
-                seleccionarImagenZoom(index);
-            };
-
-            contenedorMiniaturas.appendChild(thumb);
-        });
-
-        const btnAgregar = document.getElementById("zoom-btn-agregar");
-        if (btnAgregar) {
-            btnAgregar.setAttribute("data-id", item.id);
-            btnAgregar.setAttribute("data-nombre", `${item.marca || 'SIN MARCA'} ${item.modelo || ''}`);
-            btnAgregar.setAttribute("data-precio", item.precio);
-            btnAgregar.setAttribute("data-imagenes", JSON.stringify(imagenesActualesZoom));
-        }
-    }
-
-    $('#modalZoom').modal('show');
+    setTimeout(() => {
+        $('#modalZoom').modal('show');
+    }, 100);
 }
 
 
@@ -2299,7 +2753,7 @@ function actualizarBadgeYDropdown() {
 
         const clickZoomAction = esModal
             ? `onclick="abrirZoomDesdeCarrito(${item.id})"`
-            : `onclick="abrirZoomDesdeCarrito(${item.id})"; event.stopPropagation();`;
+            : `onclick="abrirZoomDesdeCarrito(${item.id}); event.stopPropagation();"`;
 
         const stopProp = !esModal ? 'event.stopPropagation();' : '';
 
@@ -2377,19 +2831,188 @@ function actualizarBadgeYDropdown() {
 }
 
 function abrirZoomDesdeCarrito(id) {
-    const item = carrito.find(prod => prod.id === id);
-    if (item && item.imagenes && item.imagenes.length > 0) {
-        // Cerramos temporalmente el modal del carrito (si estuviese abierto)
+
+    const itemCarrito = carrito.find(prod => prod.id === id);
+
+    if (!itemCarrito) {
+        mostrarToast(
+            "No se encontró el producto en el carrito.",
+            "#ff4d4d"
+        );
+        return;
+    }
+
+    // =====================================================
+    // BUSCAR LA VARIANTE COMPLETA EN LOS PRODUCTOS CARGADOS
+    // =====================================================
+
+    let productoCompleto = null;
+    let varianteEncontrada = null;
+    let varianteIndex = 0;
+
+    if (window.productosAgrupados) {
+
+        for (const producto of window.productosAgrupados) {
+
+            const variantes =
+                producto.variantes ||
+                producto.Variantes ||
+                [];
+
+            const index = variantes.findIndex(
+                variante => variante.id === id
+            );
+
+            if (index !== -1) {
+
+                productoCompleto = producto;
+                varianteEncontrada = variantes[index];
+                varianteIndex = index;
+
+                break;
+            }
+        }
+    }
+
+    // =====================================================
+    // SI ENCONTRAMOS EL PRODUCTO COMPLETO
+    // =====================================================
+
+    if (productoCompleto && varianteEncontrada) {
+
+        const itemZoom = {
+
+            ...productoCompleto,
+
+            // Datos de la variante seleccionada
+            id: varianteEncontrada.id,
+
+            color: varianteEncontrada.color,
+
+            precio: varianteEncontrada.precio,
+
+            precio_Antes:
+                varianteEncontrada.precio_Antes,
+
+            descuento:
+                varianteEncontrada.descuento,
+
+            estado:
+                varianteEncontrada.estado,
+
+            descripcion:
+                varianteEncontrada.descripcion,
+
+            descripcion1:
+                varianteEncontrada.descripcion1,
+
+            garantia:
+                varianteEncontrada.garantia,
+
+            codigo_Producto:
+                varianteEncontrada.codigo_Producto ||
+                productoCompleto.codigo_Producto,
+
+            url_Equipo:
+                varianteEncontrada.url_Equipo,
+
+            url1:
+                varianteEncontrada.url1,
+
+            url2:
+                varianteEncontrada.url2,
+
+            url3:
+                varianteEncontrada.url3,
+
+            // IMPORTANTE
+            variantes:
+                productoCompleto.variantes ||
+                productoCompleto.Variantes ||
+                [],
+
+            varianteSeleccionadaIndex:
+                varianteIndex
+        };
+
+
+        // =================================================
+        // CERRAR CARRITO
+        // =================================================
+
         $('#modalCarrito').modal('hide');
 
-        // Esperamos brevemente a que el modal del carrito cierre su animación antes de abrir el zoom
+
+        // =================================================
+        // ABRIR EL ZOOM COMPLETO
+        // =================================================
+
         setTimeout(() => {
-            zoomImage(item.imagenes, 0);
+
+            abrirZoom(itemZoom);
+
         }, 300);
+
+        return;
+    }
+
+
+    // =====================================================
+    // FALLBACK
+    // =====================================================
+    // Si por alguna razón productosAgrupados todavía
+    // no contiene el producto, mostramos al menos
+    // la información básica del carrito.
+
+    if (itemCarrito.imagenes &&
+        itemCarrito.imagenes.length > 0) {
+
+        $('#modalCarrito').modal('hide');
+
+        setTimeout(() => {
+
+            const itemFallback = {
+
+                id: itemCarrito.id,
+
+                nombre: itemCarrito.nombre,
+
+                marca: itemCarrito.nombre,
+
+                modelo: "",
+
+                precio: itemCarrito.precio,
+
+                url_Equipo:
+                    itemCarrito.imagenes[0],
+
+                url1:
+                    itemCarrito.imagenes[1],
+
+                url2:
+                    itemCarrito.imagenes[2],
+
+                url3:
+                    itemCarrito.imagenes[3],
+
+                variantes: []
+
+            };
+
+            abrirZoom(itemFallback);
+
+        }, 300);
+
     } else {
-        mostrarToast("Este producto no contiene imágenes para visualizar.", "#ff4d4d");
+
+        mostrarToast(
+            "Este producto no contiene imágenes para visualizar.",
+            "#ff4d4d"
+        );
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 // Eliminar un elemento del carrito
 function eliminarDelCarrito(id) {
     carrito = carrito.filter(item => item.id !== id);
@@ -2493,7 +3116,6 @@ function procesarCompra(event) {
         total_pagado: carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
     };
 
-    console.log("¡Pedido Listo para Procesar!", resumenPedido);
 
     // TODO: Aquí puedes hacer un fetch() a tu API de Render para guardar el pedido en tu base de datos si cuentas con un endpoint.
 
@@ -2590,3 +3212,540 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// =====================================================
+// NAVEGACIÓN DEL ZOOM CON TECLADO
+// =====================================================
+
+
+// =====================================================
+// VISOR GRANDE DE IMÁGENES
+// =====================================================
+
+let imagenesVisorGrande = [];
+let indiceVisorGrande = 0;
+
+
+// =====================================================
+// ABRIR VISOR
+// =====================================================
+
+function abrirImagenGrandeZoom(
+    url,
+    imagenes = [],
+    indice = 0
+) {
+
+    const visor =
+        document.getElementById(
+            "visorImagenGrande"
+        );
+
+    const imagen =
+        document.getElementById(
+            "imagenGrandeZoom"
+        );
+
+    if (!visor || !imagen) return;
+
+
+    // ==========================================
+    // GUARDAR TODAS LAS IMÁGENES
+    // ==========================================
+
+    imagenesVisorGrande =
+        Array.isArray(imagenes) &&
+            imagenes.length > 0
+            ? imagenes
+            : [url];
+
+
+    // ==========================================
+    // DETERMINAR ÍNDICE
+    // ==========================================
+
+    indiceVisorGrande =
+        parseInt(indice) || 0;
+
+
+    if (
+        indiceVisorGrande < 0 ||
+        indiceVisorGrande >=
+        imagenesVisorGrande.length
+    ) {
+
+        indiceVisorGrande = 0;
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR IMAGEN
+    // ==========================================
+
+    imagen.src =
+        imagenesVisorGrande[
+        indiceVisorGrande
+        ];
+
+
+    // ==========================================
+    // MOSTRAR VISOR
+    // ==========================================
+
+    visor.classList.add("activo");
+
+
+    // ==========================================
+    // BLOQUEAR SCROLL
+    // ==========================================
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    // ==========================================
+    // ACTUALIZAR FLECHAS
+    // ==========================================
+
+    actualizarFlechasVisorGrande();
+
+}
+
+
+// =====================================================
+// CERRAR VISOR
+// =====================================================
+
+function cerrarImagenGrandeZoom() {
+
+    const visor =
+        document.getElementById(
+            "visorImagenGrande"
+        );
+
+    const imagen =
+        document.getElementById(
+            "imagenGrandeZoom"
+        );
+
+    if (!visor) return;
+
+
+    visor.classList.remove(
+        "activo"
+    );
+
+
+    if (imagen) {
+
+        imagen.src = "";
+
+    }
+
+
+    imagenesVisorGrande = [];
+
+    indiceVisorGrande = 0;
+
+
+    // Restaurar scroll
+
+    document.body.style.overflow = "";
+
+}
+
+
+// =====================================================
+// MOSTRAR IMAGEN ANTERIOR
+// =====================================================
+
+function imagenAnteriorVisorGrande() {
+
+    if (
+        imagenesVisorGrande.length <= 1
+    ) {
+        return;
+    }
+
+
+    indiceVisorGrande--;
+
+
+    if (
+        indiceVisorGrande < 0
+    ) {
+
+        indiceVisorGrande =
+            imagenesVisorGrande.length - 1;
+
+    }
+
+
+    actualizarImagenVisorGrande();
+
+}
+
+
+// =====================================================
+// MOSTRAR IMAGEN SIGUIENTE
+// =====================================================
+
+function imagenSiguienteVisorGrande() {
+
+    if (
+        imagenesVisorGrande.length <= 1
+    ) {
+        return;
+    }
+
+
+    indiceVisorGrande++;
+
+
+    if (
+        indiceVisorGrande >=
+        imagenesVisorGrande.length
+    ) {
+
+        indiceVisorGrande = 0;
+
+    }
+
+
+    actualizarImagenVisorGrande();
+
+}
+
+
+// =====================================================
+// ACTUALIZAR IMAGEN
+// =====================================================
+
+function actualizarImagenVisorGrande() {
+
+    const imagen =
+        document.getElementById(
+            "imagenGrandeZoom"
+        );
+
+    if (!imagen) return;
+
+    if (
+        !imagenesVisorGrande[
+        indiceVisorGrande
+        ]
+    ) {
+        return;
+    }
+
+
+    imagen.src =
+        imagenesVisorGrande[
+        indiceVisorGrande
+        ];
+
+
+    actualizarFlechasVisorGrande();
+
+}
+
+
+// =====================================================
+// MOSTRAR / OCULTAR FLECHAS
+// =====================================================
+
+function actualizarFlechasVisorGrande() {
+
+    const anterior =
+        document.getElementById(
+            "visorImagenAnterior"
+        );
+
+    const siguiente =
+        document.getElementById(
+            "visorImagenSiguiente"
+        );
+
+
+    const mostrar =
+        imagenesVisorGrande.length > 1;
+
+
+    if (anterior) {
+
+        anterior.style.display =
+            mostrar
+                ? "flex"
+                : "none";
+
+    }
+
+
+    if (siguiente) {
+
+        siguiente.style.display =
+            mostrar
+                ? "flex"
+                : "none";
+
+    }
+
+}
+
+
+// =====================================================
+// EVENTOS DEL VISOR
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const cerrar =
+            document.getElementById(
+                "cerrarImagenGrande"
+            );
+
+        const anterior =
+            document.getElementById(
+                "visorImagenAnterior"
+            );
+
+        const siguiente =
+            document.getElementById(
+                "visorImagenSiguiente"
+            );
+
+        const visor =
+            document.getElementById(
+                "visorImagenGrande"
+            );
+
+
+        // X
+
+        if (cerrar) {
+
+            cerrar.addEventListener(
+                "click",
+                function (e) {
+
+                    e.stopPropagation();
+
+                    cerrarImagenGrandeZoom();
+
+                }
+            );
+
+        }
+
+
+        // Flecha izquierda
+
+        if (anterior) {
+
+            anterior.addEventListener(
+                "click",
+                function (e) {
+
+                    e.stopPropagation();
+
+                    imagenAnteriorVisorGrande();
+
+                }
+            );
+
+        }
+
+
+        // Flecha derecha
+
+        if (siguiente) {
+
+            siguiente.addEventListener(
+                "click",
+                function (e) {
+
+                    e.stopPropagation();
+
+                    imagenSiguienteVisorGrande();
+
+                }
+            );
+
+        }
+
+
+        // Clic en fondo
+
+        if (visor) {
+
+            visor.addEventListener(
+                "click",
+                function (e) {
+
+                    if (
+                        e.target === visor
+                    ) {
+
+                        cerrarImagenGrandeZoom();
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// TECLADO
+// =====================================================
+
+
+
+
+// ==========================================
+// CERRAR AL HACER CLICK
+// ==========================================
+
+document.addEventListener("click", function (e) {
+
+    const visor =
+        document.getElementById("visorImagenGrande");
+
+    if (!visor) return;
+
+    if (
+        visor.classList.contains("activo") &&
+        (
+            e.target === visor ||
+            e.target.id === "imagenGrandeZoom"
+        )
+    ) {
+        cerrarImagenGrandeZoom();
+    }
+
+});
+
+
+// ==========================================
+// CERRAR CON ESC
+// ==========================================
+
+
+
+
+// =====================================================
+// NAVEGACIÓN DE IMÁGENES CON TECLADO
+// =====================================================
+
+document.addEventListener("keydown", function (event) {
+
+    // =================================================
+    // ESC
+    // =================================================
+
+    if (event.key === "Escape") {
+
+        const visorGrande =
+            document.getElementById("visorImagenGrande");
+
+        if (
+            visorGrande &&
+            visorGrande.classList.contains("activo")
+        ) {
+
+            event.preventDefault();
+
+            cerrarImagenGrandeZoom();
+
+            return;
+        }
+
+        return;
+    }
+
+
+    // =================================================
+    // SOLO FLECHAS
+    // =================================================
+
+    if (
+        event.key !== "ArrowLeft" &&
+        event.key !== "ArrowRight"
+    ) {
+        return;
+    }
+
+
+    // =================================================
+    // PRIMERO: VISOR GRANDE
+    // =================================================
+
+    const visorGrande =
+        document.getElementById("visorImagenGrande");
+
+
+    if (
+        visorGrande &&
+        visorGrande.classList.contains("activo")
+    ) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+
+        if (event.key === "ArrowLeft") {
+
+            imagenAnteriorVisorGrande();
+
+        } else if (event.key === "ArrowRight") {
+
+            imagenSiguienteVisorGrande();
+
+        }
+
+
+        return;
+    }
+
+
+    // =================================================
+    // SEGUNDO: MODAL ZOOM
+    // =================================================
+
+    const modalZoom =
+        document.getElementById("modalZoom");
+
+
+    if (
+        modalZoom &&
+        modalZoom.classList.contains("show")
+    ) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+
+        if (event.key === "ArrowLeft") {
+
+            navegarImagenZoom(-1);
+
+        } else if (event.key === "ArrowRight") {
+
+            navegarImagenZoom(1);
+
+        }
+
+
+        return;
+    }
+
+});
+
+
