@@ -95,11 +95,16 @@ namespace Proyecto1.Controllers
             return RedirectToAction("Index", "Inicio");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
             return RedirectToAction("Index", "Inicio");
         }
+
     }
 
     public class LoginResponse

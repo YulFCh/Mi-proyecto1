@@ -154,17 +154,40 @@
                             <i class="icon feather icon-settings"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
+                            
+
                             <div class="pro-head">
-                                <img src="assets/images/user/avatar-1.jpg" class="img-radius" alt="User-Profile-Image">
-                                
 
-                                <!-- Muestra el Rol del usuario --> 
-                                <small style="display:block; color: #ffff; font-size: 12px;"><?php echo htmlspecialchars($_SESSION["rol"]); ?></small>
+                                <img src="assets/images/user/avatar-1.jpg"
+                                     class="img-radius"
+                                     alt="User-Profile-Image">
 
-                                <a href="" class="dud-logout" title="Logout">
-                                    <i class="feather icon-log-out"></i>
-                                </a>
+                                <small style="display:block; color:#ffff; font-size:12px;">
+                                    @rol
+                                </small>
+
+                                <form asp-controller="Login"
+                                      asp-action="Logout"
+                                      method="post"
+                                      style="display:inline;">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="dud-logout"
+                                            title="Cerrar sesión"
+                                            style="border:none; background:none; padding:0; cursor:pointer;">
+
+                                        <i class="feather icon-log-out"></i>
+
+                                    </button>
+
+                                </form>
+
                             </div>
+
+
+
                             <ul class="pro-body">
                                 <!-- <li><a href="javascript:" class="dropdown-item"><i class="feather icon-settings"></i>Ajustes</a></li> --> 
                                 <!--<li><a href="javascript:" class="dropdown-item"><i class="feather icon-user"></i>Perfil</a></li>--> 

@@ -1,4 +1,5 @@
 ﻿using ApiProyecto1.Services;
+using ApiProyecto1.Services.Pedidos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
 builder.Services.AddScoped<EditarEquiposService>();
+builder.Services.AddScoped<PedidosService>();
 
 
 var app = builder.Build();
