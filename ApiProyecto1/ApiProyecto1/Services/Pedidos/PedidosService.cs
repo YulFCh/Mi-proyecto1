@@ -15,33 +15,70 @@ namespace ApiProyecto1.Services.Pedidos
                     "No se encontró la cadena de conexión.");
         }
 
+
         // ============================================================
         // REGISTRAR PEDIDO
         // ============================================================
 
         public int Registrar(PedidosModel model)
         {
-            if (model.Detalles == null || model.Detalles.Count == 0)
+            // ========================================================
+            // VALIDACIÓN GENERAL
+            // ========================================================
+
+            if (model == null)
+            {
+                throw new Exception(
+                    "Los datos del pedido son obligatorios.");
+            }
+
+
+            if (model.Detalles == null ||
+                model.Detalles.Count == 0)
             {
                 throw new Exception(
                     "El pedido debe contener al menos un detalle.");
             }
 
-            using SqlConnection con = new SqlConnection(_connectionString);
+
+            // ========================================================
+            // CONEXIÓN
+            // ========================================================
+
+            using SqlConnection con =
+                new SqlConnection(_connectionString);
 
             con.Open();
 
-            using SqlTransaction transaction = con.BeginTransaction();
+
+            // ========================================================
+            // TRANSACCIÓN
+            // ========================================================
+
+            using SqlTransaction transaction =
+                con.BeginTransaction();
+
 
             try
             {
                 // ====================================================
-                // 1. INSERTAR CABECERA DEL PEDIDO
+                // 1. INSERTAR CABECERA
+                //
+                // cod_pedido es NOT NULL.
+                //
+                // Primero colocamos un valor temporal único basado
+                // en GUID. Después de obtener id_pedido, lo
+                // reemplazamos por P-000001, P-000002, etc.
                 // ====================================================
+
+                string codigoTemporal =
+                    $"TEMP-{Guid.NewGuid():N}";
+
 
                 string queryPedido = @"
                     INSERT INTO pedidos
                     (
+                        cod_pedido,
                         nombres_pedido,
                         apellidos_pedido,
                         dni_pedido,
@@ -59,6 +96,7 @@ namespace ApiProyecto1.Services.Pedidos
                     )
                     VALUES
                     (
+                        @cod_pedido,
                         @nombres,
                         @apellidos,
                         @dni,
@@ -78,60 +116,69 @@ namespace ApiProyecto1.Services.Pedidos
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
 
+
                 int idPedido;
 
-                using (SqlCommand cmd = new SqlCommand(
-                    queryPedido,
-                    con,
-                    transaction))
+
+                using (SqlCommand cmd =
+                    new SqlCommand(
+                        queryPedido,
+                        con,
+                        transaction))
                 {
                     cmd.Parameters.AddWithValue(
+                        "@cod_pedido",
+                        codigoTemporal);
+
+                    cmd.Parameters.AddWithValue(
                         "@nombres",
-                        model.Nombres_Pedido);
+                        model.Nombres_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@apellidos",
-                        model.Apellidos_Pedido);
+                        model.Apellidos_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@dni",
-                        model.Dni_Pedido);
+                        model.Dni_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@celular",
-                        model.Celular_Pedido);
+                        model.Celular_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@correo",
-                        model.Correo_Pedido);
+                        model.Correo_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@region",
-                        model.Region_Pedido);
+                        model.Region_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@provincia",
-                        model.Provincia_Pedido);
+                        model.Provincia_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@distrito",
-                        model.Distrito_Pedido);
+                        model.Distrito_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@direccion",
-                        model.Direccion_Pedido);
+                        model.Direccion_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@estado",
-                        string.IsNullOrWhiteSpace(model.Estado_Pedido)
+                        string.IsNullOrWhiteSpace(
+                            model.Estado_Pedido)
                             ? "PENDIENTE"
-                            : model.Estado_Pedido);
+                            : model.Estado_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@estado_pago",
-                        string.IsNullOrWhiteSpace(model.Estado_Pago_Pedido)
+                        string.IsNullOrWhiteSpace(
+                            model.Estado_Pago_Pedido)
                             ? "PENDIENTE"
-                            : model.Estado_Pago_Pedido);
+                            : model.Estado_Pago_Pedido.Trim());
 
                     cmd.Parameters.AddWithValue(
                         "@ticket",
@@ -143,24 +190,28 @@ namespace ApiProyecto1.Services.Pedidos
                         (object?)model.Usuario_Registra
                         ?? DBNull.Value);
 
-                    idPedido = Convert.ToInt32(
-                        cmd.ExecuteScalar());
+
+                    idPedido =
+                        Convert.ToInt32(
+                            cmd.ExecuteScalar());
                 }
 
 
                 // ====================================================
-                // 2. GENERAR CODIGO DEL PEDIDO
+                // 2. GENERAR CÓDIGO DEFINITIVO
                 //
-                // 1  -> P-0001
-                // 25 -> P-0025
-                // 100 -> P-0100
+                // 1      -> P-000001
+                // 25     -> P-000025
+                // 100    -> P-000100
+                // 1250   -> P-001250
                 // ====================================================
 
-                string codPedido = $"P-{idPedido:D4}";
+                string codPedido =
+                    $"P-{idPedido:D6}";
 
 
                 // ====================================================
-                // 3. GUARDAR CODIGO EN PEDIDOS
+                // 3. ACTUALIZAR CÓDIGO DEFINITIVO
                 // ====================================================
 
                 string queryCodigo = @"
@@ -169,10 +220,12 @@ namespace ApiProyecto1.Services.Pedidos
                     WHERE id_pedido = @id_pedido;
                 ";
 
-                using (SqlCommand cmd = new SqlCommand(
-                    queryCodigo,
-                    con,
-                    transaction))
+
+                using (SqlCommand cmd =
+                    new SqlCommand(
+                        queryCodigo,
+                        con,
+                        transaction))
                 {
                     cmd.Parameters.AddWithValue(
                         "@cod_pedido",
@@ -182,7 +235,16 @@ namespace ApiProyecto1.Services.Pedidos
                         "@id_pedido",
                         idPedido);
 
-                    cmd.ExecuteNonQuery();
+
+                    int filasAfectadas =
+                        cmd.ExecuteNonQuery();
+
+
+                    if (filasAfectadas != 1)
+                    {
+                        throw new Exception(
+                            "No se pudo asignar el código del pedido.");
+                    }
                 }
 
 
@@ -192,11 +254,19 @@ namespace ApiProyecto1.Services.Pedidos
 
                 decimal totalPedido = 0;
 
+
                 foreach (var detalle in model.Detalles)
                 {
-                    // ----------------------------------------------
-                    // Validaciones
-                    // ----------------------------------------------
+                    // =================================================
+                    // VALIDACIONES
+                    // =================================================
+
+                    if (detalle.Id_Producto <= 0)
+                    {
+                        throw new Exception(
+                            "El producto del detalle no es válido.");
+                    }
+
 
                     if (detalle.Cantidad <= 0)
                     {
@@ -204,11 +274,13 @@ namespace ApiProyecto1.Services.Pedidos
                             "La cantidad debe ser mayor que cero.");
                     }
 
+
                     if (detalle.Precio_Unitario < 0)
                     {
                         throw new Exception(
                             "El precio unitario no puede ser negativo.");
                     }
+
 
                     if (detalle.Descuento < 0)
                     {
@@ -217,9 +289,9 @@ namespace ApiProyecto1.Services.Pedidos
                     }
 
 
-                    // ----------------------------------------------
-                    // Calcular subtotal
-                    // ----------------------------------------------
+                    // =================================================
+                    // CALCULAR SUBTOTAL EN EL SERVIDOR
+                    // =================================================
 
                     decimal subtotal =
                         (detalle.Cantidad *
@@ -237,9 +309,9 @@ namespace ApiProyecto1.Services.Pedidos
                     totalPedido += subtotal;
 
 
-                    // ----------------------------------------------
-                    // Insertar detalle
-                    // ----------------------------------------------
+                    // =================================================
+                    // INSERTAR DETALLE
+                    // =================================================
 
                     string queryDetalle = @"
                         INSERT INTO detalle_pedidos
@@ -276,10 +348,12 @@ namespace ApiProyecto1.Services.Pedidos
                         );
                     ";
 
-                    using (SqlCommand cmd = new SqlCommand(
-                        queryDetalle,
-                        con,
-                        transaction))
+
+                    using (SqlCommand cmd =
+                        new SqlCommand(
+                            queryDetalle,
+                            con,
+                            transaction))
                     {
                         cmd.Parameters.AddWithValue(
                             "@id_pedido",
@@ -339,6 +413,7 @@ namespace ApiProyecto1.Services.Pedidos
                             "@subtotal",
                             subtotal);
 
+
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -354,10 +429,12 @@ namespace ApiProyecto1.Services.Pedidos
                     WHERE id_pedido = @id_pedido;
                 ";
 
-                using (SqlCommand cmd = new SqlCommand(
-                    queryTotal,
-                    con,
-                    transaction))
+
+                using (SqlCommand cmd =
+                    new SqlCommand(
+                        queryTotal,
+                        con,
+                        transaction))
                 {
                     cmd.Parameters.AddWithValue(
                         "@total",
@@ -367,22 +444,49 @@ namespace ApiProyecto1.Services.Pedidos
                         "@id_pedido",
                         idPedido);
 
-                    cmd.ExecuteNonQuery();
+
+                    int filasAfectadas =
+                        cmd.ExecuteNonQuery();
+
+
+                    if (filasAfectadas != 1)
+                    {
+                        throw new Exception(
+                            "No se pudo actualizar el total del pedido.");
+                    }
                 }
 
 
                 // ====================================================
-                // 6. CONFIRMAR TODO
+                // 6. CONFIRMAR TRANSACCIÓN
                 // ====================================================
 
                 transaction.Commit();
+
+
+                // ====================================================
+                // 7. DEVOLVER ID DEL PEDIDO
+                // ====================================================
 
                 return idPedido;
             }
             catch
             {
-                // Si algo falla, no se guarda nada.
-                transaction.Rollback();
+                // ====================================================
+                // SI ALGO FALLA:
+                //
+                // NO SE GUARDA NADA.
+                // ====================================================
+
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch
+                {
+                    // No ocultar la excepción original.
+                }
+
 
                 throw;
             }
