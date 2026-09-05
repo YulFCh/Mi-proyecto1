@@ -32,7 +32,6 @@ namespace ApiProyecto1.Services.Pedidos
                     "Los datos del pedido son obligatorios.");
             }
 
-
             if (model.Detalles == null ||
                 model.Detalles.Count == 0)
             {
@@ -62,23 +61,15 @@ namespace ApiProyecto1.Services.Pedidos
             try
             {
                 // ====================================================
-                // 1. INSERTAR CABECERA
+                // 1. INSERTAR CABECERA DEL PEDIDO
                 //
-                // cod_pedido es NOT NULL.
-                //
-                // Primero colocamos un valor temporal único basado
-                // en GUID. Después de obtener id_pedido, lo
-                // reemplazamos por P-000001, P-000002, etc.
+                // cod_pedido se deja NULL inicialmente.
+                // Primero obtenemos id_pedido.
                 // ====================================================
-
-                string codigoTemporal =
-                    $"TEMP-{Guid.NewGuid():N}";
-
 
                 string queryPedido = @"
                     INSERT INTO pedidos
                     (
-                        cod_pedido,
                         nombres_pedido,
                         apellidos_pedido,
                         dni_pedido,
@@ -96,7 +87,6 @@ namespace ApiProyecto1.Services.Pedidos
                     )
                     VALUES
                     (
-                        @cod_pedido,
                         @nombres,
                         @apellidos,
                         @dni,
@@ -126,10 +116,6 @@ namespace ApiProyecto1.Services.Pedidos
                         con,
                         transaction))
                 {
-                    cmd.Parameters.AddWithValue(
-                        "@cod_pedido",
-                        codigoTemporal);
-
                     cmd.Parameters.AddWithValue(
                         "@nombres",
                         model.Nombres_Pedido.Trim());
@@ -191,19 +177,30 @@ namespace ApiProyecto1.Services.Pedidos
                         ?? DBNull.Value);
 
 
+                    object resultado =
+                        cmd.ExecuteScalar();
+
+
+                    if (resultado == null ||
+                        resultado == DBNull.Value)
+                    {
+                        throw new Exception(
+                            "No se pudo obtener el ID del pedido.");
+                    }
+
+
                     idPedido =
-                        Convert.ToInt32(
-                            cmd.ExecuteScalar());
+                        Convert.ToInt32(resultado);
                 }
 
 
                 // ====================================================
                 // 2. GENERAR CÓDIGO DEFINITIVO
                 //
-                // 1      -> P-000001
-                // 25     -> P-000025
-                // 100    -> P-000100
-                // 1250   -> P-001250
+                // 1     -> P-000001
+                // 25    -> P-000025
+                // 100   -> P-000100
+                // 1250  -> P-001250
                 // ====================================================
 
                 string codPedido =
@@ -211,7 +208,7 @@ namespace ApiProyecto1.Services.Pedidos
 
 
                 // ====================================================
-                // 3. ACTUALIZAR CÓDIGO DEFINITIVO
+                // 3. ACTUALIZAR CÓDIGO DEL PEDIDO
                 // ====================================================
 
                 string queryCodigo = @"
@@ -465,7 +462,7 @@ namespace ApiProyecto1.Services.Pedidos
 
 
                 // ====================================================
-                // 7. DEVOLVER ID DEL PEDIDO
+                // 7. DEVOLVER ID
                 // ====================================================
 
                 return idPedido;
@@ -474,7 +471,6 @@ namespace ApiProyecto1.Services.Pedidos
             {
                 // ====================================================
                 // SI ALGO FALLA:
-                //
                 // NO SE GUARDA NADA.
                 // ====================================================
 
