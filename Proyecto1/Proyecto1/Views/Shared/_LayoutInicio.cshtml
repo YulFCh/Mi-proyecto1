@@ -189,94 +189,335 @@
     </div>
 
     <div class="modal fade" id="modalCheckout" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content" style="border-radius: 12px;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" style="font-weight: bold;">Datos de Envío y Facturación</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+
+            <div class="modal-content checkout-modal-content">
+
+                <!-- ========================================= -->
+                <!-- HEADER -->
+                <!-- ========================================= -->
+
+                <div class="modal-header border-0 checkout-header">
+
+                    <h5 class="modal-title" style="font-weight: bold;">
+                        Datos de Envío y Facturación
+                    </h5>
+
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+
                         <span>&times;</span>
+
                     </button>
+
                 </div>
-                <form id="formCheckout" onsubmit="procesarCompra(event)">
-                    <div class="modal-body" style="padding-top: 0;">
-                        <p class="text-muted" style="font-size: 13px; margin-bottom: 20px;">Por favor, complete el siguiente formulario con tus datos reales para coordinar la entrega de tus productos.</p>
+
+
+                <!-- ========================================= -->
+                <!-- FORMULARIO -->
+                <!-- ========================================= -->
+
+                <form id="formCheckout"
+                      onsubmit="procesarCompra(event)"
+                      class="checkout-form">
+
+                    <!-- ===================================== -->
+                    <!-- CONTENIDO -->
+                    <!-- ===================================== -->
+
+                    <div class="modal-body checkout-body">
+
+                        <p class="text-muted"
+                           style="font-size: 13px; margin-bottom: 20px;">
+
+                            Por favor, complete el siguiente formulario
+                            con tus datos reales para coordinar la entrega
+                            de tus productos.
+
+                        </p>
+
+
+                        <!-- ================================ -->
+                        <!-- DATOS PERSONALES -->
+                        <!-- ================================ -->
 
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label style="font-weight: 600; font-size: 13px;">Nombres <span class="text-danger">*</span></label>
-                                <input type="text" id="chkNombres" class="form-control" required style="border-radius: 6px;">
-                            </div>
 
                             <div class="form-group col-md-6">
-                                <label style="font-weight: 600; font-size: 13px;">Apellidos <span class="text-danger">*</span></label>
-                                <input type="text" id="chkApellidos" class="form-control" required style="border-radius: 6px;">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Nombres
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="chkNombres"
+                                       class="form-control"
+                                       required
+                                       style="border-radius: 6px;">
+
                             </div>
+
+
+                            <div class="form-group col-md-6">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Apellidos
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="chkApellidos"
+                                       class="form-control"
+                                       required
+                                       style="border-radius: 6px;">
+
+                            </div>
+
                         </div>
 
+
+                        <!-- ================================ -->
+                        <!-- DNI / CELULAR -->
+                        <!-- ================================ -->
+
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label style="font-weight: 600; font-size: 13px;">DNI<span class="text-danger">*</span></label>
-                                <input type="text" id="chkDni" class="form-control" required maxlength="12" style="border-radius: 6px;">
-                            </div>
 
                             <div class="form-group col-md-6">
-                                <label style="font-weight: 600; font-size: 13px;">Número de Celular <span class="text-danger">*</span></label>
-                                <input type="tel" id="chkCelular" class="form-control" required style="border-radius: 6px;">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    DNI
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="chkDni"
+                                       class="form-control"
+                                       required
+                                       maxlength="12"
+                                       style="border-radius: 6px;">
+
                             </div>
+
+
+                            <div class="form-group col-md-6">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Número de Celular
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="tel"
+                                       id="chkCelular"
+                                       class="form-control"
+                                       required
+                                       style="border-radius: 6px;">
+
+                            </div>
+
                         </div>
 
+
+                        <!-- ================================ -->
+                        <!-- CORREO -->
+                        <!-- ================================ -->
+
                         <div class="row">
+
                             <div class="form-group col-12">
-                                <label style="font-weight: 600; font-size: 13px;">Correo Electrónico <span class="text-danger">*</span></label>
-                                <input type="email" id="chkCorreo" class="form-control" required style="border-radius: 6px;">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Correo Electrónico
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="email"
+                                       id="chkCorreo"
+                                       class="form-control"
+                                       required
+                                       style="border-radius: 6px;">
+
                             </div>
+
                         </div>
+
 
                         <hr style="border-style: dashed; margin: 15px 0;">
-                        <h6 style="font-weight: bold; margin-bottom: 15px; font-size: 14px; color: #555;">Dirección de Entrega</h6>
+
+
+                        <!-- ================================ -->
+                        <!-- DIRECCIÓN -->
+                        <!-- ================================ -->
+
+                        <h6 style="
+                        font-weight: bold;
+                        margin-bottom: 15px;
+                        font-size: 14px;
+                        color: #555;
+                    ">
+                            Dirección de Entrega
+                        </h6>
+
 
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                <label style="font-weight: 600; font-size: 13px;">Región <span class="text-danger">*</span></label>
-                                <select id="chkRegion" class="form-control" required style="border-radius: 6px;">
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
+
+                            <!-- REGIÓN -->
 
                             <div class="form-group col-md-4">
-                                <label style="font-weight: 600; font-size: 13px;">Provincia <span class="text-danger">*</span></label>
-                                <select id="chkProvincia" class="form-control" required disabled style="border-radius: 6px;">
-                                    <option value="">Seleccione...</option>
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Región
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select id="chkRegion"
+                                        class="form-control"
+                                        required
+                                        style="border-radius: 6px;">
+
+                                    <option value="">
+                                        Seleccione...
+                                    </option>
+
                                 </select>
+
                             </div>
 
+
+                            <!-- PROVINCIA -->
+
                             <div class="form-group col-md-4">
-                                <label style="font-weight: 600; font-size: 13px;">Distrito <span class="text-danger">*</span></label>
-                                <select id="chkDistrito" class="form-control" required disabled style="border-radius: 6px;">
-                                    <option value="">Seleccione...</option>
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Provincia
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select id="chkProvincia"
+                                        class="form-control"
+                                        required
+                                        disabled
+                                        style="border-radius: 6px;">
+
+                                    <option value="">
+                                        Seleccione...
+                                    </option>
+
                                 </select>
+
                             </div>
+
+
+                            <!-- DISTRITO -->
+
+                            <div class="form-group col-md-4">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Distrito
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select id="chkDistrito"
+                                        class="form-control"
+                                        required
+                                        disabled
+                                        style="border-radius: 6px;">
+
+                                    <option value="">
+                                        Seleccione...
+                                    </option>
+
+                                </select>
+
+                            </div>
+
                         </div>
 
+
+                        <!-- ================================ -->
+                        <!-- DIRECCIÓN -->
+                        <!-- ================================ -->
+
                         <div class="row">
+
                             <div class="form-group col-12">
-                                <label style="font-weight: 600; font-size: 13px;">Dirección de Domicilio <span class="text-danger">*</span></label>
-                                <input type="text" id="chkDireccion" class="form-control" placeholder="Av. Principal 123 - Dpto 401" required style="border-radius: 6px;">
+
+                                <label style="font-weight: 600; font-size: 13px;">
+                                    Dirección de Domicilio
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="chkDireccion"
+                                       class="form-control"
+                                       placeholder="Av. Principal 123 - Dpto 401"
+                                       required
+                                       style="border-radius: 6px;">
+
                             </div>
+
                         </div>
 
-                        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; color: #555; font-weight: bold;">Monto Final a Pagar:</span>
-                            <strong id="chkMontoFinal" style="font-size: 16px; color: #28a745;">S/. 0.00</strong>
+
+                        <!-- ================================ -->
+                        <!-- TOTAL -->
+                        <!-- ================================ -->
+
+                        <div class="checkout-total">
+
+                            <span>
+                                Monto Final a Pagar:
+                            </span>
+
+                            <strong id="chkMontoFinal">
+                                S/. 0.00
+                            </strong>
+
                         </div>
+
                     </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 6px;">Cancelar</button>
-                        <button type="submit" class="btn btn-success" style="border-radius: 6px; font-weight: bold; padding-left: 25px; padding-right: 25px;">Finalizar Pedido</button>
+
+
+                    <!-- ===================================== -->
+                    <!-- FOOTER -->
+                    <!-- ===================================== -->
+
+                    <div class="modal-footer border-0 checkout-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                                style="border-radius: 6px;">
+
+                            Cancelar
+
+                        </button>
+
+
+                        <button type="submit"
+                                class="btn btn-success"
+                                style="
+                                border-radius: 6px;
+                                font-weight: bold;
+                                padding-left: 25px;
+                                padding-right: 25px;
+                            ">
+
+                            Finalizar Pedido
+
+                        </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
 
     

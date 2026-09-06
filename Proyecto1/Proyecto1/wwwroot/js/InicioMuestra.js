@@ -2679,28 +2679,171 @@ function cambiarCantidadHTML(id, delta) {
     }
 }
 
-function agregarAlCarritoDirecto(id, nombre, precio, urlsArray, cantidadAAgregar = 1) {
-    const imagenesValidas = urlsArray.filter(url => url && url.trim() !== '');
-    const existe = carrito.find(prod => prod.id === id);
+function agregarAlCarritoDirecto(
+    id,
+    nombre,
+    precio,
+    urlsArray,
+    cantidadAAgregar = 1
+) {
+    const imagenesValidas =
+        Array.isArray(urlsArray)
+            ? urlsArray.filter(url => url && url.trim() !== '')
+            : [];
 
-    if (existe) {
-        existe.cantidad += cantidadAAgregar;
-        if (!existe.imagenes || existe.imagenes.length === 0) {
-            existe.imagenes = imagenesValidas;
+    // =====================================================
+    // BUSCAR LA VARIANTE COMPLETA
+    // =====================================================
+
+    let varianteEncontrada = null;
+    let productoEncontrado = null;
+
+    if (window.productosAgrupados) {
+
+        for (const producto of window.productosAgrupados) {
+
+            const variantes =
+                producto.variantes ||
+                producto.Variantes ||
+                [];
+
+            const variante =
+                variantes.find(v => v.id === id);
+
+            if (variante) {
+
+                varianteEncontrada = variante;
+                productoEncontrado = producto;
+
+                break;
+            }
         }
-    } else {
-        carrito.push({
-            id: id,
-            nombre: nombre,
-            precio: parseFloat(precio),
-            cantidad: cantidadAAgregar,
-            imagenes: imagenesValidas
-        });
     }
 
+    // =====================================================
+    // DATOS DE LA VARIANTE
+    // =====================================================
+
+    const datosProducto = {
+
+        id: id,
+
+        nombre: nombre,
+
+        precio:
+            parseFloat(
+                varianteEncontrada?.precio ?? precio
+            ) || 0,
+
+        cantidad: cantidadAAgregar,
+
+        imagenes: imagenesValidas,
+
+        // ================================================
+        // DATOS NECESARIOS PARA detalle_pedidos
+        // ================================================
+
+        codigoProducto:
+            varianteEncontrada?.codigo_Producto ||
+            productoEncontrado?.codigo_Producto ||
+            null,
+
+        tipoEquipo:
+            productoEncontrado?.tipo_Equipo ||
+            varianteEncontrada?.tipo_Equipo ||
+            null,
+
+        marca:
+            productoEncontrado?.marca ||
+            varianteEncontrada?.marca ||
+            null,
+
+        modelo:
+            productoEncontrado?.modelo ||
+            varianteEncontrada?.modelo ||
+            null,
+
+        color:
+            varianteEncontrada?.color ||
+            null,
+
+        descripcion:
+            varianteEncontrada?.descripcion ||
+            null,
+
+        descuento:
+            parseFloat(
+                varianteEncontrada?.descuento ?? 0
+            ) || 0
+    };
+
+
+    // =====================================================
+    // VERIFICAR SI YA EXISTE
+    // =====================================================
+
+    const existe =
+        carrito.find(prod => prod.id === id);
+
+
+    if (existe) {
+
+        existe.cantidad += cantidadAAgregar;
+
+        // Actualizar información por seguridad
+
+        existe.precio =
+            datosProducto.precio;
+
+        existe.codigoProducto =
+            datosProducto.codigoProducto;
+
+        existe.tipoEquipo =
+            datosProducto.tipoEquipo;
+
+        existe.marca =
+            datosProducto.marca;
+
+        existe.modelo =
+            datosProducto.modelo;
+
+        existe.color =
+            datosProducto.color;
+
+        existe.descripcion =
+            datosProducto.descripcion;
+
+        existe.descuento =
+            datosProducto.descuento;
+
+
+        if (
+            (!existe.imagenes ||
+                existe.imagenes.length === 0) &&
+            imagenesValidas.length > 0
+        ) {
+            existe.imagenes =
+                imagenesValidas;
+        }
+
+    } else {
+
+        carrito.push(datosProducto);
+    }
+
+
+    // =====================================================
+    // GUARDAR
+    // =====================================================
+
     guardarYActualizarCarrito();
-    mostrarToast("¡Producto añadido al carrito!", "#007bff");
+
+    mostrarToast(
+        "¡Producto añadido al carrito!",
+        "#007bff"
+    );
 }
+
 
 function agregarAlCarrito(id, nombre, precio) {
     agregarAlCarritoDirecto(id, nombre, precio, [], 1);
@@ -3093,43 +3236,423 @@ function abrirCheckout() {
 }
 
 // Acción al enviar el formulario del checkout
-function procesarCompra(event) {
-    event.preventDefault(); // Evita que recargue la página
+async function procesarCompra(event) {
 
-    // Capturar datos del cliente
-    const datosCliente = {
-        nombres: document.getElementById("chkNombres").value,
-        apellidos: document.getElementById("chkApellidos").value,
-        dni: document.getElementById("chkDni").value,
-        celular: document.getElementById("chkCelular").value,
-        correo: document.getElementById("chkCorreo").value,
-        region: document.getElementById("chkRegion").value,
-        provincia: document.getElementById("chkProvincia").value,
-        distrito: document.getElementById("chkDistrito").value,
-        direccion: document.getElementById("chkDireccion").value
-    };
+    event.preventDefault();
 
-    // Resumen de productos comprados
-    const resumenPedido = {
-        cliente: datosCliente,
-        productos: carrito,
-        total_pagado: carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
-    };
+    // =====================================================
+    // 1. VALIDAR CARRITO
+    // =====================================================
+
+    if (!Array.isArray(carrito) || carrito.length === 0) {
+
+        mostrarToast(
+            "No se puede registrar el pedido porque el carrito está vacío.",
+            "#ff4d4d"
+        );
+
+        return;
+    }
 
 
-    // TODO: Aquí puedes hacer un fetch() a tu API de Render para guardar el pedido en tu base de datos si cuentas con un endpoint.
+    // =====================================================
+    // 2. VALIDAR FORMULARIO
+    // =====================================================
 
-    // Simulación de éxito
-    mostrarToast("¡Compra registrada con éxito!", "#28a745");
+    const formulario =
+        document.getElementById("formCheckout");
 
-    // Limpiamos el carrito del sistema
-    carrito = [];
-    guardarYActualizarCarrito();
+    if (!formulario) {
 
-    // Resetear formulario y cerrar modal
-    document.getElementById("formCheckout").reset();
-    $('#modalCheckout').modal('hide');
+        mostrarToast(
+            "No se encontró el formulario de pedido.",
+            "#ff4d4d"
+        );
+
+        return;
+    }
+
+
+    if (!formulario.checkValidity()) {
+
+        formulario.reportValidity();
+
+        return;
+    }
+
+
+    // =====================================================
+    // 3. EVITAR DOBLE ENVÍO
+    // =====================================================
+
+    const botonEnviar =
+        formulario.querySelector('button[type="submit"]');
+
+    if (botonEnviar) {
+
+        if (botonEnviar.dataset.procesando === "true") {
+            return;
+        }
+
+        botonEnviar.dataset.procesando = "true";
+
+        botonEnviar.disabled = true;
+
+        botonEnviar.innerText = "Registrando pedido...";
+    }
+
+
+    try {
+
+        // =================================================
+        // 4. DATOS DEL CLIENTE
+        // =================================================
+
+        const datosCliente = {
+
+            nombres:
+                document.getElementById("chkNombres").value.trim(),
+
+            apellidos:
+                document.getElementById("chkApellidos").value.trim(),
+
+            dni:
+                document.getElementById("chkDni").value.trim(),
+
+            celular:
+                document.getElementById("chkCelular").value.trim(),
+
+            correo:
+                document.getElementById("chkCorreo").value.trim(),
+
+            region:
+                document.getElementById("chkRegion").value.trim(),
+
+            provincia:
+                document.getElementById("chkProvincia").value.trim(),
+
+            distrito:
+                document.getElementById("chkDistrito").value.trim(),
+
+            direccion:
+                document.getElementById("chkDireccion").value.trim()
+        };
+
+
+        // =================================================
+        // 5. CONSTRUIR DETALLES DEL PEDIDO
+        // =================================================
+
+        const detalles = carrito.map(item => {
+
+            const cantidad =
+                parseInt(item.cantidad) || 0;
+
+            const precioUnitario =
+                parseFloat(item.precio) || 0;
+
+            const descuento =
+                parseFloat(item.descuento) || 0;
+
+            if (cantidad <= 0) {
+
+                throw new Error(
+                    `Cantidad inválida para el producto: ${item.nombre}`
+                );
+            }
+
+            if (precioUnitario < 0) {
+
+                throw new Error(
+                    `Precio inválido para el producto: ${item.nombre}`
+                );
+            }
+
+            if (descuento < 0) {
+
+                throw new Error(
+                    `Descuento inválido para el producto: ${item.nombre}`
+                );
+            }
+
+
+            // El backend volverá a calcular este valor.
+            // Aquí solamente lo enviamos como referencia.
+
+            const subtotal =
+                (cantidad * precioUnitario) - descuento;
+
+
+            if (subtotal < 0) {
+
+                throw new Error(
+                    `El subtotal no puede ser negativo: ${item.nombre}`
+                );
+            }
+
+
+            return {
+
+                id_Producto:
+                    parseInt(item.id) || 0,
+
+                codigo_Producto:
+                    item.codigoProducto || null,
+
+                tipo_Equipo:
+                    item.tipoEquipo || null,
+
+                marca:
+                    item.marca || null,
+
+                modelo:
+                    item.modelo || null,
+
+                color:
+                    item.color || null,
+
+                descripcion:
+                    item.descripcion || null,
+
+                cantidad:
+                    cantidad,
+
+                precio_Unitario:
+                    precioUnitario,
+
+                descuento:
+                    descuento,
+
+                subtotal:
+                    subtotal
+            };
+        });
+
+
+        // =================================================
+        // 6. CALCULAR TOTAL
+        // =================================================
+
+        const totalPedido =
+            detalles.reduce(
+                (total, detalle) =>
+                    total + detalle.subtotal,
+                0
+            );
+
+
+        // =================================================
+        // 7. CONSTRUIR PEDIDOSMODEL
+        // =================================================
+
+        const pedido = {
+
+            id_Pedido: 0,
+
+            cod_Pedido: null,
+
+            nombres_Pedido:
+                datosCliente.nombres,
+
+            apellidos_Pedido:
+                datosCliente.apellidos,
+
+            dni_Pedido:
+                datosCliente.dni,
+
+            celular_Pedido:
+                datosCliente.celular,
+
+            correo_Pedido:
+                datosCliente.correo,
+
+            region_Pedido:
+                datosCliente.region,
+
+            provincia_Pedido:
+                datosCliente.provincia,
+
+            distrito_Pedido:
+                datosCliente.distrito,
+
+            direccion_Pedido:
+                datosCliente.direccion,
+
+            total_Pedido:
+                totalPedido,
+
+            estado_Pedido:
+                "PENDIENTE",
+
+            estado_Pago_Pedido:
+                "PENDIENTE",
+
+            ticket_Pedido:
+                null,
+
+            usuario_Registra:
+                null,
+
+            detalles:
+                detalles
+        };
+
+
+        console.log(
+            "Pedido que se enviará a la API:",
+            pedido
+        );
+
+
+        // =================================================
+        // 8. ENVIAR A LA API DE RENDER
+        // =================================================
+
+        const response = await fetch(
+            "https://mi-proyecto1-2.onrender.com/api/Pedidos",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(pedido)
+            }
+        );
+
+
+        // =================================================
+        // 9. LEER RESPUESTA
+        // =================================================
+
+        let resultado = null;
+
+        try {
+
+            resultado = await response.json();
+
+        } catch {
+
+            resultado = null;
+        }
+
+
+        console.log(
+            "Respuesta API pedidos:",
+            response.status,
+            resultado
+        );
+
+
+        // =================================================
+        // 10. NUNCA CONSIDERAR 404/400/500 COMO ÉXITO
+        // =================================================
+
+        if (!response.ok) {
+
+            const mensajeAPI =
+                resultado?.message ||
+                `No se pudo registrar el pedido. Código HTTP: ${response.status}`;
+
+            throw new Error(mensajeAPI);
+        }
+
+
+        // =================================================
+        // 11. VALIDAR RESPUESTA DEL BACKEND
+        // =================================================
+
+        if (!resultado || resultado.success !== true) {
+
+            throw new Error(
+                resultado?.message ||
+                "La API no confirmó el registro del pedido."
+            );
+        }
+
+
+        // =================================================
+        // 12. AQUÍ SÍ EL PEDIDO FUE REGISTRADO
+        // =================================================
+
+        console.log(
+            "Pedido registrado correctamente:",
+            resultado
+        );
+
+
+        mostrarToast(
+            `¡Pedido ${resultado.cod_pedido || ""} registrado correctamente!`,
+            "#28a745"
+        );
+
+
+        // =================================================
+        // 13. SOLO AHORA VACIAR EL CARRITO
+        // =================================================
+
+        carrito = [];
+
+        guardarYActualizarCarrito();
+
+
+        // =================================================
+        // 14. LIMPIAR FORMULARIO
+        // =================================================
+
+        formulario.reset();
+
+
+        // =================================================
+        // 15. CERRAR CHECKOUT
+        // =================================================
+
+        $('#modalCheckout').modal('hide');
+
+
+    } catch (error) {
+
+        // =================================================
+        // ERROR
+        // =================================================
+
+        console.error(
+            "Error al registrar pedido:",
+            error
+        );
+
+
+        // IMPORTANTE:
+        // NO SE VACÍA EL CARRITO.
+        // NO SE MUESTRA MENSAJE DE ÉXITO.
+
+        mostrarToast(
+            error.message ||
+            "No se pudo registrar el pedido. Inténtelo nuevamente.",
+            "#ff4d4d"
+        );
+
+
+    } finally {
+
+        // =================================================
+        // RESTAURAR BOTÓN
+        // =================================================
+
+        if (botonEnviar) {
+
+            botonEnviar.dataset.procesando = "false";
+
+            botonEnviar.disabled = false;
+
+            botonEnviar.innerText =
+                "Finalizar Pedido";
+        }
+    }
 }
+
+
 
 
 
