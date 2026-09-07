@@ -67,6 +67,37 @@
                     </li>
 
                     <!-- Inicio de función que trae esta página solo para el rol Administrador-->
+                    <!-- ============================================================
+                    GESTIÓN DE VENTAS
+                    ============================================================ -->
+
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-shopping-cart"></i>
+                            </span>
+
+                            <span class="pcoded-mtext">
+                                Gestión de ventas
+                            </span>
+                        </a>
+
+                        <ul class="pcoded-submenu">
+
+                            <!-- PEDIDOS -->
+                            <li>
+                                <a asp-controller="Pedidos"
+                                   asp-action="Index"
+                                   class="nav-link">
+                                    <span class="pcoded-mtext">
+                                        Pedidos
+                                    </span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
                      
                     <!-- Fin de función que trae esta página solo para el rol Administrador-->
 
