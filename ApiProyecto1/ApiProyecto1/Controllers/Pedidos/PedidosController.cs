@@ -9,10 +9,19 @@ namespace ApiProyecto1.Controllers.Pedidos
     public class PedidosController : ControllerBase
     {
         private readonly PedidosService _pedidosService;
+        private readonly TicketService _ticketService;
 
-        public PedidosController(PedidosService pedidosService)
+
+        // ============================================================
+        // CONSTRUCTOR
+        // ============================================================
+
+        public PedidosController(
+            PedidosService pedidosService,
+            TicketService ticketService)
         {
             _pedidosService = pedidosService;
+            _ticketService = ticketService;
         }
 
 
@@ -22,13 +31,18 @@ namespace ApiProyecto1.Controllers.Pedidos
         // ============================================================
 
         [HttpPost]
-        public IActionResult Registrar([FromBody] PedidosModel model)
+        public IActionResult Registrar(
+            [FromBody] PedidosModel model)
         {
             try
             {
-                int idPedido = _pedidosService.Registrar(model);
+                int idPedido =
+                    _pedidosService.Registrar(model);
 
-                string codPedido = $"P-{idPedido:D4}";
+
+                string codPedido =
+                    $"P-{idPedido:D6}";
+
 
                 return Ok(new
                 {
@@ -47,6 +61,36 @@ namespace ApiProyecto1.Controllers.Pedidos
                 });
             }
         }
+
+
+        // ============================================================
+        // CONSULTAR TICKET
+        // GET: api/Pedidos/125/ticket
+        // ============================================================
+
+        [HttpGet("{idPedido}/ticket")]
+        public IActionResult ObtenerTicket(int idPedido)
+        {
+            try
+            {
+                TicketModel ticket =
+                    _ticketService.ObtenerTicket(idPedido);
+
+
+                return Ok(new
+                {
+                    success = true,
+                    data = ticket
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
     }
 }
-
