@@ -1,0 +1,664 @@
+﻿.pedidos-card {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+    .pedidos-card .card-header {
+        background-color: #212529 !important;
+        color: #ffffff !important;
+        border-bottom: none !important;
+        padding: 12px 15px !important;
+    }
+
+        .pedidos-card .card-header h5 {
+            margin: 0;
+            color: #ffffff !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+    .pedidos-card .card-body {
+        background-color: #ffffff;
+        padding: 18px !important;
+    }
+
+    .pedidos-card .form-label {
+        font-weight: 500;
+        color: #495057;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .pedidos-card #buscarNombre,
+    .pedidos-card #buscarDni,
+    .pedidos-card #buscarCodigo {
+        height: 36px;
+        min-height: 36px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        color: #212529;
+        padding: 6px 12px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+        .pedidos-card #buscarNombre::placeholder,
+        .pedidos-card #buscarDni::placeholder,
+        .pedidos-card #buscarCodigo::placeholder {
+            color: #adb5bd;
+            font-size: 13px;
+        }
+
+        .pedidos-card #buscarNombre:focus,
+        .pedidos-card #buscarDni:focus,
+        .pedidos-card #buscarCodigo:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.20);
+            outline: none;
+        }
+
+    .pedidos-card #btnBuscarPedidos,
+    .pedidos-card #btnLimpiarPedidos {
+        height: 36px;
+        padding: 6px 15px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .pedidos-card #btnBuscarPedidos {
+        background-color: #4a90e2;
+        border-color: #4a90e2;
+        color: #ffffff;
+    }
+
+        .pedidos-card #btnBuscarPedidos:hover {
+            background-color: #357abd;
+            border-color: #357abd;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(74, 144, 226, 0.20);
+        }
+
+        .pedidos-card #btnBuscarPedidos:focus {
+            background-color: #357abd;
+            border-color: #357abd;
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.20);
+            outline: none;
+        }
+
+    .pedidos-card #btnLimpiarPedidos {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+        color: #495057;
+        margin-left: 5px;
+    }
+
+        .pedidos-card #btnLimpiarPedidos:hover {
+            background-color: #dee2e6;
+            border-color: #adb5bd;
+            color: #343a40;
+            transform: translateY(-1px);
+        }
+
+        .pedidos-card #btnLimpiarPedidos:focus {
+            background-color: #dee2e6;
+            border-color: #adb5bd;
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.15);
+            outline: none;
+        }
+
+.pedidos-tabla-wrapper {
+    width: 100%;
+    margin-top: 15px;
+}
+
+    .pedidos-tabla-wrapper .contenedor-tabla-scroll {
+        width: 100%;
+        max-height: 25.5rem;
+        overflow-y: auto;
+        overflow-x: auto;
+        position: relative;
+        scrollbar-gutter: stable;
+    }
+
+        .pedidos-tabla-wrapper .contenedor-tabla-scroll::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        .pedidos-tabla-wrapper .contenedor-tabla-scroll::-webkit-scrollbar-track {
+            background: #f1f3f5;
+        }
+
+        .pedidos-tabla-wrapper .contenedor-tabla-scroll::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 10px;
+        }
+
+            .pedidos-tabla-wrapper .contenedor-tabla-scroll::-webkit-scrollbar-thumb:hover {
+                background: #868e96;
+            }
+
+#tablaPedidos {
+    width: 100%;
+    min-width: 1100px;
+    font-size: 13px;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+    #tablaPedidos th,
+    #tablaPedidos td {
+        padding: 6px 8px !important;
+        vertical-align: middle;
+        border: 1px solid #dee2e6 !important;
+    }
+
+    #tablaPedidos thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: #212529 !important;
+        color: #ffffff !important;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        padding: 8px 7px !important;
+        box-shadow: inset 0 -1px 0 #dee2e6;
+    }
+
+    #tablaPedidos tbody td {
+        color: #212529;
+        font-size: 13px;
+        background-color: #ffffff;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #tablaPedidos tbody tr:hover td {
+        background-color: #f8f9fa !important;
+    }
+
+    #tablaPedidos tbody td.text-end {
+        text-align: right !important;
+    }
+
+    #tablaPedidos tbody td.text-center {
+        text-align: center !important;
+    }
+
+    #tablaPedidos th:first-child,
+    #tablaPedidos td:first-child {
+        width: 85px;
+        min-width: 85px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+.btn-detalle-pedido {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #4a90e2;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .btn-detalle-pedido:hover {
+        background-color: #eaf3ff;
+        border-color: #4a90e2;
+        color: #357abd;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(74, 144, 226, 0.18);
+    }
+
+    .btn-detalle-pedido:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.20);
+    }
+
+    .btn-detalle-pedido i {
+        font-size: 14px;
+        color: inherit;
+    }
+
+#tablaPedidos .badge {
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+#tablaPedidos .text-center {
+    padding: 15px !important;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+
+    .pedidos-card .card-body {
+        padding: 12px !important;
+    }
+
+    .pedidos-card #buscarNombre,
+    .pedidos-card #buscarDni,
+    .pedidos-card #buscarCodigo {
+        margin-bottom: 8px;
+    }
+
+    .pedidos-card #btnBuscarPedidos,
+    .pedidos-card #btnLimpiarPedidos {
+        margin-top: 5px;
+    }
+
+    #tablaPedidos {
+        min-width: 1100px;
+    }
+
+        #tablaPedidos thead th {
+            font-size: 11px;
+        }
+
+        #tablaPedidos tbody td {
+            font-size: 12px;
+        }
+}
+
+
+/* =========================================================
+   MODAL DETALLE DE PEDIDO
+   ========================================================= */
+
+/* =========================================================
+   CONTENEDOR MODAL
+   ========================================================= */
+
+#modalDetallePedido .modal-dialog {
+    max-width: 1200px;
+}
+
+#modalDetallePedido .modal-content {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================================
+   HEADER MODAL
+   ========================================================= */
+
+#modalDetallePedido .modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 50px 10px 15px !important;
+    background-color: #212529 !important;
+    border-bottom: none !important;
+    color: #ffffff !important;
+}
+
+
+#modalDetallePedido .modal-title {
+    width: 100%;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+
+/* =========================================================
+   BOTÓN CERRAR
+   ========================================================= */
+
+#modalDetallePedido .modal-header .close {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: 6px !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+
+    #modalDetallePedido .modal-header .close:hover {
+        background-color: rgba(255, 255, 255, 0.18) !important;
+        border-color: rgba(255, 255, 255, 0.55) !important;
+        color: #ffffff !important;
+        transform: translateY(-1px);
+    }
+
+
+    #modalDetallePedido .modal-header .close:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 0.15rem rgba(255, 255, 255, 0.15) !important;
+    }
+
+
+    #modalDetallePedido .modal-header .close span {
+        font-size: 21px !important;
+        font-weight: 400 !important;
+        line-height: 1;
+    }
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+#modalDetallePedido .modal-body {
+    background-color: #ffffff;
+    padding: 18px !important;
+}
+
+
+/* =========================================================
+   INFORMACIÓN DEL PEDIDO
+   ========================================================= */
+
+#modalDetallePedido #informacionPedido {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+    #modalDetallePedido #informacionPedido strong {
+        color: #343a40;
+        font-weight: 600;
+    }
+
+
+/* =========================================================
+   CONTENEDOR TABLA
+   ========================================================= */
+
+#modalDetallePedido .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 12px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-gutter: stable;
+}
+
+
+    /* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar-track {
+        background: #f1f3f5;
+        border-radius: 10px;
+    }
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 10px;
+    }
+
+        #modalDetallePedido .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #868e96;
+        }
+
+
+/* =========================================================
+   TABLA DETALLE
+   ========================================================= */
+
+#modalDetallePedido .table {
+    width: 100% !important;
+    min-width: 950px;
+    margin-bottom: 0 !important;
+    font-size: 13px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+
+    /* =========================================================
+   CELDAS
+   ========================================================= */
+
+    #modalDetallePedido .table th,
+    #modalDetallePedido .table td {
+        padding: 7px 8px !important;
+        vertical-align: middle !important;
+        border: 1px solid #dee2e6 !important;
+    }
+
+
+    /* =========================================================
+   ENCABEZADO TABLA
+   ========================================================= */
+
+    #modalDetallePedido .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: #212529 !important;
+        color: #ffffff !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        padding: 8px 7px !important;
+        border-color: #343a40 !important;
+        box-shadow: inset 0 -1px 0 #495057;
+    }
+
+
+    /* =========================================================
+   CUERPO TABLA
+   ========================================================= */
+
+    #modalDetallePedido .table tbody td {
+        background-color: #ffffff;
+        color: #212529;
+        font-size: 13px !important;
+        white-space: nowrap;
+        vertical-align: middle !important;
+    }
+
+
+    /* =========================================================
+   HOVER
+   ========================================================= */
+
+    #modalDetallePedido .table tbody tr:hover td {
+        background-color: #f8f9fa !important;
+    }
+
+
+    /* =========================================================
+   ALINEACIÓN
+   ========================================================= */
+
+    #modalDetallePedido .table tbody td.text-center {
+        text-align: center !important;
+    }
+
+    #modalDetallePedido .table tbody td.text-end {
+        text-align: right !important;
+    }
+
+
+/* =========================================================
+   MENSAJE SIN DATOS
+   ========================================================= */
+
+#modalDetallePedido #tablaDetallePedido .text-center {
+    padding: 15px !important;
+    color: #6c757d !important;
+    font-size: 13px !important;
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+#modalDetallePedido .modal-body > .d-flex {
+    margin-top: 14px !important;
+    padding-top: 10px;
+    border-top: 1px solid #dee2e6;
+}
+
+
+    #modalDetallePedido .modal-body > .d-flex strong {
+        color: #495057;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+
+#modalDetallePedido #totalDetallePedido {
+    display: inline-block;
+    min-width: 120px;
+    margin-left: 8px;
+    padding: 6px 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #212529;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+#modalDetallePedido .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px 15px !important;
+    background-color: #f1f3f5 !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+
+
+    /* =========================================================
+   BOTÓN CERRAR
+   ========================================================= */
+
+    #modalDetallePedido .modal-footer .btn-secondary {
+        height: 34px;
+        padding: 6px 15px !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 6px !important;
+        background-color: #e9ecef !important;
+        color: #495057 !important;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: none !important;
+        transition: all 0.2s ease;
+    }
+
+
+        #modalDetallePedido .modal-footer .btn-secondary:hover {
+            background-color: #dee2e6 !important;
+            border-color: #adb5bd !important;
+            color: #343a40 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+        }
+
+
+        #modalDetallePedido .modal-footer .btn-secondary:focus {
+            background-color: #dee2e6 !important;
+            border-color: #adb5bd !important;
+            outline: none !important;
+            box-shadow: 0 0 0 0.15rem rgba(108, 117, 125, 0.15) !important;
+        }
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    #modalDetallePedido .modal-dialog {
+        margin: 8px !important;
+    }
+
+    #modalDetallePedido .modal-body {
+        padding: 12px !important;
+    }
+
+    #modalDetallePedido .modal-title {
+        font-size: 13px !important;
+    }
+
+    #modalDetallePedido .table {
+        min-width: 950px;
+    }
+
+        #modalDetallePedido .table thead th {
+            font-size: 11px !important;
+            padding: 7px 6px !important;
+        }
+
+        #modalDetallePedido .table tbody td {
+            font-size: 12px !important;
+            padding: 6px !important;
+        }
+}

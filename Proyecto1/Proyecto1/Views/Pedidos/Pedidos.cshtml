@@ -1,13 +1,14 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutNavegador.cshtml";
-
     ViewData["Title"] = "Pedidos";
 }
+
+<link rel="stylesheet" href="~/css/Pedidos.css" />
 
 <div class="row">
     <div class="col-sm-12">
 
-        <div class="card">
+        <div class="card pedidos-card">
 
             <div class="card-header">
                 <h5>
@@ -17,38 +18,105 @@
 
             <div class="card-body">
 
-                <div class="table-responsive">
+                <div class="row mb-3">
 
-                    <table class="table table-hover">
+                    <div class="col-md-4">
 
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Código</th>
-                                <th>Cliente</th>
-                                <th>DNI</th>
-                                <th>Celular</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Pago</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
+                        <label class="form-label">
+                            Nombre
+                        </label>
 
-                        <tbody>
+                        <input type="text"
+                               id="buscarNombre"
+                               class="form-control"
+                               placeholder="Buscar por nombre..." />
 
-                            <tr>
-                                <td colspan="10" class="text-center">
-                                    No existen pedidos registrados.
-                                </td>
-                            </tr>
+                    </div>
 
-                        </tbody>
+                    <div class="col-md-4">
 
-                    </table>
+                        <label class="form-label">
+                            DNI
+                        </label>
+
+                        <input type="text"
+                               id="buscarDni"
+                               class="form-control"
+                               placeholder="Buscar por DNI..." />
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Código de pedido
+                        </label>
+
+                        <input type="text"
+                               id="buscarCodigo"
+                               class="form-control"
+                               placeholder="Buscar por código..." />
+
+                    </div>
 
                 </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+
+                        <button type="button"
+                                id="btnBuscarPedidos"
+                                class="btn btn-primary">
+                            <i class="fa-solid fa-magnifying-glass me-2"></i> Buscar
+                        </button>
+
+                        <button type="button"
+                                id="btnLimpiarPedidos"
+                                class="btn btn-secondary">
+                            <i class="fa-solid fa-rotate-right me-2"></i> Limpiar
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="pedidos-tabla-wrapper">
+
+                    <div class="contenedor-tabla-scroll">
+
+                        <table class="table table-bordered table-sm table-hover"
+                               id="tablaPedidos">
+                            <thead>
+                                <tr>
+                                    <th>Acciones</th>
+                                    <th>N°</th>
+                                    <th>Cód. pedido</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>DNI</th>
+                                    <th>Celular</th>
+                                    <th>Adelanto</th>
+                                    <th>Total a pagar</th>
+                                    <th>Estado pedido</th>
+                                    <th>Estado Pago</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tbodyPedidos">
+
+                                <tr>
+                                    <td colspan="11" class="text-center">
+                                        Cargando pedidos...
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
 
             </div>
 
@@ -56,3 +124,93 @@
 
     </div>
 </div>
+
+<div class="modal fade"
+     id="modalDetallePedido"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="modalDetallePedidoLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div class="d-flex align-items-center">
+                    <div class="modal-icon-wrapper me-3">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <h5 class="modal-title" id="modalDetallePedidoLabel">
+                        Detalle del pedido
+                    </h5>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Contenedor de información general del pedido (Cabecera limpia) -->
+                <div id="informacionPedido" class="pedido-info-box mb-4">
+                    <!-- Aquí se inyecta dinámicamente la info del cliente/pedido mediante JS -->
+                </div>
+
+                <div class="table-responsive pedidos-tabla-wrapper">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Color</th>
+                                <th>Cantidad</th>
+                                <th>Precio unitario</th>
+                                <th>Descuento</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDetallePedido">
+                            <tr>
+                                <td colspan="10" class="text-center py-4 text-muted">
+                                    <i class="fa-solid fa-basket-shopping fa-2x mb-2 d-block opacity-50"></i>
+                                    Selecciona un pedido para ver el detalle.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Total estilizado con diseño moderno -->
+                <div class="pedido-total-card d-flex justify-content-between align-items-center mt-4">
+                    <span class="text-muted font-weight-medium">Resumen financiero</span>
+                    <div class="d-flex align-items-center">
+                        <span class="total-label me-2">Total a pagar:</span>
+                        <span id="totalDetallePedido" class="total-amount">
+                            S/ 0.00
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1"></i> Cerrar
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/js/pedidos.js"></script>

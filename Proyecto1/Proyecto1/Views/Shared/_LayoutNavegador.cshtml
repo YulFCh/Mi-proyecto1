@@ -62,9 +62,22 @@
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
-                        <a href="" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Inicio</span></a>
+                    <li class="nav-item">
+                        <a asp-controller="Inicio"
+                           asp-action="Index"
+                           class="nav-link">
+
+                            <span class="pcoded-micon">
+                                <i class="feather icon-home"></i>
+                            </span>
+
+                            <span class="pcoded-mtext">
+                                Inicio
+                            </span>
+
+                        </a>
                     </li>
+
 
                     <!-- Inicio de función que trae esta página solo para el rol Administrador-->
                     <!-- ============================================================
