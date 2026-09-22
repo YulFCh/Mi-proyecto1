@@ -29,6 +29,8 @@ builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
 builder.Services.AddScoped<EditarEquiposService>();
 builder.Services.AddScoped<PedidosService>();
+builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<VerPedidosService>();
 
 
 var app = builder.Build();

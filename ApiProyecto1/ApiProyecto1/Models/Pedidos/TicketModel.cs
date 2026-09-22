@@ -39,6 +39,8 @@
         public string? Usuario_Registra { get; set; }
 
         public string? Estado_Pago_Pedido { get; set; }
+        public decimal Adelanto_Pedido { get; set; }
+
 
 
         // ============================================================
