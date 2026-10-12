@@ -94,7 +94,67 @@ document.addEventListener("DOMContentLoaded", function () {
         editarDescuentoInput.addEventListener("input", calcularPrecioActualEditar);
     }
 
-    cargarProductos();
+
+    cargarProductos().then(() => {
+
+        const coincidencia = window.location.pathname.match(
+            /^\/Producto\/Detalle\/(\d+)(?:\/([^/]+))?\/?$/
+        );
+
+        const parametros = new URLSearchParams(window.location.search);
+
+        const idURL = coincidencia
+            ? parseInt(coincidencia[1], 10)
+            : parseInt(parametros.get("productoId"), 10);
+
+        const slugURL = coincidencia?.[2] || "";
+
+        if (!Number.isInteger(idURL) || idURL <= 0) {
+            return;
+        }
+
+        // Buscar el producto principal o una de sus variantes
+        const producto = window.productosAgrupados?.find(p => {
+            const variantes = p.variantes || p.Variantes || [];
+
+            return Number(p.id) === idURL ||
+                variantes.some(v => Number(v.id) === idURL);
+        });
+
+        if (!producto) {
+            console.error("No se encontró el producto o variante:", idURL);
+            return;
+        }
+
+        const variantes = producto.variantes || producto.Variantes || [];
+
+        // Primero identificar la variante por el ID de la URL
+        let varianteIndex = variantes.findIndex(
+            v => Number(v.id) === idURL
+        );
+
+        // Si no coincide el ID, intentar identificarla por el slug
+        if (varianteIndex === -1 && slugURL) {
+            varianteIndex = variantes.findIndex(
+                v => generarSlugProducto(producto, v) === slugURL
+            );
+        }
+
+        // Preparar la tarjeta con la variante correcta
+        const card = document.getElementById(`producto-${producto.id}`);
+
+        if (card && varianteIndex !== -1) {
+            card.dataset.varianteIndex = String(varianteIndex);
+            card.dataset.imagenIndex = "0";
+
+            // Actualizar visualmente la tarjeta y sus datos
+            seleccionarColorProducto(producto.id, varianteIndex);
+        }
+
+        // Abrir el modal del producto principal
+        abrirZoomProductoSeleccionado(producto.id);
+    });
+
 
     // --- CAPTURA DE CLICS EN "AGREGAR AL CARRITO" (Tarjetas y Modales) ---
     document.addEventListener("click", function (e) {
@@ -118,7 +178,11 @@ document.addEventListener("DOMContentLoaded", function () {
             agregarAlCarritoDirecto(id, nombre, precio, imagenes, cantidad);
         }
     });
+
+
 });
+
+
 
 const traductorColores = {
     negro: "#000000",
@@ -174,6 +238,7 @@ function seleccionarColorProducto(productoId, varianteIndex) {
 
     const variante = variantes[varianteIndex];
 
+
     if (!variante) {
         console.error(
             "Variante no encontrada:",
@@ -181,6 +246,8 @@ function seleccionarColorProducto(productoId, varianteIndex) {
         );
         return;
     }
+
+    actualizarUrlProducto(producto, variante);
 
     const card = document.getElementById(
         `producto-${productoId}`
@@ -547,6 +614,12 @@ function seleccionarMiniaturaProducto(
 
 function abrirZoomProductoSeleccionado(productoId) {
 
+    history.replaceState(
+        null,
+        "",
+        `/Producto/Detalle/${productoId}`
+    );
+
     const producto =
         window.productosAgrupados?.find(
             p => p.id === productoId
@@ -731,7 +804,13 @@ function abrirZoomProductoSeleccionado(productoId) {
             imagenes[indiceImagen]
     };
 
+    // Generar URL amigable sin salir de la página
+    const slug = generarSlugProducto(producto, variante);
 
+    const nuevaUrl =
+        `/Producto/Detalle/${producto.id}/${slug}`;
+
+    window.history.pushState({}, "", nuevaUrl);
 
     abrirZoom(itemZoom);
 }
@@ -875,6 +954,7 @@ async function cargarProductos() {
                             src="${varianteInicial.url_Equipo || ""}"
                             class="main-product-image"
                             style="cursor:pointer"
+                            data-url="/Producto/Detalle/${item.id}"
                             onclick="abrirZoomProductoSeleccionado(${item.id})"
                         />
 
@@ -2346,6 +2426,19 @@ function abrirZoom(item) {
                             if (!nuevaVariante)
                                 return;
 
+                            // Actualizar información de la variante seleccionada
+                            item.varianteSeleccionadaIndex = index;
+                            item.id = nuevaVariante.id;
+                            item.color = nuevaVariante.color;
+
+                            // Generar el slug de la nueva variante
+                            const slug = generarSlugProducto(item, nuevaVariante);
+
+                            // Actualizar la URL usando el ID de la nueva variante
+                            const nuevaUrl =
+                                `/Producto/Detalle/${nuevaVariante.id}/${slug}`;
+
+                            window.history.replaceState({}, "", nuevaUrl);
 
                             // Actualizar información
                             item.varianteSeleccionadaIndex =
@@ -2568,12 +2661,43 @@ function abrirZoom(item) {
     // MOSTRAR MODAL
     // =====================================================
 
+    const modalZoom = $('#modalZoom');
+
+    modalZoom.off('hidden.bs.modal.volverInicio');
+
+    modalZoom.on('hidden.bs.modal.volverInicio', function () {
+        window.history.replaceState(null, '', '/');
+    });
+
     setTimeout(() => {
-        $('#modalZoom').modal('show');
+        modalZoom.modal('show');
     }, 100);
 }
 
+function generarSlugProducto(producto, variante) {
+    const nombre = [
+        producto.marca,
+        producto.modelo,
+        variante?.color
+    ]
+        .filter(Boolean)
+        .join(" ");
 
+    return nombre
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+function actualizarUrlProducto(producto, variante) {
+    const slug = generarSlugProducto(producto, variante);
+
+    const nuevaUrl =
+        `/Producto/Detalle/${producto.id}/${slug}`;
+
+    window.history.replaceState({}, "", nuevaUrl);
+}
 function seleccionarImagenZoom(index) {
     if (index < 0 || index >= imagenesActualesZoom.length) return;
 
@@ -3974,9 +4098,7 @@ function actualizarImagenVisorGrande() {
 }
 
 
-// =====================================================
-// MOSTRAR / OCULTAR FLECHAS
-// =====================================================
+
 
 function actualizarFlechasVisorGrande() {
 
@@ -4017,9 +4139,6 @@ function actualizarFlechasVisorGrande() {
 }
 
 
-// =====================================================
-// EVENTOS DEL VISOR
-// =====================================================
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -4125,16 +4244,6 @@ document.addEventListener(
 );
 
 
-// =====================================================
-// TECLADO
-// =====================================================
-
-
-
-
-// ==========================================
-// CERRAR AL HACER CLICK
-// ==========================================
 
 document.addEventListener("click", function (e) {
 
@@ -4156,16 +4265,7 @@ document.addEventListener("click", function (e) {
 });
 
 
-// ==========================================
-// CERRAR CON ESC
-// ==========================================
 
-
-
-
-// =====================================================
-// NAVEGACIÓN DE IMÁGENES CON TECLADO
-// =====================================================
 
 document.addEventListener("keydown", function (event) {
 

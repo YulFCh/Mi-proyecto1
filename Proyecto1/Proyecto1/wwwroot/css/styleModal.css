@@ -284,3 +284,48 @@ body {
             padding-top: 15px;
         }
 }
+
+
+/* Corregir el desplazamiento del modal de checkout */
+#modalCheckout .modal-dialog {
+    max-height: calc(100vh - 20px);
+    margin: 10px auto;
+}
+
+#modalCheckout .checkout-modal-content {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 20px);
+    overflow: hidden;
+}
+
+#modalCheckout .checkout-form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#modalCheckout .checkout-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#modalCheckout .checkout-footer {
+    flex-shrink: 0;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 576px) {
+    #modalCheckout .modal-dialog {
+        width: auto;
+        max-width: none;
+        margin: 10px;
+    }
+
+    #modalCheckout .checkout-modal-content {
+        max-height: calc(100vh - 20px);
+    }
+}

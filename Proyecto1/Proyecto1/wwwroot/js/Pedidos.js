@@ -193,10 +193,8 @@ async function cargarPedidos() {
             await response.json();
 
 
-        console.log(
-            "Respuesta API pedidos:",
-            resultado
-        );
+
+
 
 
         if (!resultado.success) {
@@ -270,6 +268,7 @@ async function cargarPedidos() {
 
 
 function generarFilaPedido(
+
     pedido,
     index
 ) {
@@ -281,7 +280,7 @@ function generarFilaPedido(
 
     const fecha =
         formatearFecha(
-            pedido.fechregist_Pedido
+            pedido.fechRegist_Pedido
         );
 
 
@@ -524,41 +523,27 @@ function generarBadgeEstadoPago(
 
 
 
-function formatearFecha(
-    fecha
-) {
+function formatearFecha(fecha) {
 
     if (!fecha) {
-
         return "";
-
     }
 
+    const fechaObj = new Date(fecha);
 
-    const fechaObj =
-        new Date(fecha);
-
-
-    if (
-        isNaN(
-            fechaObj.getTime()
-        )
-    ) {
-
+    if (isNaN(fechaObj.getTime())) {
         return fecha;
-
     }
 
-
-    return fechaObj.toLocaleDateString(
-        "es-PE",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        }
-    );
-
+    return fechaObj.toLocaleString("es-PE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    });
 }
 
 
@@ -623,6 +608,38 @@ async function verDetallePedido(
             "S/ 0.00";
 
     }
+
+
+    const urlPedido = `${API_PEDIDOS}?${new URLSearchParams({
+        codigoPedido: ""
+    }).toString()}`;
+
+    // Consultar los pedidos y localizar el seleccionado.
+    const responsePedidos = await fetch(API_PEDIDOS, {
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    if (!responsePedidos.ok) {
+        throw new Error("No se pudo consultar la información del pedido.");
+    }
+
+    const resultadoPedidos = await responsePedidos.json();
+
+    if (!resultadoPedidos.success) {
+        throw new Error("No se pudo obtener la información del pedido.");
+    }
+
+    const pedidoSeleccionado = (resultadoPedidos.data || []).find(
+        p => Number(p.id_Pedido) === Number(idPedido)
+    );
+
+    if (!pedidoSeleccionado) {
+        throw new Error("No se encontró la información del pedido.");
+    }
+
+    mostrarInformacionPedido(pedidoSeleccionado);
 
 
     $("#modalDetallePedido").modal("show");
@@ -860,4 +877,104 @@ function verTicketPedido(
         idPedido
     );
 
+}
+
+
+function mostrarInformacionPedido(pedido) {
+
+    const informacion = document.getElementById("informacionPedido");
+
+    if (!informacion || !pedido) return;
+
+    const nombreCompleto = [
+        pedido.nombres_Pedido,
+        pedido.apellidos_Pedido
+    ].filter(Boolean).join(" ");
+
+    const escaparHTML = (valor) => {
+        return String(valor ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    };
+
+    const campo = (valor) => escaparHTML(valor || "No registrado");
+
+    informacion.innerHTML = `
+    <div class="pedido-contacto">
+
+        <!-- CÓDIGO DEL PEDIDO DESTACADO -->
+        <div class="pedido-codigo-destacado">
+            <div class="pedido-codigo-icono">
+    <i class="fa fa-clipboard-list" aria-hidden="true"></i>
+</div>
+
+
+            <div class="pedido-codigo-info">
+                <span>CÓDIGO DEL PEDIDO</span>
+                <strong>${campo(pedido.cod_Pedido)}</strong>
+            </div>
+
+
+        </div>
+
+        <!-- ENCABEZADO DE CONTACTO -->
+        <div class="pedido-contacto-header">
+            <div class="pedido-contacto-icono">
+                <i class="fa fa-user" aria-hidden="true"></i>
+            </div>
+
+            <div>
+                <h5>Información de contacto</h5>
+            </div>
+        </div>
+
+        <!-- INFORMACIÓN DEL CLIENTE -->
+        <div class="pedido-contacto-grid">
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-user" aria-hidden="true"></i> Cliente</span>
+                <strong>${campo(nombreCompleto)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-id-card" aria-hidden="true"></i> DNI</span>
+                <strong>${campo(pedido.dni_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-phone" aria-hidden="true"></i> Celular</span>
+                <strong>${campo(pedido.celular_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-envelope" aria-hidden="true"></i> Correo</span>
+                <strong>${campo(pedido.correo_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-map" aria-hidden="true"></i> Región</span>
+                <strong>${campo(pedido.region_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-map-marker" aria-hidden="true"></i> Provincia</span>
+                <strong>${campo(pedido.provincia_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item">
+                <span><i class="fa fa-location-arrow" aria-hidden="true"></i> Distrito</span>
+                <strong>${campo(pedido.distrito_Pedido)}</strong>
+            </div>
+
+            <div class="pedido-contacto-item pedido-direccion">
+                <span><i class="fa fa-home" aria-hidden="true"></i> Dirección</span>
+                <strong>${campo(pedido.direccion_Pedido)}</strong>
+            </div>
+
+        </div>
+    </div>
+`;
 }

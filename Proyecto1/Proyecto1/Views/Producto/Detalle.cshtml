@@ -1,0 +1,13 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Proyecto1.Controllers
+{
+    public class ProductoController : Controller
+    {
+        public IActionResult Detalle(int id)
+        {
+            return RedirectToAction("Index", "Inicio",
+                new { productoId = id });
+        }
+    }
+}

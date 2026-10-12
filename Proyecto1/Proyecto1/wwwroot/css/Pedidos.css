@@ -7,7 +7,7 @@
 }
 
     .pedidos-card .card-header {
-        background-color: #212529 !important;
+        background-color:  !important;
         color: #ffffff !important;
         border-bottom: none !important;
         padding: 12px 15px !important;
@@ -146,22 +146,38 @@
                 background: #868e96;
             }
 
+/* ========================================================= TABLA PEDIDOS MISMO ESTILO QUE CONSULTA DE PAGOS EN CAJA ========================================================= */
+
 #tablaPedidos {
     width: 100%;
     min-width: 1100px;
+    margin-bottom: 0 !important;
     font-size: 13px;
-    margin-bottom: 0;
     border-collapse: separate;
     border-spacing: 0;
     table-layout: auto;
 }
 
-    #tablaPedidos th,
-    #tablaPedidos td {
-        padding: 6px 8px !important;
-        vertical-align: middle;
-        border: 1px solid #dee2e6 !important;
+    /* ========================================================= CELDAS: SOLO LÍNEAS VERTICALES ========================================================= */
+
+    #tablaPedidos th, #tablaPedidos td {
+        padding: 4px 6px !important;
+        vertical-align: middle !important;
+        /* Elimina las líneas horizontales */ border-top: none !important;
+        border-bottom: none !important;
+        /* Mantiene las líneas verticales */ border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
     }
+
+        /* Evita bordes dobles en los extremos */ #tablaPedidos th:first-child, #tablaPedidos td:first-child {
+            border-left: none !important;
+        }
+
+        #tablaPedidos th:last-child, #tablaPedidos td:last-child {
+            border-right: none !important;
+        }
+
+    /* ========================================================= ENCABEZADO FIJO ========================================================= */
 
     #tablaPedidos thead th {
         position: sticky;
@@ -172,27 +188,34 @@
         text-align: center;
         vertical-align: middle;
         white-space: nowrap;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 12px !important;
+        font-weight: 600 !important;
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        padding: 8px 7px !important;
+        padding: 8px 22px 8px 7px !important;
+        /* Solo una línea inferior en el encabezado */ border-top: none !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-left: 1px solid #495057 !important;
+        border-right: 1px solid #495057 !important;
         box-shadow: inset 0 -1px 0 #dee2e6;
     }
 
+    /* ========================================================= CUERPO DE LA TABLA ========================================================= */
+
     #tablaPedidos tbody td {
         color: #212529;
-        font-size: 13px;
         background-color: #ffffff;
-        vertical-align: middle;
+        font-size: 13px !important;
+        font-weight: 400;
         white-space: nowrap;
+        vertical-align: middle !important;
     }
 
-    #tablaPedidos tbody tr:hover td {
+    /* Hover de las filas */ #tablaPedidos tbody tr:hover td {
         background-color: #f8f9fa !important;
     }
 
-    #tablaPedidos tbody td.text-end {
+    /* Alineación de valores */ #tablaPedidos tbody td.text-end {
         text-align: right !important;
     }
 
@@ -200,13 +223,72 @@
         text-align: center !important;
     }
 
-    #tablaPedidos th:first-child,
-    #tablaPedidos td:first-child {
+    /* ========================================================= COLUMNA DE ACCIONES ========================================================= */
+
+    #tablaPedidos th:first-child, #tablaPedidos td:first-child {
         width: 85px;
         min-width: 85px;
         text-align: center;
         white-space: nowrap;
     }
+
+    /* ========================================================= ESTADO Y BADGES ========================================================= */
+
+    #tablaPedidos .badge {
+        font-size: 11px;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+
+    /* ========================================================= MENSAJES DE LA TABLA ========================================================= */
+
+    #tablaPedidos tbody td.text-center {
+        padding: 15px !important;
+        color: #6c757d;
+        font-size: 13px !important;
+    }
+
+    /* ========================================================= ORDENAMIENTO DE COLUMNAS (SI SE UTILIZA) ========================================================= */
+
+    #tablaPedidos thead th {
+        cursor: pointer;
+        user-select: none;
+    }
+
+        #tablaPedidos thead th:hover {
+            background-color: #343a40 !important;
+        }
+
+
+
+@media (max-width: 768px) {
+    #tablaPedidos {
+        min-width: 1100px;
+    }
+
+        #tablaPedidos thead th {
+            font-size: 11px !important;
+        }
+
+        #tablaPedidos tbody td {
+            font-size: 12px !important;
+        }
+}
+
+
+
+
+
+
+
+
+
+/* ========================================================= DETALLE PEDIDOS ========================================================= */
+
+
+
+
 
 .btn-detalle-pedido {
     width: 30px;
@@ -293,9 +375,6 @@
    CONTENEDOR MODAL
    ========================================================= */
 
-#modalDetallePedido .modal-dialog {
-    max-width: 1200px;
-}
 
 #modalDetallePedido .modal-content {
     border: 1px solid #dee2e6 !important;
@@ -454,6 +533,7 @@
 /* =========================================================
    TABLA DETALLE
    ========================================================= */
+/* ========================================================= TABLA DETALLE DEL PEDIDO MISMO ESTILO QUE CONSULTA DE PAGOS EN CAJA ========================================================= */
 
 #modalDetallePedido .table {
     width: 100% !important;
@@ -465,22 +545,26 @@
     table-layout: auto;
 }
 
+    /* ========================================================= CELDAS: SOLO LÍNEAS VERTICALES ========================================================= */
 
-    /* =========================================================
-   CELDAS
-   ========================================================= */
-
-    #modalDetallePedido .table th,
-    #modalDetallePedido .table td {
-        padding: 7px 8px !important;
+    #modalDetallePedido .table th, #modalDetallePedido .table td {
+        padding: 4px 6px !important;
         vertical-align: middle !important;
-        border: 1px solid #dee2e6 !important;
+        /* Sin líneas horizontales entre filas */ border-top: none !important;
+        border-bottom: none !important;
+        /* Líneas verticales entre columnas */ border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
     }
 
+        /* Evitar bordes verticales exteriores */ #modalDetallePedido .table th:first-child, #modalDetallePedido .table td:first-child {
+            border-left: none !important;
+        }
 
-    /* =========================================================
-   ENCABEZADO TABLA
-   ========================================================= */
+        #modalDetallePedido .table th:last-child, #modalDetallePedido .table td:last-child {
+            border-right: none !important;
+        }
+
+    /* ========================================================= ENCABEZADO FIJO ========================================================= */
 
     #modalDetallePedido .table thead th {
         position: sticky;
@@ -488,44 +572,37 @@
         z-index: 2;
         background-color: #212529 !important;
         color: #ffffff !important;
-        font-size: 12px !important;
-        font-weight: 600 !important;
         text-align: center !important;
         vertical-align: middle !important;
+        white-space: nowrap;
+        font-size: 12px !important;
+        font-weight: 600 !important;
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        white-space: nowrap;
         padding: 8px 7px !important;
-        border-color: #343a40 !important;
-        box-shadow: inset 0 -1px 0 #495057;
+        /* Separación inferior del encabezado */ border-top: none !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-left: 1px solid #495057 !important;
+        border-right: 1px solid #495057 !important;
+        box-shadow: inset 0 -1px 0 #dee2e6;
     }
 
-
-    /* =========================================================
-   CUERPO TABLA
-   ========================================================= */
+    /* ========================================================= CUERPO DE LA TABLA ========================================================= */
 
     #modalDetallePedido .table tbody td {
         background-color: #ffffff;
         color: #212529;
         font-size: 13px !important;
+        font-weight: 400;
         white-space: nowrap;
         vertical-align: middle !important;
     }
 
-
-    /* =========================================================
-   HOVER
-   ========================================================= */
-
-    #modalDetallePedido .table tbody tr:hover td {
+    /* Efecto al pasar el cursor */ #modalDetallePedido .table tbody tr:hover td {
         background-color: #f8f9fa !important;
     }
 
-
-    /* =========================================================
-   ALINEACIÓN
-   ========================================================= */
+    /* ========================================================= ALINEACIÓN DE CELDAS ========================================================= */
 
     #modalDetallePedido .table tbody td.text-center {
         text-align: center !important;
@@ -535,18 +612,62 @@
         text-align: right !important;
     }
 
-
-/* =========================================================
-   MENSAJE SIN DATOS
-   ========================================================= */
+/* ========================================================= MENSAJE SIN DATOS ========================================================= */
 
 #modalDetallePedido #tablaDetallePedido .text-center {
     padding: 15px !important;
     color: #6c757d !important;
     font-size: 13px !important;
+    white-space: normal;
 }
 
+/* ========================================================= CONTENEDOR Y BARRA DE DESPLAZAMIENTO ========================================================= */
 
+#modalDetallePedido .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 12px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-gutter: stable;
+}
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar-track {
+        background: #f1f3f5;
+        border-radius: 10px;
+    }
+
+    #modalDetallePedido .table-responsive::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 10px;
+    }
+
+        #modalDetallePedido .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #868e96;
+        }
+
+/* ========================================================= RESPONSIVE ========================================================= */
+
+@media (max-width: 768px) {
+    #modalDetallePedido .table {
+        min-width: 950px;
+    }
+
+        #modalDetallePedido .table thead th {
+            font-size: 11px !important;
+            padding: 7px 6px !important;
+        }
+
+        #modalDetallePedido .table tbody td {
+            font-size: 12px !important;
+            padding: 4px 6px !important;
+        }
+}
 /* =========================================================
    TOTAL
    ========================================================= */
@@ -662,3 +783,184 @@
             padding: 6px !important;
         }
 }
+
+
+
+/* CONTENEDOR DE INFORMACIÓN DEL PEDIDO */
+.pedido-contacto {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px 18px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* ENCABEZADO */
+.pedido-contacto-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e9edf3;
+}
+
+.pedido-contacto-icono {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #e8f0ff;
+    color: #0d6efd;
+}
+
+    .pedido-contacto-icono i {
+        font-size: 19px;
+        line-height: 1;
+    }
+
+.pedido-contacto-header h5 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.pedido-contacto-header p {
+    margin: 3px 0 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* CUADRÍCULA COMPACTA: 5 COLUMNAS Y 2 FILAS */
+.pedido-contacto-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: 12px;
+    row-gap: 14px;
+}
+
+.pedido-contacto-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 2px 0;
+}
+
+    .pedido-contacto-item span {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .pedido-contacto-item span i {
+            width: 14px;
+            margin-right: 3px;
+            color: #0d6efd;
+            text-align: center;
+        }
+
+    .pedido-contacto-item strong {
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    /* LA DIRECCIÓN OCUPA TODO EL ANCHO */
+    .pedido-contacto-item.pedido-direccion {
+        grid-column: auto !important;
+        border-top: none !important;
+        padding-top: 2px !important;
+    }
+
+/* TABLETS */
+@media (max-width: 900px) {
+    .pedido-contacto-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .pedido-contacto-item.pedido-direccion {
+        grid-column: 1 / -1;
+    }
+}
+
+/* MÓVILES */
+@media (max-width: 480px) {
+    .pedido-contacto {
+        padding: 12px;
+    }
+
+    .pedido-contacto-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .pedido-contacto-item.pedido-direccion {
+        grid-column: 1 / -1;
+    }
+
+    .pedido-contacto-item span {
+        white-space: normal;
+    }
+}
+
+
+/* =========================================================
+   CÓDIGO DEL PEDIDO DESTACADO
+   ========================================================= */
+
+.pedido-codigo-destacado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    background-color: #f0f7f0;
+    border: 1px solid #d5e8d5;
+    border-left: 4px solid #72a879;
+    border-radius: 7px;
+}
+
+.pedido-codigo-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background-color: #e1efe2;
+    color: #477d4d;
+    border-radius: 7px;
+}
+
+    .pedido-codigo-icono i {
+        font-size: 17px;
+    }
+
+.pedido-codigo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+    .pedido-codigo-info span {
+        color: #638167;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.7px;
+    }
+
+    .pedido-codigo-info strong {
+        color: #315f37;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
