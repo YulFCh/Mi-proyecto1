@@ -169,7 +169,12 @@ namespace ApiProyecto1.Services.Pedidos
                         reader["adelanto_pedido"] == DBNull.Value
                             ? 0
                             : Convert.ToDecimal(
-                                reader["adelanto_pedido"])
+                                reader["adelanto_pedido"]),
+                    FechRegist_Pedido =
+    reader["fechregist_pedido"] == DBNull.Value
+        ? null
+        : Convert.ToDateTime(
+            reader["fechregist_pedido"]),
                 });
             }
 

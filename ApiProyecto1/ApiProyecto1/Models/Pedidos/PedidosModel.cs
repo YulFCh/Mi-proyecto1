@@ -25,6 +25,7 @@
         public string? Ticket_Pedido { get; set; }
         public string? Usuario_Registra { get; set; }
         public decimal Adelanto_Pedido { get; set; }
+        public DateTime? FechRegist_Pedido { get; set; }
 
 
         public List<DetallePedidoModel> Detalles { get; set; } = new();
