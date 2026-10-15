@@ -222,48 +222,47 @@ namespace ApiProyecto1.Services
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 string query = @"
-                INSERT INTO equipos
-                (
-                    tipo_equipo,
-                    color,
-                    modelo,
-                    descripcion,
-                    precio,
-                    fecha_registro,
-                    url_equipo,
-                    url1,
-                    url2,
-                    url3,
-                    marca,
-                    codigo_producto,
-                    precio_antes,
-                    descuento,
-                    estado,
-                    usuario_registra,
-                    descripcion1,
-                    garantia
-                )
-                VALUES
-                (
-                    @tipo,
-                    @color,
-                    @modelo,
-                    @descripcion,
-                    @precio,
-                    GETDATE(),
-                    @url0,
-                    @url1,
-                    @url2,
-                    @url3,
-                    @marca,
-                    @codigo_producto,
-                    @precio_antes,
-                    @descuento,
-                    @estado,
-                    @usuario_registra,
-                    @descripcion1,
-                    @garantia
-                )";
+                
+INSERT INTO equipos
+(
+    tipo_equipo,
+    color,
+    modelo,
+    descripcion,
+    fecha_registro,
+    url_equipo,
+    url1,
+    url2,
+    url3,
+    marca,
+    codigo_producto,
+    precio_antes,
+    descuento,
+    estado,
+    usuario_registra,
+    descripcion1,
+    garantia
+)
+VALUES
+(
+    @tipo,
+    @color,
+    @modelo,
+    @descripcion,
+    GETDATE(),
+    @url0,
+    @url1,
+    @url2,
+    @url3,
+    @marca,
+    @codigo_producto,
+    @precio_antes,
+    @descuento,
+    @estado,
+    @usuario_registra,
+    @descripcion1,
+    @garantia
+)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
@@ -278,7 +277,7 @@ namespace ApiProyecto1.Services
                 cmd.Parameters.AddWithValue("@descripcion",
                     (object?)model.Descripcion ?? DBNull.Value);
 
-                cmd.Parameters.AddWithValue("@precio", model.Precio);
+              
 
                 cmd.Parameters.AddWithValue("@url0",
                     (object?)model.Url_Equipo ?? DBNull.Value);
