@@ -178,11 +178,7 @@ namespace ApiProyecto1.Services
                 cmd.Parameters.Add("@garantia", System.Data.SqlDbType.VarChar).Value = model.Garantia;
             }
 
-            if (model.Precio.HasValue)
-            {
-                campos.Add("precio = @precio");
-                cmd.Parameters.Add("@precio", System.Data.SqlDbType.Decimal).Value = model.Precio;
-            }
+          
 
             if (model.Url_Equipo != null)
             {
