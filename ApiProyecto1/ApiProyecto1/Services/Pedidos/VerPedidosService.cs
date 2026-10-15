@@ -46,6 +46,7 @@ namespace ApiProyecto1.Services.Pedidos
             p.distrito_pedido,
             p.direccion_pedido,
             p.total_pedido,
+            p.totalpago_pedido,
             p.estado_pedido,
             p.estado_pago_pedido,
             p.fechregist_pedido,
@@ -148,6 +149,11 @@ namespace ApiProyecto1.Services.Pedidos
                     Total_Pedido =
                         Convert.ToDecimal(
                             reader["total_pedido"]),
+
+                    Totalpago_Pedido =
+    reader["totalpago_pedido"] == DBNull.Value
+        ? 0
+        : Convert.ToDecimal(reader["totalpago_pedido"]),
 
                     Estado_Pedido =
                         reader["estado_pedido"].ToString() ?? "",
