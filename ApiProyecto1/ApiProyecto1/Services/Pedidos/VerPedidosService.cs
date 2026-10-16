@@ -58,7 +58,8 @@ namespace ApiProyecto1.Services.Pedidos
             p.usuaranula_pedido,
             p.fechanula_pedido,
             p.motanula_pedido,
-            p.adelanto_pedido
+            p.adelanto_pedido,
+            p.notacliente_pedido,
         FROM pedidos p
         WHERE
             (
@@ -176,6 +177,12 @@ namespace ApiProyecto1.Services.Pedidos
                             ? 0
                             : Convert.ToDecimal(
                                 reader["adelanto_pedido"]),
+
+                    NotaCliente_Pedido =
+    reader["notacliente_pedido"] == DBNull.Value
+        ? null
+        : reader["notacliente_pedido"].ToString(),
+
                     FechRegist_Pedido =
     reader["fechregist_pedido"] == DBNull.Value
         ? null
