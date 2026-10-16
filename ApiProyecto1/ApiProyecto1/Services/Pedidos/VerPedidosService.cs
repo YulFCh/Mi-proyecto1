@@ -59,7 +59,7 @@ namespace ApiProyecto1.Services.Pedidos
             p.fechanula_pedido,
             p.motanula_pedido,
             p.adelanto_pedido,
-            p.notacliente_pedido,
+            p.notacliente_pedido
         FROM pedidos p
         WHERE
             (
