@@ -83,7 +83,8 @@ namespace ApiProyecto1.Services.Pedidos
                         estado_pedido,
                         estado_pago_pedido,
                         ticket_pedido,
-                        usuaregis_pedido
+                        usuaregis_pedido,
+                        notacliente_pedido
                     )
                     VALUES
                     (
@@ -100,7 +101,8 @@ namespace ApiProyecto1.Services.Pedidos
                         @estado,
                         @estado_pago,
                         @ticket,
-                        @usuario
+                        @usuario,
+                        @nota_cliente
                     );
 
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
@@ -175,6 +177,10 @@ namespace ApiProyecto1.Services.Pedidos
                         "@usuario",
                         (object?)model.Usuario_Registra
                         ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue(
+    "@nota_cliente",
+    (object?)model.NotaCliente_Pedido
+    ?? DBNull.Value);
 
 
                     object resultado =
