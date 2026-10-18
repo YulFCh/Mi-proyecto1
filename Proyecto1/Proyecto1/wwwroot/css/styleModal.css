@@ -329,3 +329,491 @@ body {
         max-height: calc(100vh - 20px);
     }
 }
+
+
+
+
+
+
+/* ==========================================
+   HEADER COMPACTO DEL CHECKOUT
+========================================== */
+
+#modalCheckout .checkout-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 20px !important;
+    min-height: 0;
+    background: linear-gradient(135deg, #1e3a5f, #2563a6) !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+/* CONTENIDO: ICONO + TÍTULO */
+
+#modalCheckout .checkout-header-content {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+/* ICONO CIRCULAR */
+
+#modalCheckout .checkout-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff !important;
+}
+
+    #modalCheckout .checkout-header-icon i {
+        display: inline-block;
+        color: #ffffff !important;
+        font-size: 17px !important;
+        line-height: 1;
+    }
+
+/* TÍTULO */
+
+#modalCheckout .checkout-header-text {
+    min-width: 0;
+}
+
+#modalCheckout .checkout-header .modal-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 1.35;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* SUBTÍTULO */
+
+#modalCheckout .checkout-header-text p {
+    margin: 2px 0 0 !important;
+    color: #dbeafe !important;
+    font-size: 11px !important;
+    line-height: 1.4;
+}
+
+/* BOTÓN CERRAR */
+
+#modalCheckout .checkout-header .close {
+    position: static;
+    float: none;
+    flex: 0 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 0 0 0 12px !important;
+    padding: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+    transition: background 0.2s ease;
+}
+
+    #modalCheckout .checkout-header .close span {
+        color: #ffffff !important;
+        font-size: 23px !important;
+        font-weight: 400;
+        line-height: 1;
+    }
+
+    #modalCheckout .checkout-header .close:hover {
+        background: rgba(255, 255, 255, 0.22) !important;
+        opacity: 1 !important;
+    }
+
+/* MÓVILES */
+
+@media (max-width: 576px) {
+    #modalCheckout .checkout-header {
+        padding: 12px 14px !important;
+    }
+
+    #modalCheckout .checkout-header-icon {
+        flex-basis: 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+        #modalCheckout .checkout-header-icon i {
+            font-size: 15px !important;
+        }
+
+    #modalCheckout .checkout-header .modal-title {
+        font-size: 14px !important;
+    }
+
+    #modalCheckout .checkout-header-text p {
+        font-size: 10px !important;
+    }
+}
+
+
+
+
+
+/* ==========================================
+   CHECKOUT - ESTILO MODERNO Y COMPACTO
+   Mantener el CSS actual del encabezado
+========================================== */
+
+/* MODAL */
+
+#modalCheckout .checkout-modal-content {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 13px !important;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 16px 45px rgba(15, 23, 42, 0.16);
+}
+
+/* CUERPO */
+
+#modalCheckout .checkout-body {
+    padding: 21px 24px !important;
+    background: #ffffff;
+}
+
+    #modalCheckout .checkout-body > p {
+        margin: 0 0 17px !important;
+        color: #64748b !important;
+        font-size: 12px !important;
+        line-height: 1.6;
+    }
+
+    /* ESPACIADO DE FILAS */
+
+    #modalCheckout .checkout-body .row {
+        margin-left: -8px;
+        margin-right: -8px;
+    }
+
+    #modalCheckout .checkout-body .form-group {
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-bottom: 14px !important;
+    }
+
+        /* ETIQUETAS */
+
+        #modalCheckout .checkout-body .form-group label {
+            display: block;
+            margin-bottom: 6px !important;
+            color: #334155 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            line-height: 1.4;
+        }
+
+    #modalCheckout .checkout-body .text-danger {
+        color: #dc3545 !important;
+    }
+
+    #modalCheckout .checkout-body .text-muted {
+        color: #94a3b8 !important;
+    }
+
+    /* INPUTS Y SELECTORES */
+
+    #modalCheckout .checkout-body .form-control {
+        width: 100%;
+        height: 39px;
+        min-height: 39px;
+        padding: 8px 11px !important;
+        border: 1px solid #d9e2ee !important;
+        border-radius: 7px !important;
+        background-color: #f8fafc;
+        color: #1e293b;
+        font-size: 12px !important;
+        line-height: 1.4;
+        box-shadow: none !important;
+        transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        #modalCheckout .checkout-body .form-control::placeholder {
+            color: #a0acbb;
+            font-size: 12px;
+        }
+
+        #modalCheckout .checkout-body .form-control:hover {
+            border-color: #b7c7dc !important;
+        }
+
+        #modalCheckout .checkout-body .form-control:focus {
+            border-color: #3978bd !important;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 166, 0.10) !important;
+            outline: none;
+        }
+
+    /* SELECTORES */
+
+    #modalCheckout .checkout-body select.form-control {
+        cursor: pointer;
+        padding-right: 8px !important;
+    }
+
+    #modalCheckout .checkout-body .form-control:disabled {
+        background-color: #eef2f7 !important;
+        color: #94a3b8 !important;
+        cursor: not-allowed;
+        opacity: 1;
+    }
+
+/* NOTA DEL CLIENTE */
+
+#modalCheckout #chkNotaCliente {
+    height: 68px;
+    min-height: 68px;
+    padding: 9px 11px !important;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* SEPARADOR */
+
+#modalCheckout .checkout-body hr {
+    margin: 4px 0 17px !important;
+    border: 0;
+    border-top: 1px solid #e7edf4 !important;
+}
+
+/* TÍTULO DIRECCIÓN DE ENTREGA */
+
+#modalCheckout .checkout-body h6 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 15px !important;
+    color: #243b53 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+    #modalCheckout .checkout-body h6::before {
+        content: "";
+        display: inline-block;
+        width: 3px;
+        height: 16px;
+        flex-shrink: 0;
+        border-radius: 3px;
+        background: #2563a6;
+    }
+
+/* RESUMEN DEL TOTAL */
+
+#modalCheckout .checkout-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 5px;
+    padding: 14px 17px;
+    border: 1px solid #d7e5f5;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #eff6ff, #f8fafc);
+}
+
+    #modalCheckout .checkout-total span {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    #modalCheckout .checkout-total strong {
+        color: #245b96;
+        font-size: 20px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+/* PIE DEL MODAL */
+
+#modalCheckout .checkout-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    padding: 13px 24px 17px !important;
+    background: #ffffff;
+    border-top: 1px solid #edf1f5 !important;
+}
+
+    /* BOTONES */
+
+
+    /* FINALIZAR PEDIDO - AZUL IGUAL AL ENCABEZADO */
+
+    #modalCheckout .checkout-footer button.btn.btn-success[type="submit"] {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2563a6 100%) !important;
+        background-color: #2563a6 !important;
+        border: 1px solid #2563a6 !important;
+        color: #ffffff !important;
+        border-radius: 7px !important;
+        min-height: 37px !important;
+        padding: 8px 25px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 3px 8px rgba(30, 58, 95, 0.16) !important;
+        transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        /* HOVER */
+
+        #modalCheckout .checkout-footer button.btn.btn-success[type="submit"]:hover {
+            background: linear-gradient(135deg, #172f4d 0%, #1e5591 100%) !important;
+            background-color: #1e5591 !important;
+            border-color: #1e5591 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.24) !important;
+        }
+
+        /* FOCO */
+
+        #modalCheckout .checkout-footer button.btn.btn-success[type="submit"]:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 166, 0.20) !important;
+        }
+
+    /* CANCELAR */
+
+
+    /* BOTÓN CANCELAR - ESTILO MODERNO */
+
+    #modalCheckout .checkout-footer button.btn.btn-secondary[data-dismiss="modal"] {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+        background-color: #475569 !important;
+        border: 1px solid #475569 !important;
+        color: #ffffff !important;
+        border-radius: 7px !important;
+        min-height: 37px !important;
+        padding: 8px 25px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        line-height: 1.4;
+        box-shadow: 0 3px 8px rgba(71, 85, 105, 0.16) !important;
+        transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        /* AL PASAR EL CURSOR */
+
+        #modalCheckout .checkout-footer button.btn.btn-secondary[data-dismiss="modal"]:hover {
+            background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+            background-color: #334155 !important;
+            border-color: #334155 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(71, 85, 105, 0.24) !important;
+        }
+
+        /* AL HACER CLIC */
+
+        #modalCheckout .checkout-footer button.btn.btn-secondary[data-dismiss="modal"]:active {
+            background: #334155 !important;
+            border-color: #334155 !important;
+            color: #ffffff !important;
+        }
+
+        /* FOCO */
+
+        #modalCheckout .checkout-footer button.btn.btn-secondary[data-dismiss="modal"]:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.20) !important;
+        }
+
+    /* FINALIZAR PEDIDO */
+
+    #modalCheckout .checkout-footer .btn-success {
+        color: #ffffff !important;
+        background: #237747 !important;
+        border: 1px solid #237747 !important;
+        box-shadow: 0 3px 8px rgba(35, 119, 71, 0.14);
+    }
+
+        #modalCheckout .checkout-footer .btn-success:hover {
+            background: #1c6239 !important;
+            border-color: #1c6239 !important;
+            box-shadow: 0 4px 10px rgba(35, 119, 71, 0.20);
+        }
+
+    #modalCheckout .checkout-footer .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 166, 0.13);
+    }
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 576px) {
+
+    #modalCheckout .modal-dialog {
+        margin: 8px !important;
+    }
+
+    #modalCheckout .checkout-modal-content {
+        border-radius: 11px !important;
+    }
+
+    #modalCheckout .checkout-body {
+        padding: 17px 15px !important;
+    }
+
+        #modalCheckout .checkout-body .form-group {
+            margin-bottom: 12px !important;
+        }
+
+        #modalCheckout .checkout-body .form-control {
+            height: 38px;
+            min-height: 38px;
+            font-size: 12px !important;
+        }
+
+    #modalCheckout #chkNotaCliente {
+        height: 65px;
+        min-height: 65px;
+    }
+
+    #modalCheckout .checkout-total {
+        padding: 12px;
+    }
+
+        #modalCheckout .checkout-total span {
+            font-size: 11px;
+        }
+
+        #modalCheckout .checkout-total strong {
+            font-size: 18px;
+        }
+
+    #modalCheckout .checkout-footer {
+        padding: 12px 15px 15px !important;
+        gap: 8px;
+    }
+
+        #modalCheckout .checkout-footer .btn {
+            flex: 1;
+            padding: 9px 10px !important;
+            font-size: 11px !important;
+        }
+}
+

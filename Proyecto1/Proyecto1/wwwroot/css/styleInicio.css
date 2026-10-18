@@ -1,7 +1,8 @@
-﻿:root {
+﻿
+:root {
     /* ================= COLORES ================= */
-    --primary-purple: #7A1F87;
-    --primary-purple-dark: #681973;
+    --primary-purple: #d7007c;
+    --primary-purple-dark: #a90061;
     --light-gray: #E5E7EB;
     --card-gray: #F3F4F6;
     --border-gray: #D1D5DB;
@@ -21,25 +22,28 @@ body {
 
 /* ================= CONTENEDOR PRODUCTOS ================= */
 
+
 .products-container {
     display: flex;
     flex-wrap: wrap;
     gap: 18px;
-    align-items: flex-start;
+    align-items: stretch;
     padding: 20px;
 }
-
 
 /* ================= CARD PRODUCTO ================= */
 
 .product-gallery {
     width: 280px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     background: white;
-    border-radius: 18px;
+    border-radius: 5px;
     border: 1px solid var(--border-gray);
     padding: 12px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    transition: all .25s ease;
+    transition: box-shadow .25s ease, transform .25s ease;
 }
 
     .product-gallery:hover {
@@ -48,11 +52,23 @@ body {
     }
 
 
+/* La información se adapta al espacio disponible */
+.product-info-block {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+}
+
+/* Las acciones quedan al final de la tarjeta */
+.product-actions {
+    margin-top: auto;
+}
+
 /* ================= IMAGEN PRINCIPAL ================= */
 
 .main-image-container {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 0px;
     padding: 10px;
     border: 1px solid var(--border-gray);
     overflow: hidden;
@@ -78,9 +94,9 @@ body {
 .thumbnail-image {
     width: 42px;
     height: 42px;
-    border-radius: 10px;
+    border-radius: 5px;
     object-fit: cover;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     cursor: pointer;
     transition: .2s ease;
     box-shadow: 0 3px 10px rgba(0,0,0,0.06);
@@ -449,5 +465,918 @@ body {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/* ========================================
+   LOGIN MODERNO - FRACTÁLICA
+   ======================================== */
+
+#loginModal .login-dialog {
+    max-width: 410px;
+    width: calc(100% - 30px);
+    margin: 1.75rem auto;
+}
+
+#loginModal .login-card {
+    position: relative;
+    border: 1px solid #f0e8ed;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(35, 15, 28, 0.16);
+    animation: loginEntrada .25s ease-out;
+}
+
+#loginModal .login-header {
+    position: relative;
+    text-align: center;
+    padding: 34px 25px 20px;
+    background: #ffffff;
+}
+
+
+
+
+#loginModal .login-close {
+    position: absolute;
+    top: 13px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 50%;
+    background: #f7f4f6;
+    color: #777077;
+    float: none;
+    line-height: normal;
+    text-align: center;
+    opacity: 1;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+    #loginModal .login-close svg {
+        display: block;
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        margin: 0;
+    }
+
+    #loginModal .login-close:hover {
+        background: #fff0f8;
+        color: #d7007c;
+    }
+
+
+#loginModal .login-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 17px;
+    border-radius: 18px;
+    color: #d7007c;
+    background: #fff0f8;
+}
+
+#loginModal .login-title {
+    margin: 0;
+    color: #242124;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -.7px;
+}
+
+#loginModal .login-subtitle {
+    margin: 9px 0 0;
+    color: #898189;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#loginModal .login-body {
+    padding: 8px 28px 25px;
+}
+
+#loginModal .login-field {
+    margin-bottom: 19px;
+}
+
+    #loginModal .login-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: #393239;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+#loginModal .login-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 49px;
+    padding: 0 13px;
+    border: 1px solid #e7e1e6;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #9a9099;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+    #loginModal .login-input-wrapper:focus-within {
+        border-color: #d7007c;
+        box-shadow: 0 0 0 3px rgba(215, 0, 124, .09);
+    }
+
+    #loginModal .login-input-wrapper input {
+        width: 100%;
+        min-width: 0;
+        height: 47px;
+        padding: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #292329;
+        font-family: inherit;
+        font-size: 14px;
+    }
+
+        #loginModal .login-input-wrapper input::placeholder {
+            color: #aaa1a9;
+        }
+
+#loginModal .login-toggle-password {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 4px;
+    border: none;
+    background: transparent;
+    color: #918791;
+    cursor: pointer;
+}
+
+    #loginModal .login-toggle-password:hover {
+        color: #d7007c;
+    }
+
+#loginModal .login-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 49px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 10px;
+    background: #d7007c;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(215, 0, 124, .18);
+    transition: background .2s, transform .2s, box-shadow .2s;
+}
+
+    #loginModal .login-submit:hover {
+        background: #b9006a;
+        box-shadow: 0 7px 18px rgba(215, 0, 124, .25);
+        transform: translateY(-1px);
+    }
+
+    #loginModal .login-submit:active {
+        transform: translateY(0);
+    }
+
+#loginModal .login-footer {
+    margin: 22px 0 0;
+    color: #b0a7af;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-align: center;
+}
+
+#loginModal .modern-alert {
+    margin-bottom: 20px;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+@keyframes loginEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    #loginModal .login-dialog {
+        margin: 1rem auto;
+    }
+
+    #loginModal .login-header {
+        padding: 30px 20px 18px;
+    }
+
+    #loginModal .login-body {
+        padding: 8px 22px 23px;
+    }
+
+    #loginModal .login-title {
+        font-size: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #loginModal .login-card {
+        animation: none;
+    }
+
+    #loginModal .login-submit,
+    #loginModal .login-input-wrapper,
+    #loginModal .login-close {
+        transition: none;
+    }
+}
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   MODAL CARRITO - FRACTÁLICA
+   ========================================== */
+
+#modalCarrito .carrito-dialog {
+    width: calc(100% - 30px);
+    max-width: 510px;
+    margin: 1.5rem auto;
+}
+
+#modalCarrito .carrito-modal {
+    overflow: hidden;
+    border: 1px solid #eee7ed;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(35, 15, 28, .16);
+    animation: carritoEntrada .22s ease-out;
+}
+
+/* ENCABEZADO */
+
+#modalCarrito .carrito-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 23px 24px;
+    border-bottom: 1px solid #f0ebef;
+    background: #fff;
+}
+
+#modalCarrito .carrito-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 47px;
+    height: 47px;
+    border-radius: 13px;
+    background: #fff0f8;
+    color: #d7007c;
+}
+
+#modalCarrito .carrito-header-text {
+    min-width: 0;
+}
+
+    #modalCarrito .carrito-header-text h5 {
+        margin: 0;
+        color: #262126;
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -.4px;
+    }
+
+    #modalCarrito .carrito-header-text p {
+        margin: 5px 0 0;
+        color: #898189;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+#modalCarrito .carrito-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    margin-left: auto;
+    border: none;
+    border-radius: 50%;
+    background: #f7f4f6;
+    color: #777077;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+    #modalCarrito .carrito-close:hover {
+        background: #fff0f8;
+        color: #d7007c;
+    }
+
+    #modalCarrito .carrito-close svg {
+        display: block;
+    }
+
+/* CUERPO */
+
+#modalCarrito .carrito-body {
+    padding: 22px 24px 18px;
+}
+
+#modalCarrito .carrito-items-lista {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: #e2b2cf transparent;
+}
+
+    #modalCarrito .carrito-items-lista:empty {
+        min-height: 60px;
+    }
+
+    /* BARRA DE DESPLAZAMIENTO */
+
+    #modalCarrito .carrito-items-lista::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    #modalCarrito .carrito-items-lista::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: #e2b2cf;
+    }
+
+    #modalCarrito .carrito-items-lista::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+/* RESUMEN */
+
+#modalCarrito .carrito-resumen {
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid #eee8ed;
+}
+
+#modalCarrito .carrito-resumen-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 15px;
+    color: #777077;
+    font-size: 13px;
+}
+
+    #modalCarrito .carrito-resumen-fila strong {
+        color: #393239;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: right;
+    }
+
+#modalCarrito .carrito-total-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 11px;
+    background: #fff5fa;
+    color: #393239;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+    #modalCarrito .carrito-total-fila strong {
+        color: #d7007c;
+        font-size: 21px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+#modalCarrito .carrito-nota {
+    margin: 12px 0 0;
+    color: #999099;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* PIE Y BOTONES */
+
+#modalCarrito .carrito-footer {
+    display: flex;
+    gap: 10px;
+    padding: 17px 24px 23px;
+    border-top: 1px solid #f0ebef;
+    background: #fff;
+}
+
+#modalCarrito .carrito-btn-secundario,
+#modalCarrito .carrito-btn-principal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    min-height: 45px;
+    padding: 10px 13px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s, transform .2s;
+}
+
+#modalCarrito .carrito-btn-secundario {
+    border: 1px solid #e5dfe4;
+    background: #fff;
+    color: #514951;
+}
+
+    #modalCarrito .carrito-btn-secundario:hover {
+        border-color: #d7007c;
+        background: #fff5fa;
+        color: #d7007c;
+    }
+
+#modalCarrito .carrito-btn-principal {
+    border: 1px solid #d7007c;
+    background: #d7007c;
+    color: #fff;
+}
+
+    #modalCarrito .carrito-btn-principal:hover {
+        border-color: #b9006a;
+        background: #b9006a;
+        transform: translateY(-1px);
+    }
+
+    #modalCarrito .carrito-btn-principal svg {
+        flex-shrink: 0;
+    }
+
+/* ANIMACIÓN */
+
+@keyframes carritoEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(7px) scale(.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* MÓVILES */
+
+@media (max-width: 480px) {
+    #modalCarrito .carrito-dialog {
+        margin: 12px auto;
+    }
+
+    #modalCarrito .carrito-header {
+        padding: 18px 16px;
+        gap: 10px;
+    }
+
+    #modalCarrito .carrito-header-text h5 {
+        font-size: 17px;
+    }
+
+    #modalCarrito .carrito-header-text p {
+        font-size: 11px;
+    }
+
+    #modalCarrito .carrito-body {
+        padding: 17px 16px;
+    }
+
+    #modalCarrito .carrito-footer {
+        padding: 14px 16px 18px;
+        gap: 8px;
+    }
+
+    #modalCarrito .carrito-btn-secundario,
+    #modalCarrito .carrito-btn-principal {
+        padding: 10px 8px;
+        font-size: 11px;
+    }
+
+    #modalCarrito .carrito-total-fila strong {
+        font-size: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #modalCarrito .carrito-modal {
+        animation: none;
+    }
+
+    #modalCarrito .carrito-close,
+    #modalCarrito .carrito-btn-secundario,
+    #modalCarrito .carrito-btn-principal {
+        transition: none;
+    }
+}
+
+
+
+/* Borde de los selectores de color */
+.color-selector {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+    /* Borde fucsia al seleccionar un color */
+    .color-selector.color-activo {
+        border: 1px solid #d7007c !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    /* Evitar que el navegador cambie el borde al hacer clic */
+    .color-selector:focus,
+    .color-selector:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+
+
+
+
+
+
+#zoom-caracteristicas-collapse {
+    scroll-margin-top: 20px;
+}
+
+
+
+
+
+
+/* ==========================================
+   MODAL ZOOM - ESTILO MODERNO Y MINIMALISTA
+   ========================================== */
+
+#modalZoom .modal-content {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.14);
+}
+
+/* Encabezado */
+#modalZoom .modal-header {
+    padding: 20px 24px 12px !important;
+    align-items: center;
+}
+
+#modalZoom .modal-title {
+    color: #222222;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px;
+}
+
+
+
+    #modalZoom .modal-header .close:hover {
+        background: #fce7f3;
+        color: #d7007c;
+    }
+
+/* Espaciado general */
+#modalZoom .modal-body {
+    padding: 16px 24px 24px !important;
+}
+
+    /* Contenedor de la imagen principal */
+    #modalZoom .modal-body .row > .col-md-6:first-child {
+        border-right: 1px solid #f0f0f0 !important;
+    }
+
+/* Imagen principal: conserva el tamaño definido en el HTML */
+#modalZoom #zoom-imagen-principal {
+    object-fit: contain;
+    transition: transform .25s ease;
+}
+
+    #modalZoom #zoom-imagen-principal:hover {
+        transform: scale(1.025);
+    }
+
+/* Flechas de navegación */
+#modalZoom #zoom-prev-btn,
+#modalZoom #zoom-next-btn {
+    background: #ffffff !important;
+    border: 1px solid #e8e8e8 !important;
+    color: #333333 !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .08) !important;
+    transition: all .2s ease !important;
+}
+
+    #modalZoom #zoom-prev-btn:hover,
+    #modalZoom #zoom-next-btn:hover {
+        background: #d7007c !important;
+        border-color: #d7007c !important;
+        color: #ffffff !important;
+    }
+
+
+
+/* Tipo de producto */
+#modalZoom #zoom-tipo-badge {
+    display: inline-block;
+    background: #fce7f3 !important;
+    color: #d7007c !important;
+    border-radius: 5px !important;
+    padding: 5px 9px !important;
+    font-size: 10px !important;
+    letter-spacing: .4px;
+}
+
+/* Marca y descripción */
+#modalZoom #zoom-marca {
+    
+    color: #777777 !important;
+    font-size: 20px;
+    font-weight: 450 !important;
+    letter-spacing: -.5px;
+}
+
+#modalZoom #zoom-modelo-desc {
+    font-family: 'Montserrat', sans-serif;
+    color: #464646 !important;
+    font-size: 13px !important;
+    line-height: 1.7;
+    font-weight: 650 !important;
+}
+
+/* Más características */
+#modalZoom a[href="#zoom-caracteristicas-collapse"] {
+    color: #d7007c !important;
+    font-size: 12px !important;
+    transition: opacity .2s;
+}
+
+    #modalZoom a[href="#zoom-caracteristicas-collapse"]:hover {
+        opacity: .75;
+        text-decoration: none;
+    }
+
+
+/* Panel de precios */
+#modalZoom #zoom-precio-actual {
+    color: #222222 !important;
+    font-size: 26px !important;
+    letter-spacing: -.5px;
+}
+
+#modalZoom #zoom-descuento-badge {
+    background: #d7007c !important;
+    border-radius: 4px !important;
+    padding: 4px 7px !important;
+    font-size: 11px !important;
+}
+
+/* Selector de cantidad */
+#modalZoom #zoom-acciones-compra button:not(#zoom-btn-agregar) {
+    transition: background .2s, color .2s;
+}
+
+    #modalZoom #zoom-acciones-compra button:not(#zoom-btn-agregar):hover {
+        background: #fce7f3 !important;
+        color: #d7007c !important;
+    }
+
+/* Botón agregar al carrito */
+#modalZoom #zoom-btn-agregar {
+    background: #d7007c !important;
+    border: 1px solid #d7007c !important;
+    border-radius: 7px;
+    color: #ffffff !important;
+    font-size: 13px;
+    transition: background .2s, transform .2s;
+}
+
+    #modalZoom #zoom-btn-agregar:hover {
+        background: #a90061 !important;
+        border-color: #a90061 !important;
+        transform: translateY(-1px);
+    }
+
+/* Bloques de garantía, pagos y envíos */
+#modalZoom #zoom-garantia-container,
+#modalZoom #zoom-garantia-container ~ div {
+    background: #ffffff !important;
+    border: 1px solid #eeeeee !important;
+    border-radius: 9px !important;
+    transition: border-color .2s, transform .2s;
+}
+
+    #modalZoom #zoom-garantia-container:hover,
+    #modalZoom #zoom-garantia-container ~ div:hover {
+        border-color: #f0a3cb !important;
+        transform: translateY(-2px);
+    }
+
+/* Características desplegables */
+#modalZoom #zoom-caracteristicas-collapse > div {
+    background: #ffffff !important;
+    border: 1px solid #eeeeee !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+/* Móvil */
+@media (max-width: 767.98px) {
+    #modalZoom .modal-body {
+        padding: 12px 16px 20px !important;
+    }
+
+        #modalZoom .modal-body .row > .col-md-6:first-child {
+            border-right: none !important;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+    #modalZoom #zoom-marca {
+        font-size: 21px;
+    }
+
+    #modalZoom #zoom-precio-actual {
+        font-size: 23px !important;
+    }
+}
+
+
+
+
+
+/* ==========================================
+   TARJETAS HORIZONTALES EN PANTALLAS PEQUEÑAS
+   ========================================== */
+
+@media (max-width: 576px) {
+
+    /* Contenedor general de productos */
+    .products-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 10px;
+    }
+
+    /* Tarjeta horizontal */
+    .product-gallery {
+        width: 100%;
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: 115px minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        column-gap: 12px;
+        row-gap: 8px;
+        align-items: start;
+        padding: 10px;
+    }
+
+    /* Tipo de equipo: ocupa todo el ancho */
+    .tipo-equipo-badge {
+        grid-column: 1 / -1;
+    }
+
+    /* Imagen principal a la izquierda */
+    .main-image-container {
+        grid-column: 1;
+        grid-row: 2;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 4px;
+    }
+
+    .main-product-image {
+        width: 100%;
+        height: 125px;
+        object-fit: contain;
+    }
+
+    /* Miniaturas debajo de la imagen */
+    .thumbnail-container {
+        grid-column: 1;
+        grid-row: 3;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 0;
+    }
+
+    .thumbnail-image {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* Información a la derecha */
+    .product-info-block {
+        grid-column: 2;
+        grid-row: 2 / span 2;
+        min-width: 0;
+        margin-top: 0 !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .producto-info-contenido {
+        min-width: 0;
+        padding: 8px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .producto-marca {
+        font-size: 13px;
+    }
+
+    .producto-modelo,
+    .producto-descripcion {
+        font-size: 12px;
+    }
+
+    .producto-codigo {
+        font-size: 10px;
+    }
+
+    /* Colores debajo de la información */
+    .producto-colores-container {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Acciones a todo lo ancho */
+    .product-actions {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        width: 100%;
+    }
+
+    /* Evitar que el efecto hover eleve la tarjeta */
+    .product-gallery:hover {
+        transform: none;
     }
 }

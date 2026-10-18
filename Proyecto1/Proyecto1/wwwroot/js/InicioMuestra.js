@@ -316,17 +316,23 @@ function seleccionarColorProducto(productoId, varianteIndex) {
     // COLOR SELECCIONADO
     // ==================================================
 
-    const nombreColor =
-        card.querySelector(
-            ".color-nombre-seleccionado"
-        );
+    // ==================================================
+    // MOSTRAR SOLO EL NOMBRE DEL COLOR SELECCIONADO
+    // ==================================================
 
-    if (nombreColor) {
+    card.querySelectorAll(".color-opcion-producto").forEach(
+        (opcion, index) => {
 
-        nombreColor.innerText =
-            variante.color || "";
+            const nombre = opcion.querySelector(
+                ".color-nombre-opcion"
+            );
 
-    }
+            if (nombre) {
+                nombre.style.visibility =
+                    index === varianteIndex ? "visible" : "hidden";
+            }
+        }
+    );
 
     // ==================================================
     // DESCRIPCIÓN CORTA
@@ -480,42 +486,31 @@ function seleccionarColorProducto(productoId, varianteIndex) {
     // MARCAR COLOR ACTIVO
     // ==================================================
 
-    card.querySelectorAll(
-        ".color-selector"
-    ).forEach(btn => {
 
-        const indice =
-            parseInt(
-                btn.dataset.variante
-            );
+    // MARCAR COLOR ACTIVO
+
+    card.querySelectorAll(".color-selector").forEach(btn => {
+
+        const indice = parseInt(btn.dataset.variante);
 
         if (indice === varianteIndex) {
 
-            btn.classList.add(
-                "color-activo"
-            );
+            btn.classList.add("color-activo");
 
-            btn.style.border =
-                "2px solid #fff";
-
-            btn.style.boxShadow =
-                "0 0 0 2px #8a2be2";
+            // Borde fucsia fino
+            btn.style.border = "1px solid #d7007c";
+            btn.style.boxShadow = "none";
 
         } else {
 
-            btn.classList.remove(
-                "color-activo"
-            );
+            btn.classList.remove("color-activo");
 
-            btn.style.border =
-                "2px solid #ccc";
-
-            btn.style.boxShadow =
-                "none";
+            // Borde gris fino para los demás colores
+            btn.style.border = "1px solid #ccc";
+            btn.style.boxShadow = "none";
         }
 
     });
-
 
     // ==================================================
     // ACTUALIZAR BOTÓN CARRITO
@@ -867,39 +862,65 @@ async function cargarProductos() {
             // COLORES / VARIANTES
             // =====================================================
 
-            const coloresHTML = variantes.map((variante, index) => {
+            const coloresHTML = variantes
+                .map((variante, index) => ({ variante, index }))
+                .filter(({ variante }) => {
+                    const colorNombre = (variante.color || "").trim().toLowerCase();
 
-                const colorNombre =
-                    variante.color || "Sin color";
+                    return colorNombre !== "" && colorNombre !== "sin color";
+                })
+                .map(({ variante, index }) => {
 
-                const colorCSS =
-                    obtenerColorCSS(colorNombre);
+                    const colorNombre = variante.color.trim();
+                    const colorCSS = obtenerColorCSS(colorNombre);
+                    const seleccionado = index === 0;
 
-                return `
-        <button
-            type="button"
-            class="color-selector ${index === 0 ? "color-activo" : ""}"
-            data-variante="${index}"
-            title="${colorNombre}"
-            onclick="seleccionarColorProducto(${item.id}, ${index})"
-            style="
-                width:20px;
-                height:20px;
-                border-radius:50%;
-                padding:0;
-                cursor:pointer;
-                background-color:${colorCSS};
-                border:${index === 0
-                        ? "2px solid #fff"
-                        : "1px solid #ccc"};
-                box-shadow:${index === 0
-                        ? "0 0 0 2px #8a2be2"
-                        : "none"};
-                transition:all .2s;
-            "
-        ></button>
-    `;
-            }).join("");
+                    return `
+            <div
+                class="color-opcion-producto"
+                style="
+                    display:inline-flex;
+                    flex-direction:column;
+                    align-items:center;
+                    gap:4px;
+                "
+            >
+                <button
+                    type="button"
+                    class="color-selector ${seleccionado ? "color-activo" : ""}"
+                    data-variante="${index}"
+                    aria-label="${colorNombre}"
+                    onclick="seleccionarColorProducto(${item.id}, ${index})"
+                    style="
+                        width:20px;
+                        height:20px;
+                        border-radius:50%;
+                        padding:0;
+                        cursor:pointer;
+                        background-color:${colorCSS};
+                        border:1px solid ${seleccionado ? "#d7007c" : "#ccc"};
+                        box-shadow:none;
+                        transition:all .2s;
+                    "
+                ></button>
+
+                <span
+                    class="color-nombre-opcion"
+                    style="
+                        visibility:${seleccionado ? "visible" : "hidden"};
+                        height:14px;
+                        line-height:14px;
+                        white-space:nowrap;
+                        font-family:'Montserrat',sans-serif;
+                        font-size:10px;
+                        color:#555;
+                        text-align:center;
+                    "
+                >${colorNombre}</span>
+            </div>
+        `;
+                })
+                .join("");
             
 
             // =====================================================
@@ -1001,38 +1022,37 @@ async function cargarProductos() {
         ${coloresHTML}
     </div>
 
-    <span
-        class="color-nombre-seleccionado"
-        style="
-            font-size:13px;
-            color:#555;
-            margin-left:2px;
-        "
-    >
-        ${varianteInicial.color || ""}
-    </span>
+    
 </div>
 
 
                     <!-- INFORMACIÓN -->
                     <div
-                        class="product-info-block"
-                        style="
-                            text-align:left;
-                            margin-top:10px;
-                            line-height:1.5;
-                        "
-                    >
+    class="product-info-block"
+    style="
+        text-align:left;
+        margin-top:10px;
+        line-height:1.5;
+        display:flex;
+        flex-direction:column;
+        flex:1;
+    "
+>
 
                         <div
-                            style="
-                                background:#fbfbfb;
-                                padding:12px;
-                                border-radius:8px;
-                                border:1px dashed #e5e5e5;
-                                margin-bottom:8px;
-                            "
-                        >
+    class="producto-info-contenido"
+    style="
+        background:#fbfbfb;
+        padding:12px;
+        border-radius:8px;
+        border:1px dashed #e5e5e5;
+        margin-bottom:8px;
+        display:flex;
+        flex-direction:column;
+        flex:1;
+        min-height:0;
+    "
+>
 
                             <!-- MARCA -->
                             <strong class="producto-marca">
@@ -1071,118 +1091,99 @@ async function cargarProductos() {
 
                             
 
+<!-- ESPACIO FLEXIBLE: CÓDIGO Y PRECIOS -->
+<div
+    class="producto-pie-info"
+    style="
+        margin-top:auto;
+        width:100%;
+        flex-shrink:0;
+    "
+>
+    <!-- CÓDIGO -->
+    <small
+        class="text-muted producto-codigo"
+        style="
+            display:block;
+            margin-bottom:8px;
+        "
+    >
+        ${varianteInicial.codigo_Producto || "N/A"}
+    </small>
 
-
-
-                            <!-- CÓDIGO -->
-                            <small class="text-muted producto-codigo">
-                                ${varianteInicial.codigo_Producto || "N/A"}
-                            </small>
-
-
-                           
-
-
-                            <!-- PRECIOS -->
-                            <div
-                                style="
-                                    display:flex;
-                                    align-items:baseline;
-                                    justify-content:space-between;
-                                    margin-top:8px;
-                                    line-height:1.2;
-                                    flex-wrap:wrap;
-                                    width:100%;
-                                "
-                            >
-
-                                <div
-                                    style="
-                                        display:flex;
-                                        align-items:center;
-                                        gap:8px;
-                                    "
-                                >
-
-                                    <span
-                                        class="producto-precio"
-                                        style="
-                                            font-size:1.1em;
-                                            font-weight:bold;
-                                            color:#222;
-                                        "
-                                    >
-                                        S/. ${parseFloat(
+    <!-- PRECIOS -->
+    <div
+        style="
+            display:flex;
+            align-items:baseline;
+            justify-content:space-between;
+            line-height:1.2;
+            flex-wrap:wrap;
+            width:100%;
+        "
+    >
+        <div
+            style="
+                display:flex;
+                align-items:center;
+                gap:8px;
+            "
+        >
+            <span
+                class="producto-precio"
+                style="
+                    font-size:1.1em;
+                    font-weight:bold;
+                    color:#222;
+                "
+            >
+                S/. ${parseFloat(
                     varianteInicial.precio || 0
                 ).toFixed(2)}
-                                    </span>
+            </span>
 
-
-                                    <span
-                                        class="producto-descuento"
-                                        style="
-                                            background-color:#ff4d4d;
-                                            color:white;
-                                            font-size:.85em;
-                                            font-weight:bold;
-                                            padding:0 6px;
-                                            border-radius:4px;
-                                            display:${parseFloat(
-                    varianteInicial.descuento || 0
-                ) > 0
-                    ? "inline-flex"
-                    : "none"
-                };
-                                            align-items:center;
-                                            justify-content:center;
-                                        "
-                                    >
-                                        ${parseFloat(
-                    varianteInicial.descuento || 0
-                ) > 0
+            <span
+                class="producto-descuento"
+                style="
+                    background-color:#d7007c;
+                    color:white;
+                    font-size:.85em;
+                    font-weight:bold;
+                    padding:3px 3px 3px 12px;
+                    line-height:1;
+                    clip-path:polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%);
+                    font-variant-numeric:tabular-nums;
+                    display:${parseFloat(varianteInicial.descuento || 0) > 0
+                    ? "inline-block"
+                    : "none"};
+                "
+            >
+                ${parseFloat(varianteInicial.descuento || 0) > 0
                     ? "-" + varianteInicial.descuento + "%"
-                    : ""
-                }
-                                    </span>
+                    : ""}
+            </span>
+        </div>
 
-                                </div>
-
-
-                                <span
-                                    class="producto-precio-antes"
-                                    style="
-                                        text-decoration:line-through;
-                                        color:#888;
-                                        font-size:.9em;
-                                        margin-left:auto;
-                                        display:${parseFloat(
-                    varianteInicial.precio_Antes || 0
-                ) > 0 &&
-                    parseFloat(
-                        varianteInicial.descuento || 0
-                    ) > 0
+        <span
+            class="producto-precio-antes"
+            style="
+                text-decoration:line-through;
+                color:#888;
+                font-size:.9em;
+                margin-left:auto;
+                display:${parseFloat(varianteInicial.precio_Antes || 0) > 0 &&
+                    parseFloat(varianteInicial.descuento || 0) > 0
                     ? "inline"
-                    : "none"
-                };
-                                    "
-                                >
-                                    ${parseFloat(
-                    varianteInicial.precio_Antes || 0
-                ) > 0 &&
-                    parseFloat(
-                        varianteInicial.descuento || 0
-                    ) > 0
-                    ? "S/. " +
-                    parseFloat(
-                        varianteInicial.precio_Antes
-                    ).toFixed(2)
-                    : ""
-                }
-                                </span>
-
-                            </div>
-
-                        </div>
+                    : "none"};
+            "
+        >
+            ${parseFloat(varianteInicial.precio_Antes || 0) > 0 &&
+                    parseFloat(varianteInicial.descuento || 0) > 0
+                    ? "S/. " + parseFloat(varianteInicial.precio_Antes).toFixed(2)
+                    : ""}
+        </span>
+    </div>
+</div>
 
 
                         <!-- INACTIVO -->
@@ -1883,6 +1884,8 @@ function abrirZoom(item) {
 
     if (!item) return;
 
+
+    contraerMasCaracteristicas();
     // =====================================================
     // CANTIDAD
     // =====================================================
@@ -1987,13 +1990,43 @@ function abrirZoom(item) {
     // CARACTERÍSTICAS
     // =====================================================
 
-    const txtCaracteristicas =
-        document.getElementById(
-            "zoom-caracteristicas-texto"
-        );
+    // =====================================================
+    // TÍTULO Y CARACTERÍSTICAS
+    // =====================================================
+
+ 
+const tituloCaracteristicas = document.getElementById(
+    "zoom-caracteristicas-titulo"
+);
+
+if (tituloCaracteristicas) {
+
+    const partesTitulo = [
+        item.tipo_Equipo,
+        item.marca,
+        item.modelo
+    ].filter(valor => valor && valor.toString().trim() !== "");
+
+    const descripcion = item.descripcion
+        ? item.descripcion.toString().trim()
+        : "";
+
+    tituloCaracteristicas.innerText =
+        partesTitulo.join(" ").toUpperCase() +
+        (descripcion
+            ? "\n" + descripcion.toUpperCase()
+            : "");
+}
+
+
+
+
+
+    const txtCaracteristicas = document.getElementById(
+        "zoom-caracteristicas-texto"
+    );
 
     if (txtCaracteristicas) {
-
         txtCaracteristicas.innerText =
             item.descripcion1 ||
             "No hay características detalladas adicionales disponibles para este equipo.";
@@ -2259,7 +2292,7 @@ function abrirZoom(item) {
                 ) {
 
                     thumb.style.borderColor =
-                        "#007bff";
+                        "#d7007c";
 
                     thumb.style.boxShadow =
                         "0 0 4px rgba(0,123,255,.5)";
@@ -2352,7 +2385,14 @@ function abrirZoom(item) {
                 "block";
 
 
-            variantes.forEach(
+            variantes
+                .filter(variante => {
+                    const color = (variante.color || "")
+                        .trim()
+                        .toLowerCase();
+
+                    return color !== "" && color !== "sin color";
+                }).forEach(
                 (variante, index) => {
 
                     const colorNombre =
@@ -2388,8 +2428,12 @@ function abrirZoom(item) {
                             colorNombre
                         );
 
-                    btnColor.title =
-                        `${colorNombre} - ${variante.codigo_Producto || ""}`;
+
+                    // Evitar el mensaje emergente del navegador
+                    btnColor.removeAttribute("title");
+
+                    // Mostrar el nombre del color explícitamente
+                    btnColor.setAttribute("aria-label", colorNombre);
 
 
                     const varianteActual =
@@ -2405,7 +2449,7 @@ function abrirZoom(item) {
                             "2px solid #fff";
 
                         btnColor.style.boxShadow =
-                            "0 0 0 2px #8a2be2";
+                            "0 0 0 1px #d7007c";
 
                     } else {
 
@@ -2467,6 +2511,21 @@ function abrirZoom(item) {
 
                             item.descripcion1 =
                                 nuevaVariante.descripcion1;
+
+
+                            // ==========================================
+                            // ACTUALIZAR CARACTERÍSTICAS DE LA VARIANTE
+                            // ==========================================
+
+                            const txtCaracteristicas = document.getElementById(
+                                "zoom-caracteristicas-texto"
+                            );
+
+                            if (txtCaracteristicas) {
+                                txtCaracteristicas.innerText =
+                                    nuevaVariante.descripcion1 ||
+                                    "No hay características detalladas adicionales disponibles para este equipo.";
+                            }
 
                             item.garantia =
                                 nuevaVariante.garantia;
@@ -2556,7 +2615,7 @@ function abrirZoom(item) {
                                         ) {
 
                                             thumb.style.borderColor =
-                                                "#007bff";
+                                                "#d7007c";
 
                                             thumb.style.boxShadow =
                                                 "0 0 4px rgba(0,123,255,.5)";
@@ -2623,29 +2682,60 @@ function abrirZoom(item) {
 
 
                             // Actualizar colores activos
+                            // Actualizar colores activos
                             contenedorColores
                                 .querySelectorAll("button")
                                 .forEach(btn => {
 
-                                    btn.style.border =
-                                        "1px solid #ccc";
-
-                                    btn.style.boxShadow =
-                                        "none";
+                                    btn.style.border = "1px solid #ccc";
+                                    btn.style.boxShadow = "none";
                                 });
 
+                            // Ocultar todos los nombres de colores
+                            contenedorColores
+                                .querySelectorAll("span")
+                                .forEach(span => {
 
-                            this.style.border =
-                                "2px solid #fff";
+                                    span.style.display = "none";
+                                });
 
-                            this.style.boxShadow =
-                                "0 0 0 2px #8a2be2";
+                            // Mostrar únicamente el nombre del color seleccionado
+                            textoColor.style.display = "block";
+
+                            // Resaltar el círculo seleccionado
+                            this.style.border = "2px solid #fff";
+                            this.style.boxShadow = "0 0 0 1px #d7007c";
                         };
 
 
-                    contenedorColores.appendChild(
-                        btnColor
-                    );
+                    // Contenedor del círculo y el nombre del color
+                    const opcionColor = document.createElement("div");
+
+                    opcionColor.style.display = "inline-flex";
+                    opcionColor.style.flexDirection = "column";
+                    opcionColor.style.alignItems = "center";
+                    opcionColor.style.gap = "4px";
+
+                    // Nombre visible del color
+                    // Nombre del color: visible solo si está seleccionado
+                    const textoColor = document.createElement("span");
+
+                    textoColor.innerText = colorNombre;
+                    textoColor.style.fontSize = "11px";
+                    textoColor.style.color = "#555";
+                    textoColor.style.fontFamily = "Montserrat, sans-serif";
+                    textoColor.style.textAlign = "center";
+
+                    textoColor.style.display =
+                        index === (item.varianteSeleccionadaIndex ?? 0)
+                            ? "block"
+                            : "none";
+
+                    // Agregar círculo y texto
+                    opcionColor.appendChild(btnColor);
+                    opcionColor.appendChild(textoColor);
+
+                    contenedorColores.appendChild(opcionColor);
                 }
             );
 
@@ -2717,7 +2807,7 @@ function seleccionarImagenZoom(index) {
 
     const thumbActiva = document.getElementById(`zoom-thumb-${index}`);
     if (thumbActiva) {
-        thumbActiva.style.borderColor = "#007bff";
+        thumbActiva.style.borderColor = "#d7007c";
         thumbActiva.style.boxShadow = "0 0 4px rgba(0,123,255,0.5)";
         thumbActiva.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); 
     }
@@ -3061,10 +3151,45 @@ function actualizarBadgeYDropdown() {
                         </div>
                     </div>
 
-                    <button onclick="eliminarDelCarrito(${item.id}); ${stopProp}" 
-                            style="border: none; background: #ff4d4d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold; padding: 0; margin-top: 12px;">
-                        &times;
-                    </button>
+                   
+
+<button type="button"
+        onclick="eliminarDelCarrito(${item.id}); ${stopProp}"
+        aria-label="Quitar producto"
+        title="Quitar producto"
+        style="
+            box-sizing: border-box;
+            border: none;
+            background: #d7007c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            padding: 0;
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            cursor: pointer;
+            line-height: 0;
+        ">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="12"
+         height="12"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2.5"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         style="display:block; flex-shrink:0;">
+        <path d="M18 6 6 18"/>
+        <path d="m6 6 12 12"/>
+    </svg>
+</button>
+
                 </div>
 
             </div>
@@ -3459,7 +3584,10 @@ async function procesarCompra(event) {
                 document.getElementById("chkDistrito").value.trim(),
 
             direccion:
-                document.getElementById("chkDireccion").value.trim()
+                document.getElementById("chkDireccion").value.trim(),
+
+            notaCliente:
+                document.getElementById("chkNotaCliente").value.trim()
         };
 
 
@@ -3601,6 +3729,9 @@ async function procesarCompra(event) {
 
             direccion_Pedido:
                 datosCliente.direccion,
+
+            notaCliente_Pedido:
+                datosCliente.notaCliente || null,
 
             total_Pedido:
                 totalPedido,
@@ -4372,3 +4503,66 @@ document.addEventListener("keydown", function (event) {
 });
 
 
+document.addEventListener("DOMContentLoaded", function () {
+
+    const boton = document.getElementById(
+        "zoom-btn-caracteristicas"
+    );
+
+    const seccion = document.getElementById(
+        "zoom-caracteristicas-collapse"
+    );
+
+    if (!boton || !seccion) return;
+
+    boton.addEventListener("click", function () {
+
+        const estaAbierta = seccion.classList.contains("show");
+
+        if (estaAbierta) {
+            seccion.classList.remove("show");
+            boton.innerHTML = "☷ Más características ▾";
+            boton.setAttribute("aria-expanded", "false");
+            return;
+        }
+
+        seccion.classList.add("show");
+        boton.innerHTML = "☷ Ocultar características ▴";
+        boton.setAttribute("aria-expanded", "true");
+
+        // Esperar a que se actualice el tamaño del contenido.
+        setTimeout(function () {
+
+            // Desplazar la página hasta las características.
+            seccion.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }, 150);
+
+    });
+
+});
+
+
+
+function contraerMasCaracteristicas() {
+
+    const boton = document.getElementById(
+        "zoom-btn-caracteristicas"
+    );
+
+    const seccion = document.getElementById(
+        "zoom-caracteristicas-collapse"
+    );
+
+    if (seccion) {
+        seccion.classList.remove("show");
+    }
+
+    if (boton) {
+        boton.innerHTML = "☷ Más características ▾";
+        boton.setAttribute("aria-expanded", "false");
+    }
+}

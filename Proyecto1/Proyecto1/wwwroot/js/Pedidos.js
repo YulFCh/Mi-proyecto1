@@ -267,116 +267,57 @@ async function cargarPedidos() {
 
 
 
-function generarFilaPedido(
 
-    pedido,
-    index
-) {
+
+function generarFilaPedido(pedido, index) {
 
     const cliente =
-        `${pedido.nombres_Pedido || ""} ${pedido.apellidos_Pedido || ""}`
-            .trim();
+        `${pedido.nombres_Pedido || ""} ${pedido.apellidos_Pedido || ""}`.trim();
 
-
-    const fecha =
-        formatearFecha(
-            pedido.fechRegist_Pedido
-        );
-
-
-    const adelanto =
-        Number(
-            pedido.adelanto_Pedido || 0
-        ).toFixed(2);
-
+    const fecha = formatearFecha(pedido.fechRegist_Pedido);
 
     const total =
-        Number(
-            pedido.total_Pedido || 0
-        ).toFixed(2);
+        Number(pedido.total_Pedido ?? 0).toFixed(2);
 
+    const adelanto =
+        Number(pedido.adelanto_Pedido ?? 0).toFixed(2);
+
+    const totalPagar =
+        Number(pedido.totalpago_Pedido ?? 0).toFixed(2);
 
     return `
         <tr>
-
             <td>
-
                 <div class="btn-group">
-
                     <button type="button"
                             class="btn-detalle-pedido"
                             onclick="verDetallePedido(${pedido.id_Pedido})"
                             title="Ver detalle">
-
                         <i class="feather icon-eye"></i>
-
                     </button>
-
                 </div>
-
             </td>
 
+            <td>${index + 1}</td>
+            <td><strong>${pedido.cod_Pedido || ""}</strong></td>
+            <td>${fecha}</td>
+            <td>${cliente}</td>
+            <td>${pedido.dni_Pedido || ""}</td>
+            <td>${pedido.celular_Pedido || ""}</td>
+
+            <td>S/ ${total}</td>
+            <td>S/ ${adelanto}</td>
+            <td><strong>S/ ${totalPagar}</strong></td>
 
             <td>
-                ${index + 1}
+                ${generarBadgeEstadoPedido(pedido.estado_Pedido)}
             </td>
-
 
             <td>
-                <strong>
-                    ${pedido.cod_Pedido || ""}
-                </strong>
+                ${generarBadgeEstadoPago(pedido.estado_Pago_Pedido)}
             </td>
-
-
-            <td>
-                ${fecha}
-            </td>
-
-
-            <td>
-                ${cliente}
-            </td>
-
-
-            <td>
-                ${pedido.dni_Pedido || ""}
-            </td>
-
-
-            <td>
-                ${pedido.celular_Pedido || ""}
-            </td>
-
-
-            <td>
-                S/ ${adelanto}
-            </td>
-
-
-            <td>
-                <strong>
-                    S/ ${total}
-                </strong>
-            </td>
-
-
-            <td>
-                ${generarBadgeEstadoPedido(
-        pedido.estado_Pedido
-    )}
-            </td>
-
-
-            <td>
-                ${generarBadgeEstadoPago(
-        pedido.estado_Pago_Pedido
-    )}
-            </td>
-
         </tr>
     `;
-
 }
 
 
@@ -973,7 +914,14 @@ function mostrarInformacionPedido(pedido) {
                 <span><i class="fa fa-home" aria-hidden="true"></i> Dirección</span>
                 <strong>${campo(pedido.direccion_Pedido)}</strong>
             </div>
+            <div class="pedido-contacto-item pedido-nota-cliente">
+    <div class="pedido-nota-titulo">
+        <i class="fa fa-comment" aria-hidden="true"></i>
+        <span>Nota del cliente</span>
+    </div>
 
+    <strong class="pedido-nota-texto">${campo(pedido.notaCliente_Pedido)}</strong>
+</div>
         </div>
     </div>
 `;
