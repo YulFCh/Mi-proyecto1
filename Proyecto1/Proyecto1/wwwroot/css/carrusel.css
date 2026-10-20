@@ -1,0 +1,210 @@
+﻿
+/* =====================================================
+   CARRUSEL PROMOCIONAL
+   ===================================================== */
+
+/* CONTENEDOR GENERAL */
+#carruselPromociones {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    line-height: 0;
+}
+
+    /* =====================================================
+   FILAS DEL CARRUSEL
+   ===================================================== */
+
+    #carruselPromociones .promo-fila {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        line-height: 0;
+        box-sizing: border-box;
+    }
+
+    /* FILA 1: PUBLICIDAD PEQUEÑA */
+    #carruselPromociones .promo-fila-1 {
+        height: 1cm;
+    }
+
+    /* FILA 2: PUBLICIDAD A PANTALLA COMPLETA */
+    #carruselPromociones .promo-fila-2 {
+        position: relative;
+        left: 50%;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 5cm;
+        margin-left: -50vw !important;
+        margin-right: 0 !important;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    /* =====================================================
+   PISTA HORIZONTAL
+   ===================================================== */
+
+    #carruselPromociones .promo-pista {
+        display: flex;
+        flex-wrap: nowrap;
+        width: max-content;
+        height: 100%;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        line-height: 0;
+        will-change: transform;
+    }
+
+    /* =====================================================
+   DIAPOSITIVAS
+   ===================================================== */
+
+    #carruselPromociones .promo-slide {
+        display: block;
+        position: relative;
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+        /* ENLACE DE CADA DIAPOSITIVA */
+        #carruselPromociones .promo-slide a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+        }
+
+    /* IMÁGENES */
+    #carruselPromociones .promo-imagen {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    /* FILA 2: CADA DIAPOSITIVA OCUPA TODA LA PANTALLA */
+    #carruselPromociones .promo-fila-2 .promo-slide {
+        flex: 0 0 100vw;
+        width: 100vw;
+    }
+
+    /* PAUSAR AL PASAR EL RATÓN */
+    #carruselPromociones .promo-fila:hover .promo-pista {
+        animation-play-state: paused;
+    }
+
+/* =====================================================
+   MÓVILES
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    #carruselPromociones .promo-fila-1 {
+        height: 1cm;
+    }
+
+    #carruselPromociones .promo-fila-2 {
+        height: 5cm;
+    }
+
+    #carruselPromociones .promo-pista {
+        height: 100%;
+    }
+
+    /* Mostrar la imagen completa en móviles */
+    #carruselPromociones .promo-slide .promo-imagen {
+        object-fit: contain;
+        object-position: center;
+    }
+}
+
+/* =====================================================
+   EVITAR DESBORDAMIENTO HORIZONTAL DE LA PÁGINA
+   ===================================================== */
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+
+
+/* CORREGIR FILA 1 EN PANTALLAS PEQUEÑAS */
+@media (max-width: 768px) {
+
+    #carruselPromociones .promo-fila-1 {
+        width: 100%;
+        max-width: 100%;
+        height: 1cm;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+        #carruselPromociones .promo-fila-1 .promo-pista {
+            height: 100%;
+            width: max-content;
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        #carruselPromociones .promo-fila-1 .promo-slide {
+            flex: 0 0 100vw;
+            width: 100vw;
+            max-width: 100vw;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+            #carruselPromociones .promo-fila-1 .promo-slide a {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+        #carruselPromociones .promo-fila-1 .promo-imagen {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            object-fit: fill;
+            object-position: center;
+            margin: 0;
+            padding: 0;
+        }
+}
+
+
+
+
+
+

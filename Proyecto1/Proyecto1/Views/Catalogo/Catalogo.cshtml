@@ -1,0 +1,1020 @@
+﻿
+
+@{
+    ViewData["Title"] = "Todos los productos";
+
+    var estaLogueado = User.Identity.IsAuthenticated;
+
+    Layout = estaLogueado
+        ? "~/Views/Shared/_LayoutNavegador.cshtml"
+        : "~/Views/Shared/_LayoutInicio.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/styleInicio.css" />
+</head>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <button type="button"
+            class="btn btn-success"
+            data-toggle="modal"
+            data-target="#modalAgregar">
+        Agregar Foto
+    </button>
+}
+
+<div class="products-container" id="contenedorProductos">
+
+    <div id="loaderProductos" class="loader-productos">
+        <div class="spinner-productos"></div>
+        <span>Cargando productos...</span>
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="modalZoom" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+
+            <div class="modal-header border-0 pb-0" style="padding: 15px 20px;">
+                <h5 class="modal-title" id="zoom-titulo-producto" style=" font-family: 'Montserrat', sans-serif;font-weight: 500; color: #464646; font-size: 1.15rem; max-width: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    Detalle del Producto
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 1.8rem; line-height: 1; padding: 10px 15px; margin: -10px -15px -10px auto;">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding: 20px;">
+                <div class="row">
+
+                    <!-- CONTENEDOR DE IMAGEN PRINCIPAL CON FLECHAS -->
+                    <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="border-right: 1px solid #f0f0f0;">
+                        <div style="width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #eaeaea; position: relative;">
+
+                            <!-- Flecha Izquierda -->
+                            <button type="button" id="zoom-prev-btn" onclick="navegarImagenZoom(-1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #333; cursor: pointer; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); outline: none;">
+                                &#10094;
+                            </button>
+
+                            <img id="zoom-imagen-principal" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+
+                            <!-- Flecha Derecha -->
+                            <button type="button" id="zoom-next-btn" onclick="navegarImagenZoom(1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #333; cursor: pointer; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); outline: none;">
+                                &#10095;
+                            </button>
+
+                        </div>
+
+                        <div id="zoom-galeria-miniaturas" style="display: flex; gap: 8px; margin-top: 12px; width: 100%; justify-content: center; overflow-x: auto; padding-bottom: 5px;">
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DE DETALLES (DERECHA) -->
+                    <div class="col-md-6 d-flex flex-column justify-content-between" style="padding-left: 25px; min-height: 320px;">
+
+                        <div style="line-height: 1.6;">
+                            <span id="zoom-tipo-badge" style="background: #eef2f7; color: #0056b3; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">TIPO</span>
+
+                            <h4 id="zoom-marca" style="font-weight: 800; margin-top: 8px; margin-bottom: 2px; color: #222;">MARCA</h4>
+                            <p id="zoom-modelo-desc" style="color: #555; font-size: 14px; margin-bottom: 12px;">Modelo y descripción detallada del equipo.</p>
+
+                            <!-- SECCIÓN CÓDIGO Y BOTÓN VERDE DEBAJO -->
+
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-size: 13px; color: #777;">
+                                    <span>Código de producto: </span><strong id="zoom-codigo" style="color: #333;">N/A</strong>
+                                </div>
+
+                                <!-- Enlace sutil estilo botón en color verde -->
+
+                                <a href="javascript:void(0)"
+                                   id="zoom-btn-caracteristicas"
+                                   style="font-size:12px; font-weight:bold; color:#d7007c; text-decoration:none;">
+                                    ☷ Más características ▾
+                                </a>
+
+
+                                <!-- SECCIÓN SELECCIÓN DE COLOR -->
+                                <div id="zoom-color-container" style="margin-top: 12px;">
+                                    <span style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 6px;">Color disponible:</span>
+                                    <div id="zoom-lista-colores" style="display: flex; gap: 10px; align-items: center;">
+
+                                        <!-- Ejemplo de Círculo de Color Activo/Seleccionado -->
+                                        <button type="button" class="color-circle active"></button>
+                                        <!-- Ejemplo de Círculo de Color Inactivo -->
+                                        <button type="button" class="color-circle" style="width: 24px; height: 24px; border-radius: 50%; background-color: #ff0000; border: 1px solid #ccc; cursor: pointer; padding: 0; outline: none; transition: all 0.2s;"></button>
+
+                                        <button type="button" class="color-circle" style="width: 24px; height: 24px; border-radius: 50%; background-color: #ffffff; border: 1px solid #ccc; cursor: pointer; padding: 0; outline: none; transition: all 0.2s;"></button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONTENEDOR DE PRECIOS -->
+                            <div style="background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px dashed #e5e5e5; margin-bottom: 20px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+
+                                <!-- Lado Izquierdo: Precio Actual y Badge de Descuento -->
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span id="zoom-precio-actual" style="font-size: 24px; font-weight: 800; color: #222; line-height: 1;">S/. 0.00</span>
+                                    <span id="zoom-descuento-badge"
+                                          style="
+          background-color: #d7007c;
+          color: white;
+          font-size: 12px;
+          font-weight: bold;
+          padding: 4px 8px 4px 12px;
+          clip-path: polygon(0 50%, 25% 0, 100% 0, 100% 100%, 25% 100%);
+          display: none;
+          line-height: 1.2;
+          white-space: nowrap;
+      ">
+                                        -0%
+                                    </span>
+                                </div>
+
+                                <!-- Lado Derecho: Precio Anterior -->
+                                <div id="zoom-precio-antes-container" style="display: none; text-align: right;">
+                                    <span style="color: #999; font-size: 13px; text-decoration: line-through;">Antes: </span>
+                                    <span id="zoom-precio-antes" style="color: #999; font-size: 13px; text-decoration: line-through;">S/. 0.00</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN ACCIONES DE COMPRA -->
+                        <div id="zoom-acciones-compra" style="border-top: 1px solid #f0f0f0; padding-top: 15px;">
+                            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+
+                                <!-- Selector de Cantidad -->
+                                <div style="display: inline-flex; align-items: center; border: 1px solid #ced4da; border-radius: 6px; overflow: hidden; background: #fff; height: 38px;">
+                                    <button type="button" onclick="cambiarCantidadZoom(-1)" style="border: none; background: #f8f9fa; width: 32px; height: 100%; cursor: pointer; font-weight: bold; color: #333; padding: 0;">-</button>
+                                    <span id="cant-display-zoom" style="min-width: 35px; text-align: center; font-weight: bold; font-size: 14px; color: #333; line-height: 38px;">1</span>
+                                    <button type="button" onclick="cambiarCantidadZoom(1)" style="border: none; background: #f8f9fa; width: 32px; height: 100%; cursor: pointer; font-weight: bold; color: #333; padding: 0;">+</button>
+                                </div>
+
+                                <!-- Botón Agregar al Carrito -->
+                                <button class="btn btn-primary btn-agregar-carrito" id="zoom-btn-agregar" style="flex: 1; height: 38px; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; margin: 0;">
+                                    Agregar al carrito
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <!-- BLOQUES INFORMATIVOS -->
+                        <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 22px; width: 100%; flex-wrap: nowrap;">
+                            <!-- Recuadro 1: Garantía -->
+                            <div id="zoom-garantia-container" style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
+                                <span style="font-size: 16px; margin-bottom: 2px;">🛡️</span>
+                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Garantía</strong>
+                                <span id="zoom-garantia" style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">12 Meses</span>
+                            </div>
+                            <!-- Recuadro 2: Formas de Pago -->
+                            <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
+                                <span style="font-size: 16px; margin-bottom: 2px;">💳</span>
+                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Pagos</strong>
+                                <span style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">Efectivo/Tarj.</span>
+                            </div>
+                            <!-- Recuadro 3: Envíos -->
+                            <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
+                                <span style="font-size: 16px; margin-bottom: 2px;">🚚</span>
+                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Envíos</strong>
+                                <span style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">Todo el Perú</span>
+                            </div>
+                        </div>
+
+                    </div> <!-- FIN DE COLUMNA DE DETALLES -->
+                </div> <!-- FIN DEL ROW ORIGINAL -->
+                <!-- RECUADRO DESPLEGABLE ABAJO DEL TODO (Ideal para mucha información) -->
+                <div class="collapse" id="zoom-caracteristicas-collapse" style="width: 100%; margin-top: 25px; border-top: 1px dashed #e5e5e5; padding-top: 20px;">
+                    <div style="background: #fdfdfd; border: 1px solid #eaeaea; border-radius: 10px; padding: 16px; font-size: 13px; color: #444; line-height: 1.6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
+                        <strong style="font-family: 'Montserrat', sans-serif; color: #777777; font-weight: 450 !important; display: block; margin-bottom: 8px; font-size: 14px;">INFORMACIÓN DE ESTE PRODUCTO</strong>
+                        <div id="zoom-caracteristicas-titulo"
+                             style="
+font-family: 'Montserrat', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #464646;
+        margin-bottom: 12px;
+        line-height: 1.5;">
+                        </div>
+
+                        <div id="zoom-caracteristicas-texto" style="white-space: pre-line; color: #555;">
+                            Cargando especificaciones adicionales...
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- FIN MODAL BODY -->
+        </div>
+    </div>
+</div>
+
+<!-- VISOR DE IMAGEN GRANDE -->
+<!-- VISOR DE IMAGEN GRANDE -->
+<div id="visorImagenGrande" class="visor-imagen-grande">
+
+    <!-- BOTÓN CERRAR -->
+    <button type="button"
+            id="cerrarImagenGrande"
+            class="visor-cerrar"
+            aria-label="Cerrar">
+        &times;
+    </button>
+
+
+    <!-- FLECHA ANTERIOR -->
+    <button type="button"
+            id="visorImagenAnterior"
+            class="visor-flecha visor-flecha-izquierda"
+            aria-label="Imagen anterior">
+        &#10094;
+    </button>
+
+
+    <!-- IMAGEN -->
+    <img id="imagenGrandeZoom"
+         src=""
+         alt="Imagen del producto">
+
+
+    <!-- FLECHA SIGUIENTE -->
+    <button type="button"
+            id="visorImagenSiguiente"
+            class="visor-flecha visor-flecha-derecha"
+            aria-label="Imagen siguiente">
+        &#10095;
+    </button>
+
+</div>
+
+<div id="toastMensaje"
+     style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #d7007c;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 6px;
+        display: none;
+        z-index: 9999;
+        font-weight: 500;
+     ">
+    Guardado correctamente
+</div>
+
+<div class="modal fade" id="modalCheckout" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+
+        <div class="modal-content checkout-modal-content">
+
+            <!-- ========================================= -->
+            <!-- HEADER -->
+            <!-- ========================================= -->
+
+
+            <div class="modal-header border-0 checkout-header">
+
+                <div class="checkout-header-content">
+
+
+                    <div class="checkout-header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="21"
+                             height="21"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+
+                            <path d="M3 6h12v12H3z" />
+                            <path d="M15 10h4l3 4v4h-7z" />
+                            <circle cx="7.5" cy="18" r="2" />
+                            <circle cx="18.5" cy="18" r="2" />
+                            <path d="M15 14h7" />
+                        </svg>
+                    </div>
+
+                    <div class="checkout-header-text">
+                        <h5 class="modal-title">
+                            Datos de Envío y Facturación
+                        </h5>
+
+                        <p>Completa tus datos para coordinar la entrega</p>
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+
+                    <span>&times;</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- FORMULARIO -->
+            <!-- ========================================= -->
+
+            <form id="formCheckout"
+                  onsubmit="procesarCompra(event)"
+                  class="checkout-form">
+
+                <!-- ===================================== -->
+                <!-- CONTENIDO -->
+                <!-- ===================================== -->
+
+                <div class="modal-body checkout-body">
+
+
+                    <!-- ================================ -->
+                    <!-- DATOS PERSONALES -->
+                    <!-- ================================ -->
+
+                    <div class="row">
+
+                        <div class="form-group col-md-6">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Nombres
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="chkNombres"
+                                   class="form-control"
+                                   required
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Apellidos
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="chkApellidos"
+                                   class="form-control"
+                                   required
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================ -->
+                    <!-- DNI / CELULAR -->
+                    <!-- ================================ -->
+
+                    <div class="row">
+
+                        <div class="form-group col-md-6">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                DNI
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="chkDni"
+                                   class="form-control"
+                                   required
+                                   maxlength="12"
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Número de Celular
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="tel"
+                                   id="chkCelular"
+                                   class="form-control"
+                                   required
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================ -->
+                    <!-- CORREO -->
+                    <!-- ================================ -->
+
+                    <div class="row">
+
+                        <div class="form-group col-12">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Correo Electrónico
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="email"
+                                   id="chkCorreo"
+                                   class="form-control"
+                                   required
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+                    </div>
+
+
+                    <hr style="border-style: dashed; margin: 15px 0;">
+
+
+                    <!-- ================================ -->
+                    <!-- DIRECCIÓN -->
+                    <!-- ================================ -->
+
+                    <h6 style="
+                        font-weight: bold;
+                        margin-bottom: 15px;
+                        font-size: 14px;
+                        color: #555;
+                    ">
+                        Dirección de Entrega
+                    </h6>
+
+
+                    <div class="row">
+
+                        <!-- REGIÓN -->
+
+                        <div class="form-group col-md-4">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Región
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <select id="chkRegion"
+                                    class="form-control"
+                                    required
+                                    style="border-radius: 6px;">
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PROVINCIA -->
+
+                        <div class="form-group col-md-4">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Provincia
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <select id="chkProvincia"
+                                    class="form-control"
+                                    required
+                                    disabled
+                                    style="border-radius: 6px;">
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- DISTRITO -->
+
+                        <div class="form-group col-md-4">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Distrito
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <select id="chkDistrito"
+                                    class="form-control"
+                                    required
+                                    disabled
+                                    style="border-radius: 6px;">
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================ -->
+                    <!-- DIRECCIÓN -->
+                    <!-- ================================ -->
+
+                    <div class="row">
+
+                        <div class="form-group col-12">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Dirección de Domicilio
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="chkDireccion"
+                                   class="form-control"
+                                   placeholder="Av. Principal 123 - Dpto 401"
+                                   required
+                                   style="border-radius: 6px;">
+
+                        </div>
+
+                    </div>
+
+                    <!-- ================================ -->
+                    <!-- NOTA DEL CLIENTE -->
+                    <!-- ================================ -->
+
+                    <div class="row">
+
+                        <div class="form-group col-12">
+
+                            <label style="font-weight: 600; font-size: 13px;">
+                                Nota del cliente
+                                <span class="text-muted">(Opcional)</span>
+                            </label>
+
+                            <textarea id="chkNotaCliente"
+                                      class="form-control"
+                                      rows="2"
+                                      maxlength="500"
+                                      style="border-radius: 6px; resize: vertical;"></textarea>
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <!-- ================================ -->
+                    <!-- TOTAL -->
+                    <!-- ================================ -->
+
+                    <div class="checkout-total">
+
+                        <span>
+                            Monto Final a Pagar:
+                        </span>
+
+                        <strong id="chkMontoFinal">
+                            S/. 0.00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ===================================== -->
+                <!-- FOOTER -->
+                <!-- ===================================== -->
+
+                <div class="modal-footer border-0 checkout-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal"
+                            style="border-radius: 6px;">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="btn btn-success"
+                            style="
+                                border-radius: 6px;
+                                font-weight: bold;
+                                padding-left: 25px;
+                                padding-right: 25px;
+                            ">
+
+                        Finalizar Pedido
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="modalAgregar"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Nuevo Equipo
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form id="formNuevoEquipo" enctype="multipart/form-data">
+
+                <div class="modal-body">
+
+                    <!-- Tipo y Color -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Tipo Equipo</label>
+                            <select id="tipoEquipo" class="form-control">
+                                <option value="">Seleccione un tipo</option>
+                                <option value="LAPTOP">LAPTOP</option>
+                                <option value="CPU">CPU</option>
+                                <option value="MONITOR">MONITOR</option>
+                                <option value="TABLET">TABLET</option>
+                                <option value="IMPRESORA">IMPRESORA</option>
+                                <option value="ANTIVIRUS">ANTIVIRUS</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Color</label>
+                            <input type="text"
+                                   id="color"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Marca y Modelo -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Marca</label>
+                            <input type="text"
+                                   id="marca"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Modelo</label>
+                            <input type="text"
+                                   id="modelo"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Código y Descripción Corta -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Código Producto</label>
+                            <input type="text"
+                                   id="codigoProducto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label>Descripción corta</label>
+                            <textarea id="descripcion"
+                                      class="form-control"
+                                      rows="1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label>Descripción detallada</label>
+                            <textarea id="descripcion1"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Garantía y Estado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Garantía</label>
+                            <select id="garantia" class="form-control">
+                                <option value="">Seleccione garantía...</option>
+                                <option value="3 Meses">3 Meses</option>
+                                <option value="6 Meses">6 Meses</option>
+                                <option value="12 Meses">12 Meses</option>
+                                <option value="24 Meses">24 Meses</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Estado</label>
+                            <select id="estado" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                                <option value="AGOTADO">AGOTADO</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Precios -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Precio actual</label>
+                            <input type="number"
+                                   id="precio"
+                                   step="0.01"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label>Precio anterior</label>
+                            <input type="number"
+                                   id="precioAntes"
+                                   step="0.01"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label>Descuento</label>
+                            <input type="number"
+                                   id="descuento"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="20" />
+                        </div>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="mb-3">
+                        <label>Imágenes del equipo (máx 4)</label>
+                        <input type="file"
+                               id="fileImage"
+                               accept="image/*"
+                               multiple
+                               class="form-control" />
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="previewContainer"
+                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-primary w-100"
+                            onclick="guardarEquipo()">
+                        Guardar Equipo
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="modalEditar"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Editar Equipo
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form id="formEditarEquipo" enctype="multipart/form-data">
+                <input type="hidden" id="editar_id" />
+
+                <div class="modal-body">
+
+                    <!-- Tipo y Color -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Tipo Equipo</label>
+                            <select id="editar_tipoEquipo" class="form-control">
+                                <option value="">Seleccione un tipo</option>
+                                <option value="LAPTOP">LAPTOP</option>
+                                <option value="CPU">CPU</option>
+                                <option value="MONITOR">MONITOR</option>
+                                <option value="TABLET">TABLET</option>
+                                <option value="IMPRESORA">IMPRESORA</option>
+                                <option value="ANTIVIRUS">ANTIVIRUS</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Color</label>
+
+                            <select id="editar_color"
+                                    class="form-control">
+                                <option value="">Seleccione un color</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Marca y Modelo -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Marca</label>
+                            <input type="text"
+                                   id="editar_marca"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Modelo</label>
+                            <input type="text"
+                                   id="editar_modelo"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Código y Descripción Corta -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Código Producto</label>
+                            <input type="text"
+                                   id="editar_codigoProducto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label>Descripción</label>
+                            <textarea id="editar_descripcion"
+                                      class="form-control"
+                                      rows="1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label>Descripción detallada</label>
+                            <textarea id="editar_descripcion1"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Garantía y Estado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Garantía</label>
+                            <select id="editar_garantia" class="form-control">
+                                <option value="">Seleccione garantía...</option>
+                                <option value="3 Meses">3 Meses</option>
+                                <option value="6 Meses">6 Meses</option>
+                                <option value="12 Meses">12 Meses</option>
+                                <option value="24 Meses">24 Meses</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Estado</label>
+                            <select id="editar_estado" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                                <option value="AGOTADO">AGOTADO</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Precios -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Precio actual</label>
+                            <input type="number"
+                                   id="editar_precio"
+                                   step="0.01"
+                                   class="form-control" readonly />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label>Precio anterior</label>
+                            <input type="number"
+                                   id="editar_precioAntes"
+                                   step="0.01"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label>Descuento</label>
+                            <input type="number"
+                                   id="editar_descuento"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="20" />
+                        </div>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="mb-3">
+                        <label>Imágenes del equipo (máx 4)</label>
+                        <input type="file"
+                               id="editar_fileImage"
+                               accept="image/*"
+                               multiple
+                               class="form-control" />
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="editar_previewContainer"
+                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            id="btnActualizar"
+                            class="btn btn-primary w-100">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    const estaLogueado = @User.Identity.IsAuthenticated.ToString().ToLower();
+</script>
+
+@{
+    int? productoIdInicial = ViewBag.ProductoId as int?;
+}
+
+<script>
+    const productoIdInicial = @(productoIdInicial.HasValue
+                                ? productoIdInicial.Value.ToString()
+                                : "null");
+</script>
+
+<script src="~/js/InicioMuestra.js"></script>

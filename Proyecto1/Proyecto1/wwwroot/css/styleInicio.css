@@ -23,18 +23,35 @@ body {
 /* ================= CONTENEDOR PRODUCTOS ================= */
 
 
+
+/* CONTENEDOR DE PRODUCTOS */
+
 .products-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(min(100%, 220px), 1fr) );
     gap: 18px;
+    /* Mismo margen exterior que la separación entre tarjetas */
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 10px 18px 20px;
+    box-sizing: border-box;
     align-items: stretch;
-    padding: 20px;
 }
 
-/* ================= CARD PRODUCTO ================= */
 
+.container:has(> #contenedorProductos),
+.container-fluid:has(> #contenedorProductos) {
+    width: 100%;
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* TARJETAS */
 .product-gallery {
-    width: 280px;
+    width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -42,14 +59,15 @@ body {
     border-radius: 5px;
     border: 1px solid var(--border-gray);
     padding: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     transition: box-shadow .25s ease, transform .25s ease;
 }
 
     .product-gallery:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
     }
+
 
 
 /* La información se adapta al espacio disponible */
@@ -1379,4 +1397,564 @@ body {
     .product-gallery:hover {
         transform: none;
     }
+}
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   CATÁLOGO Y FILTROS
+===================================================== */
+
+:root {
+    --catalogo-rosa: #d7007c;
+    --catalogo-rosa-oscuro: #a90061;
+    --catalogo-texto: #374151;
+    --catalogo-texto-secundario: #4B5563;
+    --catalogo-borde: #D1D5DB;
+    --catalogo-borde-claro: #E5E7EB;
+    --catalogo-margen: 12px;
+    --catalogo-gap: 12px;
+    --catalogo-filtro-ancho: 220px;
+    --catalogo-card-min: 220px;
+}
+
+/* =====================================================
+   CONTENEDORES PADRE
+===================================================== */
+
+body:has(#contenedorProductos) .container,
+body:has(#contenedorProductos) .container-fluid,
+body:has(#contenedorProductos) .container-lg,
+body:has(#contenedorProductos) .container-xl,
+body:has(#contenedorProductos) .container-xxl {
+    width: 100%;
+    max-width: none;
+}
+
+    body:has(#contenedorProductos) .container:has(.catalogo-layout),
+    body:has(#contenedorProductos) .container-fluid:has(.catalogo-layout),
+    body:has(#contenedorProductos) .container-lg:has(.catalogo-layout),
+    body:has(#contenedorProductos) .container-xl:has(.catalogo-layout),
+    body:has(#contenedorProductos) .container-xxl:has(.catalogo-layout) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+/* =====================================================
+   DISTRIBUCIÓN GENERAL
+===================================================== */
+
+.catalogo-layout {
+    display: grid;
+    grid-template-columns: var(--catalogo-filtro-ancho) minmax(0, 1fr);
+    gap: var(--catalogo-gap);
+    align-items: start;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 10px var(--catalogo-margen) 20px;
+    box-sizing: border-box;
+}
+
+/* =====================================================
+   PANEL DE FILTROS
+===================================================== */
+
+.panel-filtros {
+    width: 100%;
+    min-width: 0;
+    padding: 16px 13px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid var(--catalogo-borde);
+    border-radius: 5px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    align-self: start;
+}
+
+.filtros-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--catalogo-borde-claro);
+}
+
+    .filtros-header h4 {
+        margin: 0;
+        color: var(--catalogo-texto);
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+.btn-limpiar-filtros {
+    padding: 3px 0;
+    border: 0;
+    background: transparent;
+    color: var(--catalogo-rosa);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+    .btn-limpiar-filtros:hover {
+        color: var(--catalogo-rosa-oscuro);
+    }
+
+.filtro-seccion {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--catalogo-borde-claro);
+}
+
+    .filtro-seccion h5 {
+        margin: 0 0 12px;
+        color: var(--catalogo-texto);
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+.filtro-opcion {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 12px;
+    color: var(--catalogo-texto-secundario);
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+    .filtro-opcion:last-child {
+        margin-bottom: 0;
+    }
+
+    .filtro-opcion input {
+        flex: 0 0 auto;
+        margin: 0;
+        accent-color: var(--catalogo-rosa);
+        cursor: pointer;
+    }
+
+    .filtro-opcion > span:last-child {
+        min-width: 0;
+    }
+
+.filtro-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+    color: var(--catalogo-rosa);
+}
+
+    .filtro-icono svg,
+    .filtro-busqueda svg {
+        display: block;
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* =====================================================
+   BÚSQUEDA DE MARCA
+===================================================== */
+
+.filtro-busqueda {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    min-width: 0;
+    padding: 9px;
+    box-sizing: border-box;
+    color: #6B7280;
+    border: 1px solid var(--catalogo-borde);
+    border-radius: 5px;
+}
+
+    .filtro-busqueda input {
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        background: transparent;
+        color: var(--catalogo-texto);
+        font-size: 13px;
+    }
+
+    .filtro-busqueda:focus-within {
+        border-color: var(--catalogo-rosa);
+        box-shadow: 0 0 0 2px rgba(215, 0, 124, 0.10);
+    }
+
+/* =====================================================
+   BOTÓN FILTRAR
+===================================================== */
+
+.btn-aplicar-filtros {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: var(--catalogo-rosa);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+    .btn-aplicar-filtros:hover {
+        background: var(--catalogo-rosa-oscuro);
+    }
+
+    .btn-aplicar-filtros:focus-visible,
+    .btn-limpiar-filtros:focus-visible {
+        outline: 2px solid var(--catalogo-rosa);
+        outline-offset: 3px;
+    }
+
+.mensaje-filtros {
+    margin: 10px 0 0;
+    color: #6B7280;
+    font-size: 12px;
+}
+
+/* =====================================================
+   CUADRÍCULA DE PRODUCTOS
+===================================================== */
+
+.catalogo-layout > #contenedorProductos {
+    display: grid;
+    /*
+       Columnas adaptables:
+       - Mínimo de 220px cuando hay espacio.
+       - Se expanden para aprovechar el ancho disponible.
+       - El espacio entre tarjetas permanece en 18px.
+    */
+    grid-template-columns: repeat( auto-fit, minmax(min(100%, var(--catalogo-card-min)), 1fr) );
+    gap: var(--catalogo-gap);
+    justify-content: stretch;
+    align-content: start;
+    align-items: stretch;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* TARJETAS */
+
+.catalogo-layout #contenedorProductos > .product-gallery {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Evitar desbordamientos del contenido */
+
+.catalogo-layout .product-gallery img {
+    max-width: 100%;
+}
+
+.catalogo-layout .product-info-block,
+.catalogo-layout .producto-info-contenido {
+    min-width: 0;
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (min-width: 701px) and (max-width: 1000px) {
+    .catalogo-layout {
+        --catalogo-filtro-ancho: 190px;
+        --catalogo-card-min: 180px;
+    }
+}
+
+/* =====================================================
+   MÓVILES
+===================================================== */
+
+@media (max-width: 700px) {
+    .catalogo-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 10px 12px 20px;
+    }
+
+    .panel-filtros {
+        padding: 13px;
+    }
+
+    .catalogo-layout > #contenedorProductos {
+        grid-template-columns: repeat( auto-fit, minmax(min(100%, 150px), 1fr) );
+        gap: 12px;
+    }
+}
+
+
+
+
+
+/* ================================================
+   CORRECCIÓN DE TARJETAS EN PANTALLAS PEQUEÑAS
+================================================ */
+
+/* La tarjeta siempre organiza sus elementos verticalmente */
+#contenedorProductos > .product-gallery {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Imagen principal: ocupa una fila completa */
+#contenedorProductos .main-image-container {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#contenedorProductos .main-product-image {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100%;
+    height: 200px;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+/* Miniaturas en su propia fila */
+#contenedorProductos .thumbnail-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Colores en su propia fila */
+#contenedorProductos .producto-colores-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#contenedorProductos .producto-colores {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+/* Información debajo de las imágenes y los colores */
+#contenedorProductos .product-info-block {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#contenedorProductos .producto-info-contenido {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Marca, modelo y descripción */
+#contenedorProductos .producto-marca,
+#contenedorProductos .producto-modelo,
+#contenedorProductos .producto-descripcion {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    writing-mode: horizontal-tb;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+}
+
+/* Zona inferior: código y precios */
+#contenedorProductos .producto-pie-info {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0;
+    margin-top: auto;
+    box-sizing: border-box;
+}
+
+    #contenedorProductos .producto-pie-info > div {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: baseline;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 5px;
+        width: 100%;
+        min-width: 0;
+    }
+
+        #contenedorProductos .producto-pie-info > div > div {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-width: 0;
+        }
+
+#contenedorProductos .producto-precio,
+#contenedorProductos .producto-precio-antes {
+    white-space: nowrap;
+}
+
+/* Botones debajo de toda la información */
+#contenedorProductos .product-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    margin-top: auto;
+    box-sizing: border-box;
+}
+
+    #contenedorProductos .product-actions > button {
+        max-width: 100%;
+    }
+
+/* En móviles, una tarjeta por fila para evitar compresión */
+@media (max-width: 400px) {
+    .catalogo-layout > #contenedorProductos {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px;
+    }
+
+    #contenedorProductos .main-product-image {
+        height: 200px;
+    }
+}
+
+
+
+
+
+
+/* =========================================
+   ORDEN CORRECTO DE LOS PRECIOS
+========================================= */
+
+#contenedorProductos .producto-precios-bloque {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Precio anterior: siempre en su propia línea */
+#contenedorProductos .producto-precio-antes {
+    display: block;
+    position: static !important;
+    order: 1;
+    margin: 0 !important;
+    color: #888;
+    font-size: 0.85em;
+    text-decoration: line-through;
+    white-space: nowrap;
+}
+
+/* Precio actual y descuento: en la línea inferior */
+#contenedorProductos .producto-precio-actual {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    order: 2;
+}
+
+#contenedorProductos .producto-precio {
+    display: inline-block;
+    margin: 0 !important;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #222;
+    white-space: nowrap;
+}
+
+/* Etiqueta de descuento */
+#contenedorProductos .producto-descuento {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+
+
+
+
+
+/* =====================================================
+   BOTÓN CARRITO: CENTRADO Y SEPARADO DEL PRECIO
+===================================================== */
+
+.catalogo-layout #contenedorProductos > .product-gallery .product-actions {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100%;
+    margin-top: 14px !important;
+    padding-top: 4px;
+    box-sizing: border-box;
+}
+
+.catalogo-layout #contenedorProductos > .product-gallery .btn-agregar-carrito {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto;
 }

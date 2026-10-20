@@ -14,383 +14,502 @@
 <head>
 
     <link rel="stylesheet" href="~/css/styleInicio.css" />
-    
+
+    <link rel="stylesheet" href="~/css/carrusel.css" />    
 
 </head>
 
-@if (User.Identity.IsAuthenticated)
+
+@if (User.Identity?.IsAuthenticated == true)
 {
-    <button type="button"
-            class="btn btn-success"
-            data-toggle="modal"
-            data-target="#modalAgregar">
-        Agregar Foto
-    </button>
+    <div style="display:flex; justify-content:flex-start;
+                    padding:0 20px; margin:10px 0;">
+
+        <button type="button"
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#modalAgregarPromociones">
+            <i class="feather icon-image"></i>
+            Agregar promociones
+        </button>
+
+    </div>
 }
 
 
-<div class="products-container" id="contenedorProductos">
-
-    <div id="loaderProductos" class="loader-productos">
-        <div class="spinner-productos"></div>
-        <span>Cargando productos...</span>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div style="padding: 10px 20px;">
+        <button type="button"
+                class="btn btn-primary"
+                onclick="cargarListaPromociones()">
+            <i class="feather icon-edit"></i>
+            Administrar promociones
+        </button>
     </div>
 
-</div>
+    <div id="listaAdministrarPromociones"
+         style="display:none; padding:20px;">
 
+        <h5>Promociones registradas</h5>
 
+        <div id="tablaPromociones"></div>
+    </div>
+}
+
+<!-- MODAL AGREGAR PROMOCIONES -->
 <div class="modal fade"
-     id="modalAgregar"
+     id="modalAgregarPromociones"
      tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloAgregarPromociones"
      aria-hidden="true">
 
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">
-                    Nuevo Equipo
+                <h5 class="modal-title"
+                    id="tituloAgregarPromociones">
+                    Agregar promociones
                 </h5>
 
                 <button type="button"
                         class="close"
-                        data-dismiss="modal">
-                    <span>&times;</span>
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <form id="formNuevoEquipo" enctype="multipart/form-data">
+            <form id="formAgregarPromociones">
 
                 <div class="modal-body">
 
-                    <!-- Tipo y Color -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Tipo Equipo</label>
-                            <select id="tipoEquipo" class="form-control">
-                                <option value="">Seleccione un tipo</option>
-                                <option value="LAPTOP">LAPTOP</option>
-                                <option value="CPU">CPU</option>
-                                <option value="MONITOR">MONITOR</option>
-                                <option value="TABLET">TABLET</option>
-                                <option value="IMPRESORA">IMPRESORA</option>
-                                <option value="ANTIVIRUS">ANTIVIRUS</option>
-                            </select>
-                        </div>
+                    <!-- IMÁGENES -->
+                    <div class="form-group">
+                        <label for="archivosPromociones">
+                            Seleccionar imágenes
+                        </label>
 
-                        <div class="col-md-6 mb-3">
-                            <label>Color</label>
-                            <input type="text"
-                                   id="color"
-                                   class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Marca y Modelo -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Marca</label>
-                            <input type="text"
-                                   id="marca"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Modelo</label>
-                            <input type="text"
-                                   id="modelo"
-                                   class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Código y Descripción Corta -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label>Código Producto</label>
-                            <input type="text"
-                                   id="codigoProducto"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-8 mb-3">
-                            <label>Descripción corta</label>
-                            <textarea id="descripcion"
-                                      class="form-control"
-                                      rows="1"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label>Descripción detallada</label>
-                            <textarea id="descripcion1"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Garantía y Estado -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Garantía</label>
-                            <select id="garantia" class="form-control">
-                                <option value="">Seleccione garantía...</option>
-                                <option value="3 Meses">3 Meses</option>
-                                <option value="6 Meses">6 Meses</option>
-                                <option value="12 Meses">12 Meses</option>
-                                <option value="24 Meses">24 Meses</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Estado</label>
-                            <select id="estado" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="ACTIVO">ACTIVO</option>
-                                <option value="INACTIVO">INACTIVO</option>
-                                <option value="AGOTADO">AGOTADO</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Precios -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label>Precio actual</label>
-                            <input type="number"
-                                   id="precio"
-                                   step="0.01"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label>Precio anterior</label>
-                            <input type="number"
-                                   id="precioAntes"
-                                   step="0.01"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label>Descuento</label>
-                            <input type="number"
-                                   id="descuento"
-                                   step="0.01"
-                                   class="form-control"
-                                   placeholder="20" />
-                        </div>
-                    </div>
-
-                    <!-- Imágenes -->
-                    <div class="mb-3">
-                        <label>Imágenes del equipo (máx 4)</label>
                         <input type="file"
-                               id="fileImage"
-                               accept="image/*"
+                               class="form-control-file"
+                               id="archivosPromociones"
+                               accept="image/jpeg,image/png,image/webp"
                                multiple
-                               class="form-control" />
+                               required>
+
+                        <small class="form-text text-muted">
+                            Puedes seleccionar varias imágenes.
+                            Se subirán a Cloudinary.
+                        </small>
                     </div>
 
-                    <!-- Preview -->
-                    <div id="previewContainer"
-                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    <!-- VISTA PREVIA -->
+                    <div id="previewPromociones"
+                         style="display:grid;
+                                grid-template-columns:
+                                repeat(auto-fill,minmax(130px,1fr));
+                                gap:12px;
+                                margin-bottom:20px;">
+                    </div>
+
+                    <!-- FILA -->
+                    <div class="form-group">
+                        <label for="filaPromocion">
+                            Fila del carrusel
+                        </label>
+
+                        <select id="filaPromocion"
+                                class="form-control"
+                                required>
+                            <option value="1">
+                                Fila 1 - Publicidad pequeña (4 cm)
+                            </option>
+                            <option value="2">
+                                Fila 2 - Publicidad grande (10 cm)
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- ORDEN -->
+                    <div class="form-group">
+                        <label for="ordenPromocion">
+                            Orden inicial
+                        </label>
+
+                        <input type="number"
+                               id="ordenPromocion"
+                               class="form-control"
+                               min="1"
+                               value="1"
+                               required>
+
+                        <small class="form-text text-muted">
+                            Las imágenes seleccionadas ocuparán
+                            posiciones consecutivas.
+                        </small>
+                    </div>
+
+                    <!-- ENLACE -->
+                    <div class="form-group">
+                        <label for="enlacePromocion">
+                            Enlace al hacer clic (opcional)
+                        </label>
+
+                        <input type="url"
+                               id="enlacePromocion"
+                               class="form-control"
+                               maxlength="500"
+                               placeholder="https://ejemplo.com">
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="form-group">
+                        <label for="activoPromocion">
+                            Estado
+                        </label>
+
+                        <select id="activoPromocion"
+                                class="form-control">
+                            <option value="true" selected>
+                                Activo
+                            </option>
+                            <option value="false">
+                                Inactivo
+                            </option>
+                        </select>
+                    </div>
+
+                    <div id="mensajePromociones"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; margin-top:12px;">
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
+
                     <button type="button"
-                            class="btn btn-primary w-100"
-                            onclick="guardarEquipo()">
-                        Guardar Equipo
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
                     </button>
+
+                    <button type="submit"
+                            id="btnGuardarPromociones"
+                            class="btn btn-success">
+                        Guardar promociones
+                    </button>
+
                 </div>
 
             </form>
 
         </div>
     </div>
-
 </div>
 
 
+
+
+<!-- MODAL EDITAR PROMOCIÓN -->
 <div class="modal fade"
-     id="modalEditar"
+     id="modalEditarPromocion"
      tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloEditarPromocion"
      aria-hidden="true">
 
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">
-                    Editar Equipo
+                <h5 class="modal-title" id="tituloEditarPromocion">
+                    Editar promoción
                 </h5>
 
                 <button type="button"
                         class="close"
-                        data-dismiss="modal">
-                    <span>&times;</span>
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <form id="formEditarEquipo" enctype="multipart/form-data">
-                <input type="hidden" id="editar_id" />
-
+            <form id="formEditarPromocion">
                 <div class="modal-body">
 
-                    <!-- Tipo y Color -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Tipo Equipo</label>
-                            <select id="editar_tipoEquipo" class="form-control">
-                                <option value="">Seleccione un tipo</option>
-                                <option value="LAPTOP">LAPTOP</option>
-                                <option value="CPU">CPU</option>
-                                <option value="MONITOR">MONITOR</option>
-                                <option value="TABLET">TABLET</option>
-                                <option value="IMPRESORA">IMPRESORA</option>
-                                <option value="ANTIVIRUS">ANTIVIRUS</option>
-                            </select>
-                        </div>
+                    <input type="hidden" id="editarIdProm">
 
-                        <div class="col-md-6 mb-3">
-                            <label>Color</label>
+                    <div class="form-group">
+                        <label>Imagen actual</label>
 
-                            <select id="editar_color"
-                                    class="form-control">
-                                <option value="">Seleccione un color</option>
-                            </select>
+                        <div>
+                            <img id="editarVistaPrevia"
+                                 src=""
+                                 alt="Imagen promocional actual"
+                                 style="max-width:100%; max-height:180px;
+                                        object-fit:contain;">
                         </div>
                     </div>
 
-                    <!-- Marca y Modelo -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Marca</label>
-                            <input type="text"
-                                   id="editar_marca"
-                                   class="form-control" />
-                        </div>
+                    <div class="form-group">
+                        <label for="editarArchivoPromocion">
+                            Reemplazar imagen (opcional)
+                        </label>
 
-                        <div class="col-md-6 mb-3">
-                            <label>Modelo</label>
-                            <input type="text"
-                                   id="editar_modelo"
-                                   class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Código y Descripción Corta -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label>Código Producto</label>
-                            <input type="text"
-                                   id="editar_codigoProducto"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-8 mb-3">
-                            <label>Descripción</label>
-                            <textarea id="editar_descripcion"
-                                      class="form-control"
-                                      rows="1"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label>Descripción detallada</label>
-                            <textarea id="editar_descripcion1"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Garantía y Estado -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Garantía</label>
-                            <select id="editar_garantia" class="form-control">
-                                <option value="">Seleccione garantía...</option>
-                                <option value="3 Meses">3 Meses</option>
-                                <option value="6 Meses">6 Meses</option>
-                                <option value="12 Meses">12 Meses</option>
-                                <option value="24 Meses">24 Meses</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label>Estado</label>
-                            <select id="editar_estado" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="ACTIVO">ACTIVO</option>
-                                <option value="INACTIVO">INACTIVO</option>
-                                <option value="AGOTADO">AGOTADO</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Precios -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label>Precio actual</label>
-                            <input type="number"
-                                   id="editar_precio"
-                                   step="0.01"
-                                   class="form-control" readonly />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label>Precio anterior</label>
-                            <input type="number"
-                                   id="editar_precioAntes"
-                                   step="0.01"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label>Descuento</label>
-                            <input type="number"
-                                   id="editar_descuento"
-                                   step="0.01"
-                                   class="form-control"
-                                   placeholder="20" />
-                        </div>
-                    </div>
-
-                    <!-- Imágenes -->
-                    <div class="mb-3">
-                        <label>Imágenes del equipo (máx 4)</label>
                         <input type="file"
-                               id="editar_fileImage"
-                               accept="image/*"
-                               multiple
-                               class="form-control" />
+                               id="editarArchivoPromocion"
+                               class="form-control-file"
+                               accept="image/jpeg,image/png,image/webp">
+
+                        <small class="form-text text-muted">
+                            Si no seleccionas otra imagen, se conservará la actual.
+                        </small>
                     </div>
 
-                    <!-- Preview -->
-                    <div id="editar_previewContainer"
-                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    <div class="form-group">
+                        <label for="editarFilaPromocion">
+                            Fila del carrusel
+                        </label>
+
+                        <select id="editarFilaPromocion"
+                                class="form-control"
+                                required>
+                            <option value="1">Fila 1 - 4 cm</option>
+                            <option value="2">Fila 2 - 10 cm</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editarOrdenPromocion">
+                            Orden de aparición
+                        </label>
+
+                        <input type="number"
+                               id="editarOrdenPromocion"
+                               class="form-control"
+                               min="1"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editarEnlacePromocion">
+                            Enlace de destino (opcional)
+                        </label>
+
+                        <input type="url"
+                               id="editarEnlacePromocion"
+                               class="form-control"
+                               maxlength="500"
+                               placeholder="https://ejemplo.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editarActivoPromocion">
+                            Estado
+                        </label>
+
+                        <select id="editarActivoPromocion"
+                                class="form-control">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div id="mensajeEditarPromocion"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; padding:10px;">
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
                     <button type="button"
-                            id="btnActualizar"
-                            class="btn btn-primary w-100">
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarEdicionPromocion"
+                            class="btn btn-success">
                         Guardar cambios
                     </button>
                 </div>
-
             </form>
 
         </div>
+    </div>
+</div>
+
+
+<!-- BOTÓN VER TODO -->
+<div style="display:flex;
+            justify-content:flex-end;
+            padding:0 20px;
+            margin-top:15px;
+            margin-bottom:10px;">
+
+    <a href="@Url.Action("Catalogo", "Catalogo")"
+       class="btn btn-sm"
+       style="background:#d7007c;
+              color:white;
+              font-weight:600;
+              border-radius:6px;
+              padding:7px 15px;">
+        Ver todo →
+    </a>
+
+</div>
+
+<!-- CARRUSEL PROMOCIONAL -->
+<div id="carruselPromociones" class="promo-carousel">
+
+    <!-- FILA 1: publicidad pequeña -->
+    <div class="promo-fila promo-fila-1">
+        <div id="pistaPromociones1" class="promo-pista"></div>
+    </div>
+
+    <!-- FILA 2: publicidad grande -->
+    <div class="promo-fila promo-fila-2">
+        <div id="pistaPromociones2" class="promo-pista"></div>
+    </div>
+
+</div>
+
+
+
+
+<!-- CONTENEDOR GENERAL: FILTROS + PRODUCTOS -->
+<div class="catalogo-layout">
+
+    <!-- PANEL LATERAL DE FILTROS -->
+    <aside class="panel-filtros" id="panelFiltros">
+
+        <div class="filtros-header">
+            <h4>Filtros</h4>
+            <button type="button"
+                    id="limpiarFiltros"
+                    class="btn-limpiar-filtros">
+                Limpiar
+            </button>
+        </div>
+
+        <!-- ENTREGA -->
+        <section class="filtro-seccion">
+
+            <h5>Entrega</h5>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" id="filtroNuevo">
+                <span class="filtro-icono">
+                    <!-- Icono de producto nuevo -->
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" />
+                    </svg>
+                </span>
+                <span>Nuevo</span>
+            </label>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" id="filtroDomicilio">
+                <span class="filtro-icono">
+                    <!-- Icono de despacho -->
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6h11v11H3z M14 10h4l3 4v3h-7z" />
+                        <circle cx="7.5" cy="19" r="2" />
+                        <circle cx="18" cy="19" r="2" />
+                    </svg>
+                </span>
+                <span>Despacho a domicilio</span>
+            </label>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" id="filtroRetiro">
+                <span class="filtro-icono">
+                    <!-- Icono de punto de retiro -->
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z" />
+                        <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                </span>
+                <span>Punto de retiro</span>
+            </label>
+
+        </section>
+
+        <!-- MARCA -->
+        <section class="filtro-seccion">
+
+            <h5>Marca</h5>
+
+            <div class="filtro-busqueda">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m16 16 5 5" />
+                </svg>
+
+                <input type="search"
+                       id="filtroMarca"
+                       placeholder="Buscar marca..."
+                       autocomplete="off">
+            </div>
+
+        </section>
+
+        <!-- PRECIO -->
+        <section class="filtro-seccion">
+
+            <h5>Precio</h5>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" name="filtroPrecio"
+                       value="menos10000">
+                <span>Menos de S/ 10.000</span>
+            </label>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" name="filtroPrecio"
+                       value="10000a20000">
+                <span>S/ 10.000 - S/ 20.000</span>
+            </label>
+
+            <label class="filtro-opcion">
+                <input type="checkbox" name="filtroPrecio"
+                       value="mas20000">
+                <span>Más de S/ 20.000</span>
+            </label>
+
+        </section>
+
+        <button type="button"
+                id="btnAplicarFiltros"
+                class="btn-aplicar-filtros">
+            Filtrar productos
+        </button>
+
+        <p id="mensajeFiltros"
+           class="mensaje-filtros"
+           aria-live="polite"></p>
+
+    </aside>
+
+    <!-- PRODUCTOS: SE CONSERVA EL ID QUE USA TU JAVASCRIPT -->
+    <div class="products-container" id="contenedorProductos">
+
+        <div id="loaderProductos" class="loader-productos">
+            <div class="spinner-productos"></div>
+            <span>Cargando productos...</span>
+        </div>
+
     </div>
 
 </div>
@@ -617,7 +736,7 @@ font-family: 'Montserrat', sans-serif;
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #28a745;
+        background: #d7007c;
         color: white;
         padding: 12px 18px;
         border-radius: 6px;
@@ -1022,3 +1141,4 @@ font-family: 'Montserrat', sans-serif;
 </script>
 
 <script src="~/js/InicioMuestra.js"></script>
+<script src="~/js/carruselPromociones.js"></script>
