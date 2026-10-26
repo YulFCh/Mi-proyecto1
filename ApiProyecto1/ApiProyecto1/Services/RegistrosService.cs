@@ -1,5 +1,6 @@
 ﻿using ApiProyecto1.Models;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace ApiProyecto1.Services
 {
@@ -23,6 +24,7 @@ namespace ApiProyecto1.Services
                 string query = @"
             SELECT
                 id,
+                IdSubcategoria,
                 tipo_equipo,
                 color,
                 modelo,
@@ -55,6 +57,10 @@ namespace ApiProyecto1.Services
                             registros.Add(new RegistrosModel
                             {
                                 Id = Convert.ToInt32(dr["id"]),
+
+                                IdSubcategoria = dr["IdSubcategoria"] == DBNull.Value
+    ? null
+    : Convert.ToInt32(dr["IdSubcategoria"]),
 
                                 Tipo_Equipo = dr["tipo_equipo"]?.ToString() ?? "",
 
@@ -224,6 +230,7 @@ namespace ApiProyecto1.Services
                 
 INSERT INTO equipos
 (
+    IdSubcategoria,
     tipo_equipo,
     color,
     modelo,
@@ -244,6 +251,7 @@ INSERT INTO equipos
 )
 VALUES
 (
+    @idSubcategoria,
     @tipo,
     @color,
     @modelo,
@@ -264,6 +272,9 @@ VALUES
 )";
 
                 SqlCommand cmd = new SqlCommand(query, con);
+
+                cmd.Parameters.Add("@idSubcategoria", SqlDbType.Int).Value =
+    (object?)model.IdSubcategoria ?? DBNull.Value;
 
                 cmd.Parameters.AddWithValue("@tipo", model.Tipo_Equipo);
 

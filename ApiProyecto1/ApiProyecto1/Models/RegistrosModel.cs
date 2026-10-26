@@ -30,6 +30,8 @@
         public string? Descripcion1 { get; set; }
         public string? Garantia { get; set; }
 
+        public int? IdSubcategoria { get; set; }
+
         public List<VarianteModel> Variantes { get; set; } = new();
     }
 
