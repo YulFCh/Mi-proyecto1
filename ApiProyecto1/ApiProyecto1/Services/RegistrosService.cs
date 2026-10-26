@@ -13,8 +13,7 @@ namespace ApiProyecto1.Services
         }
 
         // LISTAR EQUIPOS
-        // LISTAR EQUIPOS AGRUPADOS POR MODELO
-        // LISTAR EQUIPOS AGRUPADOS POR TIPO + MARCA + MODELO
+
         public List<RegistrosModel> Listar()
         {
             var registros = new List<RegistrosModel>();

@@ -32,6 +32,7 @@ builder.Services.AddScoped<PedidosService>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<VerPedidosService>();
 builder.Services.AddScoped<RegistroPromocionesService>();
+builder.Services.AddScoped<CategoriasService>();
 
 
 var app = builder.Build();
