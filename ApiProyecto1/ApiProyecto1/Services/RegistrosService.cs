@@ -155,6 +155,10 @@ namespace ApiProyecto1.Services
                     // Registro principal
                     var primero = grupo.First();
 
+                    primero.IdSubcategoria = grupo
+    .Select(x => x.IdSubcategoria)
+    .FirstOrDefault(id => id.HasValue);
+
                     // Crear las variantes correspondientes a cada color
                     primero.Variantes = grupo.Select(x => new VarianteModel
                     {

@@ -141,6 +141,16 @@ namespace ApiProyecto1.Services
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = con;
 
+            if (model.IdSubcategoria.HasValue)
+            {
+                campos.Add("IdSubcategoria = @idSubcategoria");
+
+                cmd.Parameters.Add(
+                    "@idSubcategoria",
+                    System.Data.SqlDbType.Int
+                ).Value = model.IdSubcategoria.Value;
+            }
+
             if (model.Tipo_Equipo != null)
             {
                 campos.Add("tipo_equipo = @tipo");
