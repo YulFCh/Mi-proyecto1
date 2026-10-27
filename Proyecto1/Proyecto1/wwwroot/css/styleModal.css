@@ -817,3 +817,27 @@ body {
         }
 }
 
+
+
+
+
+/* Modal de login por encima del panel de categorías */
+#loginModal {
+    z-index: 30000 !important;
+}
+
+/* Fondo oscuro del modal de login */
+.modal-backdrop {
+    z-index: 29999 !important;
+}
+
+
+.modal-backdrop {
+    background-color: #000 !important;
+    opacity: 0.2 !important;
+}
+
+
+
+
+

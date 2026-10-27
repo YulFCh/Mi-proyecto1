@@ -825,7 +825,36 @@ async function cargarProductos() {
 
         contenedor.innerHTML = "";
 
-        data.forEach(item => {
+        // 1. Filtrar por categoría
+        const productosCategoria = obtenerProductosPorCategoria(data);
+
+        // 2. Filtrar por subcategoría
+        const productosSubcategoria = subcategoriaSeleccionada
+            ? productosCategoria.filter(item =>
+                Number(item.idSubcategoria ?? item.IdSubcategoria) ===
+                Number(subcategoriaSeleccionada)
+            )
+            : productosCategoria;
+
+        // 3. Filtrar por tipo de equipo (Laptop, PC, etc.)
+        const productosTipoEquipo = tipoEquipoSeleccionado
+            ? productosSubcategoria.filter(item => {
+                const tipo =
+                    item.tipo_Equipo ??
+                    item.tipoEquipo ??
+                    item.Tipo_Equipo ??
+                    item.tipo_equipo;
+
+                return String(tipo || "").trim().toLowerCase() ===
+                    String(tipoEquipoSeleccionado).trim().toLowerCase();
+            })
+            : productosSubcategoria;
+
+        // 4. Mantener tus filtros actuales de marca y precio
+        const productosFiltrados =
+            obtenerProductosFiltrados(productosTipoEquipo);
+
+        productosFiltrados.forEach(item => {
 
             const estadoEquipo = item.estado
                 ? item.estado.toLowerCase().trim()
@@ -1026,18 +1055,6 @@ async function cargarProductos() {
 </div>
 
 
-                    <!-- INFORMACIÓN -->
-                    <div
-    class="product-info-block"
-    style="
-        text-align:left;
-        margin-top:10px;
-        line-height:1.5;
-        display:flex;
-        flex-direction:column;
-        flex:1;
-    "
->
 
 
 <!-- INFORMACIÓN -->
@@ -1045,7 +1062,7 @@ async function cargarProductos() {
     class="product-info-block"
     style="
         text-align:left;
-        margin-top:10px;
+        margin-top:2px;
         line-height:1.5;
         display:flex;
         flex-direction:column;
@@ -1057,7 +1074,7 @@ async function cargarProductos() {
         class="producto-info-contenido"
         style="
             background:#fbfbfb;
-            padding:12px;
+            padding:8px;
             border-radius:8px;
             border:1px dashed #e5e5e5;
             margin-bottom:8px;
@@ -1129,7 +1146,8 @@ async function cargarProductos() {
         <span
             class="producto-descripcion"
             style="
-                display:-webkit-box;
+                
+                display:block;
                 margin:2px 0 0;
                 font-family:inherit;
                 font-size:12px;
@@ -1149,7 +1167,7 @@ async function cargarProductos() {
 
         <!-- AQUÍ CONTINÚA TU BLOQUE producto-pie-info -->
 
-                            <br />
+      <span style="display:block; height:2px; line-height:4px;"></span>
 
                             
 
@@ -1170,7 +1188,7 @@ async function cargarProductos() {
             margin-bottom:8px;
         "
     >
-        ${varianteInicial.codigo_Producto || "N/A"}
+       C.P:  ${varianteInicial.codigo_Producto || "N/A"}
     </small>
 
  <!-- PRECIOS DEL PRODUCTO -->
@@ -1335,78 +1353,137 @@ async function cargarProductos() {
     }
 }
 
+
 async function guardarEquipo() {
+    const idSubcategoria = document.getElementById("subcategoria").value;
+
+    if (!idSubcategoria) {
+        alert("Selecciona una subcategoría.");
+        return;
+    }
+
     if (imagenesAgregar.length === 0) {
         alert("Selecciona al menos una imagen");
         return;
     }
 
     let urls = [];
+
     try {
         for (let img of imagenesAgregar) {
             if (img.startsWith("http")) {
                 urls.push(img);
                 continue;
             }
+
             const blob = await fetch(img).then(r => r.blob());
             const formData = new FormData();
+
             formData.append("file", blob);
             formData.append("upload_preset", "inventario_preset");
 
-            const cloudResponse = await fetch("https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload", {
-                method: "POST",
-                body: formData
-            });
+            const cloudResponse = await fetch(
+                "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            if (!cloudResponse.ok) {
+                throw new Error("No se pudo subir una imagen a Cloudinary.");
+            }
+
             const cloudData = await cloudResponse.json();
+
+            if (!cloudData.secure_url) {
+                throw new Error("Cloudinary no devolvió la URL de la imagen.");
+            }
+
             urls.push(cloudData.secure_url);
         }
 
         urls = urls.slice(0, 4);
 
-        await fetch("https://mi-proyecto1-2.onrender.com/api/registros", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                tipo_Equipo: document.getElementById("tipoEquipo").value,
-                color: document.getElementById("color").value,
-                marca: document.getElementById("marca").value,
-                modelo: document.getElementById("modelo").value,
-                codigo_Producto: document.getElementById("codigoProducto").value,
-                descripcion: document.getElementById("descripcion").value,
-                descripcion1: document.getElementById("descripcion1").value, 
-                garantia: document.getElementById("garantia").value,
-                precio: parseFloat(document.getElementById("precio").value) || 0,
-                precio_Antes: document.getElementById("precioAntes").value !== "" ? parseFloat(document.getElementById("precioAntes").value) : null,
-                descuento: document.getElementById("descuento").value !== "" ? parseFloat(document.getElementById("descuento").value) : 0,
-                estado: document.getElementById("estado").value,
-                url_Equipo: urls[0] || null,
-                url1: urls[1] || null,
-                url2: urls[2] || null,
-                url3: urls[3] || null
-            })
-        });
+        const respuesta = await fetch(
+            "https://mi-proyecto1-2.onrender.com/api/registros",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idSubcategoria: Number(idSubcategoria),
+
+                    tipo_Equipo: document.getElementById("tipoEquipo").value,
+                    color: document.getElementById("color").value,
+                    marca: document.getElementById("marca").value,
+                    modelo: document.getElementById("modelo").value,
+                    codigo_Producto: document.getElementById("codigoProducto").value,
+                    descripcion: document.getElementById("descripcion").value,
+                    descripcion1: document.getElementById("descripcion1").value,
+                    garantia: document.getElementById("garantia").value,
+
+                    precio: parseFloat(document.getElementById("precio").value) || 0,
+
+                    precio_Antes:
+                        document.getElementById("precioAntes").value !== ""
+                            ? parseFloat(document.getElementById("precioAntes").value)
+                            : null,
+
+                    descuento:
+                        document.getElementById("descuento").value !== ""
+                            ? parseFloat(document.getElementById("descuento").value)
+                            : 0,
+
+                    estado: document.getElementById("estado").value,
+
+                    url_Equipo: urls[0] || null,
+                    url1: urls[1] || null,
+                    url2: urls[2] || null,
+                    url3: urls[3] || null
+                })
+            }
+        );
+
+        if (!respuesta.ok) {
+            const detalle = await respuesta.text();
+            throw new Error(`Error al guardar (${respuesta.status}): ${detalle}`);
+        }
 
         mostrarToast("Equipo guardado correctamente");
+
         document.getElementById("fileImage").value = "";
         document.getElementById("formNuevoEquipo").reset();
+
         imagenesAgregar = [];
+
         document.getElementById("previewContainer").innerHTML = "";
+
+        // Restablecer la subcategoría después de limpiar el formulario.
+        const subcategoriaSelect = document.getElementById("subcategoria");
+        subcategoriaSelect.innerHTML =
+            '<option value="">Seleccione una categoría primero</option>';
+        subcategoriaSelect.disabled = true;
+
         $('#modalAgregar').modal('hide');
+
         cargarProductos();
+
     } catch (error) {
-        console.error(error);
-        alert("Error al guardar el equipo");
+        console.error("Error al guardar el equipo:", error);
+        alert("Error al guardar el equipo. Revisa la consola para más detalles.");
     }
 }
+
 
 let varianteEditandoId = null;
 let variantesEquipoEditando = [];
 
 
+
 async function editarEquipo(id) {
-
     try {
-
         imagenesEditar = [];
 
         const inputImagenes = document.getElementById("editar_fileImage");
@@ -1432,24 +1509,16 @@ async function editarEquipo(id) {
             return;
         }
 
-        // ============================================
-        // GUARDAR TODAS LAS VARIANTES
-        // ============================================
-
+        // Guardar variantes
         variantesEquipoEditando =
-            item.variantes ||
-            item.Variantes ||
-            [];
+            item.variantes || item.Variantes || [];
 
         if (variantesEquipoEditando.length === 0) {
             alert("Este equipo no tiene colores/variantes registrados.");
             return;
         }
 
-        // ============================================
-        // DATOS GENERALES DEL EQUIPO
-        // ============================================
-
+        // Datos generales
         document.getElementById("editar_tipoEquipo").value =
             item.tipo_Equipo || "";
 
@@ -1459,9 +1528,53 @@ async function editarEquipo(id) {
         document.getElementById("editar_modelo").value =
             item.modelo || "";
 
-        // ============================================
+        // =========================================
+        // CATEGORÍA Y SUBCATEGORÍA
+        // =========================================
+
+        // Asegurar que las categorías estén cargadas
+        if (!categoriasEditar || categoriasEditar.length === 0) {
+            await cargarCaracteristicasEditar();
+        }
+
+        const idSubcategoria =
+            item.idSubcategoria ?? item.IdSubcategoria;
+
+        const categoriaActual = categoriasEditar.find(categoria =>
+            (categoria.subcategorias || []).some(sub =>
+                Number(sub.idSubcategoria) === Number(idSubcategoria)
+            )
+        );
+
+        const selectCategoria =
+            document.getElementById("editar_categoria");
+
+        const selectSubcategoria =
+            document.getElementById("editar_subcategoria");
+
+        if (categoriaActual) {
+            selectCategoria.value =
+                String(categoriaActual.idCategoria);
+
+            cargarSubcategoriasEditar(
+                categoriaActual.idCategoria,
+                idSubcategoria
+            );
+        } else {
+            selectCategoria.value = "";
+            selectSubcategoria.innerHTML =
+                '<option value="">No se encontró la subcategoría</option>';
+            selectSubcategoria.disabled = true;
+
+            console.warn(
+                "No se encontró la categoría. idSubcategoria:",
+                idSubcategoria
+            );
+        }
+
+        // =========================================
         // SELECT DE COLORES
-        // ============================================
+        // =========================================
 
         const selectColor =
             document.getElementById("editar_color");
@@ -1475,26 +1588,16 @@ async function editarEquipo(id) {
             '<option value="">Seleccione un color...</option>';
 
         variantesEquipoEditando.forEach((variante, index) => {
-
             const option = document.createElement("option");
-
-            // IMPORTANTE:
-            // El value es el índice interno de la variante
             option.value = index;
-
-            // Lo que ve el usuario es el nombre del color
             option.textContent =
                 variante.color || `Color ${index + 1}`;
 
             selectColor.appendChild(option);
         });
 
-        // ============================================
-        // CAMBIAR COLOR
-        // ============================================
-
+        // Cambiar color
         selectColor.onchange = function () {
-
             const indice = parseInt(this.value);
 
             if (
@@ -1508,18 +1611,11 @@ async function editarEquipo(id) {
             cargarVarianteEnFormularioEditar(indice);
         };
 
-        // ============================================
-        // CARGAR PRIMER COLOR
-        // ============================================
-
+        // Cargar primer color
         selectColor.value = "0";
-
         cargarVarianteEnFormularioEditar(0);
 
-        // ============================================
-        // BOTÓN ACTUALIZAR
-        // ============================================
-
+        // Botón actualizar
         const btnActualizar =
             document.getElementById("btnActualizar");
 
@@ -1529,19 +1625,15 @@ async function editarEquipo(id) {
             };
         }
 
-        // ============================================
-        // MOSTRAR MODAL
-        // ============================================
-
+        // Mostrar modal
         $('#modalEditar').modal('show');
 
     } catch (error) {
-
         console.error("Error editarEquipo:", error);
-
         alert("Error al cargar equipo");
     }
 }
+
 
 function cargarVarianteEnFormularioEditar(indice) {
 
@@ -1828,6 +1920,15 @@ async function actualizarEquipo(id) {
 
         const body = {
             tipo_Equipo: document.getElementById("editar_tipoEquipo").value,
+
+            idCategoria: Number(
+                document.getElementById("editar_categoria").value
+            ),
+
+            idSubcategoria: Number(
+                document.getElementById("editar_subcategoria").value
+            ),
+
             color: varianteActual.color || "",
             marca: document.getElementById("editar_marca").value,
             modelo: document.getElementById("editar_modelo").value,
@@ -4582,3 +4683,487 @@ function contraerMasCaracteristicas() {
         boton.setAttribute("aria-expanded", "false");
     }
 }
+
+
+
+//////////FILTROS INICIO
+
+function obtenerProductosFiltrados(productos) {
+    const marcaBuscada = (
+        document.getElementById("filtroMarca")?.value || ""
+    ).trim().toLowerCase();
+
+    const preciosSeleccionados = [
+        ...document.querySelectorAll(
+            'input[name="filtroPrecio"]:checked'
+        )
+    ].map(input => input.value);
+
+    return productos.filter(item => {
+        // FILTRO POR MARCA
+        const marca = (item.marca || "").trim().toLowerCase();
+
+        if (marcaBuscada && !marca.includes(marcaBuscada)) {
+            return false;
+        }
+
+        // FILTRO POR PRECIO
+        const variantes = item.variantes || item.Variantes || [];
+
+        const coincidePrecio =
+            preciosSeleccionados.length === 0 ||
+            variantes.some(variante => {
+                const precio = Number(variante.precio);
+
+                if (!Number.isFinite(precio)) return false;
+
+                return preciosSeleccionados.some(rango => {
+                    switch (rango) {
+                        case "menos1000":
+                            return precio < 1000;
+
+                        case "1000a5000":
+                            return precio >= 1000 && precio <= 5000;
+
+                        case "mas5000":
+                            return precio > 5000;
+
+                        default:
+                            return false;
+                    }
+                });
+            });
+
+        if (!coincidePrecio) return false;
+
+        return true;
+    });
+}
+
+//////////FILTROS FIN
+
+
+document.getElementById("btnAplicarFiltros")
+    ?.addEventListener("click", cargarProductos);
+
+document.getElementById("limpiarFiltros")
+    ?.addEventListener("click", () => {
+        document.getElementById("filtroMarca").value = "";
+
+        document.querySelectorAll(
+            '#panelFiltros input[type="checkbox"]'
+        ).forEach(input => {
+            input.checked = false;
+        });
+
+        cargarProductos();
+    });
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const API_CARACTERISTICAS =
+        "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos";
+
+    const categoriaSelect = document.getElementById("categoria");
+    const subcategoriaSelect = document.getElementById("subcategoria");
+
+    let categorias = [];
+
+    // Cargar categorías
+    async function cargarCategorias() {
+
+        if (!categoriaSelect || !subcategoriaSelect) return;
+
+        categoriaSelect.innerHTML =
+            '<option value="">Cargando categorías...</option>';
+
+        subcategoriaSelect.innerHTML =
+            '<option value="">Seleccione una categoría</option>';
+        subcategoriaSelect.disabled = true;
+
+        try {
+            const respuesta = await fetch(API_CARACTERISTICAS);
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudieron cargar las categorías.");
+            }
+
+            categorias = await respuesta.json();
+
+            categoriaSelect.innerHTML =
+                '<option value="">Seleccione una categoría</option>';
+
+            categorias.forEach(categoria => {
+                categoriaSelect.add(new Option(
+                    categoria.nombre,
+                    categoria.idCategoria
+                ));
+            });
+        } catch (error) {
+            console.error("Error al cargar categorías:", error);
+            categoriaSelect.innerHTML =
+                '<option value="">Error al cargar categorías</option>';
+        }
+    }
+
+    // Cargar subcategorías según la categoría seleccionada
+
+    if (categoriaSelect && subcategoriaSelect) {
+        categoriaSelect.addEventListener("change", function () {
+            const idCategoria = Number(this.value);
+
+            subcategoriaSelect.innerHTML =
+                '<option value="">Seleccione una subcategoría</option>';
+            subcategoriaSelect.disabled = true;
+
+            if (!idCategoria) {
+                subcategoriaSelect.innerHTML =
+                    '<option value="">Seleccione una categoría</option>';
+                return;
+            }
+
+            const categoria = categorias.find(
+                c => Number(c.idCategoria) === idCategoria
+            );
+
+            if (!categoria) return;
+
+            const subcategorias = categoria.subcategorias || [];
+
+            if (subcategorias.length === 0) {
+                subcategoriaSelect.innerHTML =
+                    '<option value="">No hay subcategorías disponibles</option>';
+                return;
+            }
+
+            subcategorias.forEach(subcategoria => {
+                subcategoriaSelect.add(
+                    new Option(subcategoria.nombre, subcategoria.idSubcategoria)
+                );
+            });
+
+            subcategoriaSelect.disabled = false;
+        });
+    }
+
+
+    // Cargar tipos, colores y marcas
+    async function cargarLista(endpoint, selectId, textoInicial) {
+        const select = document.getElementById(selectId);
+
+        if (!select) {
+            console.warn(`No se encontró el elemento #${selectId}`);
+            return;
+        }
+
+        select.innerHTML =
+            '<option value="">Cargando...</option>';
+
+        try {
+            const respuesta = await fetch(
+                `${API_CARACTERISTICAS}/${endpoint}`
+            );
+
+            if (!respuesta.ok) {
+                throw new Error(`Error HTTP ${respuesta.status}`);
+            }
+
+            const datos = await respuesta.json();
+
+            select.innerHTML = "";
+            select.add(new Option(textoInicial, ""));
+
+            datos.forEach(item => {
+                // Conserva el nombre como valor para las columnas
+                // de texto que ya utiliza Equipos.
+                select.add(new Option(item.nombre, item.nombre));
+            });
+        } catch (error) {
+            console.error(`Error al cargar ${selectId}:`, error);
+            select.innerHTML =
+                '<option value="">Error al cargar opciones</option>';
+        }
+    }
+
+    // Ejecutar todas las cargas
+    cargarCategorias();
+
+    cargarLista(
+        "tiposequipo",
+        "tipoEquipo",
+        "Seleccione"
+    );
+
+    cargarLista(
+        "colores",
+        "color",
+        "Seleccione"
+    );
+
+    cargarLista(
+        "marcas",
+        "marca",
+        "Seleccione"
+    );
+});
+
+
+
+
+const API_CARACTERISTICAS_EDITAR =
+    "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos";
+
+let categoriasEditar = [];
+
+async function cargarCaracteristicasEditar() {
+    await Promise.all([
+        cargarCategoriasEditar(),
+        cargarListaEditar("tiposequipo", "editar_tipoEquipo", "Seleccione un tipo"),
+        cargarListaEditar("colores", "editar_color", "Seleccione un color"),
+        cargarListaEditar("marcas", "editar_marca", "Seleccione una marca")
+    ]);
+}
+
+
+
+
+async function cargarCategoriasEditar() {
+    const select = document.getElementById("editar_categoria");
+
+    if (!select) return;
+
+    try {
+        const respuesta = await fetch(API_CARACTERISTICAS_EDITAR);
+
+        if (!respuesta.ok) {
+            throw new Error("Error al cargar categorías");
+        }
+
+        categoriasEditar = await respuesta.json();
+
+        select.innerHTML =
+            '<option value="">Seleccione una categoría</option>';
+
+        categoriasEditar.forEach(categoria => {
+            select.add(
+                new Option(categoria.nombre, categoria.idCategoria)
+            );
+        });
+    } catch (error) {
+        console.error("Error al cargar categorías de edición:", error);
+
+        select.innerHTML =
+            '<option value="">Error al cargar categorías</option>';
+    }
+}
+
+
+
+function cargarSubcategoriasEditar(idCategoria, idSubcategoria = null) {
+    const select = document.getElementById("editar_subcategoria");
+
+    if (!select) return;
+
+    select.innerHTML =
+        '<option value="">Seleccione una subcategoría</option>';
+
+    select.disabled = true;
+
+    if (!idCategoria) {
+        select.innerHTML =
+            '<option value="">Seleccione una categoría primero</option>';
+        return;
+    }
+
+    const categoria = categoriasEditar.find(
+        c => Number(c.idCategoria) === Number(idCategoria)
+    );
+
+    if (!categoria) return;
+
+    const subcategorias = categoria.subcategorias || [];
+
+    subcategorias.forEach(sub => {
+        select.add(
+            new Option(sub.nombre, sub.idSubcategoria)
+        );
+    });
+
+    // Seleccionar la subcategoría que ya tiene el equipo.
+    if (idSubcategoria !== null && idSubcategoria !== undefined) {
+        select.value = String(idSubcategoria);
+    }
+
+    select.disabled = subcategorias.length === 0;
+}
+
+
+
+
+async function cargarListaEditar(endpoint, selectId, textoInicial) {
+    const select = document.getElementById(selectId);
+
+    if (!select) return;
+
+    try {
+        const respuesta = await fetch(
+            `${API_CARACTERISTICAS_EDITAR}/${endpoint}`
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(`Error al cargar ${selectId}`);
+        }
+
+        const datos = await respuesta.json();
+
+        select.innerHTML = "";
+        select.add(new Option(textoInicial, ""));
+
+        datos.forEach(item => {
+            select.add(new Option(item.nombre, item.nombre));
+        });
+    } catch (error) {
+        console.error(`Error al cargar ${selectId}:`, error);
+
+        select.innerHTML =
+            '<option value="">Error al cargar opciones</option>';
+    }
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const editarCategoria = document.getElementById("editar_categoria");
+
+    if (editarCategoria) {
+        editarCategoria.addEventListener("change", function () {
+            cargarSubcategoriasEditar(this.value);
+        });
+    }
+
+    cargarCaracteristicasEditar();
+});
+
+
+
+
+
+
+
+/////////////INICIO Cargar por categoría 
+
+let categoriaSeleccionada = null;
+let subcategoriaSeleccionada = null;
+let tipoEquipoSeleccionado = null;
+
+function seleccionarCategoria(idCategoria) {
+    categoriaSeleccionada = Number(idCategoria) || null;
+    subcategoriaSeleccionada = null;
+    tipoEquipoSeleccionado = null;
+    cargarProductos();
+}
+
+
+function seleccionarSubcategoria(idSubcategoria, idCategoria) {
+    categoriaSeleccionada = Number(idCategoria);
+    subcategoriaSeleccionada = Number(idSubcategoria);
+    tipoEquipoSeleccionado = null;
+
+    cargarProductos();
+
+    // Cerrar el modal de detalles
+    const modal = document.getElementById("modalCategoriasDetalle");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    // Cerrar el panel lateral
+    const panel = document.getElementById("panelCategoriasLateral");
+
+    if (panel) {
+        panel.classList.remove("abierto", "activo", "visible");
+        panel.setAttribute("aria-hidden", "true");
+        panel.setAttribute("inert", "");
+    }
+
+    // Restaurar el desplazamiento vertical
+    document.body.classList.remove("categorias-abiertas");
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+    document.body.style.height = "";
+}
+
+
+
+
+
+function seleccionarTipoEquipo(nombreEquipo, idSubcategoria, idCategoria) {
+    categoriaSeleccionada = Number(idCategoria);
+    subcategoriaSeleccionada = Number(idSubcategoria);
+    tipoEquipoSeleccionado = nombreEquipo;
+
+    // Actualizar los productos seleccionados
+    cargarProductos();
+
+    // Cerrar el modal de categorías
+    const modal = document.getElementById("modalCategoriasDetalle");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    // Cerrar el panel lateral
+    const panel = document.getElementById("panelCategoriasLateral");
+
+    if (panel) {
+        panel.classList.remove("abierto", "activo", "visible");
+        panel.setAttribute("aria-hidden", "true");
+        panel.setAttribute("inert", "");
+    }
+
+
+    // Restaurar el desplazamiento de la página
+    document.body.classList.remove("categorias-abiertas");
+
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+    document.body.style.height = "";
+
+}
+
+
+function obtenerProductosPorCategoria(productos) {
+    if (!categoriaSeleccionada) {
+        return productos;
+    }
+
+    // Obtener las subcategorías de la categoría seleccionada
+    const categoria = (window.categoriasProductos || []).find(
+        c => Number(c.idCategoria) === categoriaSeleccionada
+    );
+
+    if (!categoria) return [];
+
+    const idsSubcategorias = (categoria.subcategorias || []).map(
+        sub => Number(sub.idSubcategoria)
+    );
+
+    return productos.filter(item =>
+        idsSubcategorias.includes(
+            Number(item.idSubcategoria ?? item.IdSubcategoria)
+        )
+    );
+}
+
+
+/////////////FIN Cargar por categoría
+
+
+

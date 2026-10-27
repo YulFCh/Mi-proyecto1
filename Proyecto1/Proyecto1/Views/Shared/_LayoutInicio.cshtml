@@ -13,21 +13,85 @@
 
     <link rel="stylesheet" href="~/assets/css/style.css" />
     <link rel="stylesheet" href="~/css/styleModal.css" />
+    <link rel="stylesheet" href="~/css/stylecategorias.css" />
 
 </head>
 
 <body>
 
-    <header class="modern-header" style="position: relative;">
+    <header class="modern-header" style="position:relative;">
 
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        width:100%;
+    ">
 
-            <h2 style="margin:0;">fractálica</h2>
+            <!-- BOTÓN CATEGORÍAS + MARCA -->
+            <div style="
+            display:flex;
+            align-items:center;
+            gap:12px;
+            min-width:0;
+        ">
 
-            <div style="display: flex; align-items: center; gap: 16px;">
+                <button type="button"
+                        id="btnAbrirCategorias"
+                        class="btn-abrir-categorias"
+                        aria-label="Abrir categorías"
+                        aria-controls="panelCategoriasLateral"
+                        aria-expanded="false">
 
-                <div style="position: relative;">
-                    <button class="btn" onclick="abrirModalCarrito()" style="background: none; border: none; padding: 4px; cursor: pointer; color: inherit; position: relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 20 20"
+                         fill="none"
+                         aria-hidden="true">
+                        <path stroke="#333"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.667"
+                              d="M3.333 5h13.332M3.333 10h13.332M3.333 14.999h13.332" />
+                    </svg>
+                </button>
+
+                <h2 style="
+                margin:0;
+                font-size:clamp(19px, 4vw, 27px);
+                white-space:nowrap;
+            ">
+                    FRACTÁLICA
+                </h2>
+
+            </div>
+
+            <!-- CARRITO + INICIAR SESIÓN -->
+            <div style="
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-shrink:0;
+        ">
+
+                <!-- CARRITO -->
+                <div style="position:relative;">
+
+                    <button type="button"
+                            class="btn"
+                            onclick="abrirModalCarrito()"
+                            aria-label="Abrir carrito"
+                            style="
+                            background:none;
+                            border:none;
+                            padding:4px;
+                            cursor:pointer;
+                            color:inherit;
+                            position:relative;
+                        ">
+
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="26"
                              height="24"
@@ -37,40 +101,103 @@
                                   stroke-linecap="round"
                                   stroke-linejoin="round"
                                   stroke-width="1.5"
-                                  d="M.75.75h2.205l3.86 11.026h11.577l2.358-8.27">
-                            </path>
-
+                                  d="M.75.75h2.205l3.86 11.026h11.577l2.358-8.27" />
                             <circle cx="8.667" cy="15.333" r="2"
-                                    stroke="#333" stroke-width="1.5">
-                            </circle>
-
+                                    stroke="#333" stroke-width="1.5" />
                             <circle cx="16.167" cy="15.333" r="2"
-                                    stroke="#333" stroke-width="1.5">
-                            </circle>
+                                    stroke="#333" stroke-width="1.5" />
                         </svg>
-                        <span id="cart-badge" style="display: none; position: absolute; top: -5px; right: -5px; background: #d7007c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 18px; text-align: center;">0</span>
+
+                        <span id="cart-badge"
+                              style="
+                              display:none;
+                              position:absolute;
+                              top:-5px;
+                              right:-5px;
+                              background:#d7007c;
+                              color:white;
+                              border-radius:50%;
+                              padding:2px 6px;
+                              font-size:11px;
+                              font-weight:bold;
+                              min-width:18px;
+                              text-align:center;
+                          ">0</span>
                     </button>
 
-                    <div id="carrito-dropdown" style="display: none; position: absolute; right: 0; top: 38px; width: 300px; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; padding: 12px; color: #333;">
-                        <h5 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px;">Tu Carrito</h5>
-                        <div id="carrito-items" style="max-height: 200px; overflow-y: auto; font-size: 14px;">
-                            <p style="color: #888; text-align: center; margin: 15px 0;">El carrito está vacío.</p>
+                    <!-- MINI CARRITO ORIGINAL -->
+                    <div id="carrito-dropdown"
+                         style="
+                         display:none;
+                         position:absolute;
+                         right:0;
+                         top:38px;
+                         width:300px;
+                         max-width:90vw;
+                         background:white;
+                         border:1px solid #ccc;
+                         border-radius:8px;
+                         box-shadow:0 4px 12px rgba(0,0,0,.15);
+                         z-index:1000;
+                         padding:12px;
+                         color:#333;
+                     ">
+
+                        <h5 style="
+                        margin-top:0;
+                        border-bottom:1px solid #eee;
+                        padding-bottom:8px;
+                    ">
+                            Tu Carrito
+                        </h5>
+
+                        <div id="carrito-items"
+                             style="
+                             max-height:200px;
+                             overflow-y:auto;
+                             font-size:14px;
+                         ">
+                            <p style="
+                            color:#888;
+                            text-align:center;
+                            margin:15px 0;
+                        ">El carrito está vacío.</p>
                         </div>
-                        <div style="border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; font-weight: bold;">
+
+                        <div style="
+                        border-top:1px solid #eee;
+                        padding-top:8px;
+                        margin-top:8px;
+                        display:flex;
+                        justify-content:space-between;
+                        font-weight:bold;
+                    ">
                             <span>Total:</span>
                             <span id="carrito-total">S/. 0.00</span>
                         </div>
                     </div>
+
                 </div>
 
-
+                <!-- BOTÓN LOGIN ORIGINAL -->
                 <button class="btn modern-login-btn"
                         data-toggle="modal"
                         data-target="#loginModal"
                         title="Iniciar sesión"
-                        style="display:flex; align-items:center; justify-content:center; gap:8px; padding:8px 12px; border:none; border-radius:8px; background:transparent; color:#d7007c; box-shadow:none;">
+                        aria-label="Iniciar sesión"
+                        style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        gap:8px;
+                        padding:8px 6px;
+                        border:none;
+                        border-radius:8px;
+                        background:transparent;
+                        color:#d7007c;
+                        box-shadow:none;
+                    ">
 
-                    <!-- Icono de usuario -->
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="20"
                          height="20"
@@ -81,11 +208,9 @@
                               stroke-linecap="round"
                               stroke-linejoin="round"
                               stroke-width="1.667"
-                              d="M15.832 17.498v-1.666a3.333 3.333 0 0 0-3.333-3.333h-5a3.333 3.333 0 0 0-3.333 3.333v1.666M10 9.166A3.333 3.333 0 1 0 10 2.5a3.333 3.333 0 0 0 0 6.666Z">
-                        </path>
+                              d="M15.832 17.498v-1.666a3.333 3.333 0 0 0-3.333-3.333h-5a3.333 3.333 0 0 0-3.333 3.333v1.666M10 9.166A3.333 3.333 0 1 0 10 2.5a3.333 3.333 0 0 0 0 6.666Z" />
                     </svg>
 
-                    <!-- Flecha hacia abajo -->
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="12"
                          height="12"
@@ -95,8 +220,7 @@
                         <path stroke="#d7007c"
                               stroke-linecap="round"
                               stroke-linejoin="round"
-                              d="m3 4.5 3 3 3-3">
-                        </path>
+                              d="m3 4.5 3 3 3-3" />
                     </svg>
 
                 </button>
@@ -104,8 +228,49 @@
             </div>
 
         </div>
-
     </header>
+    
+    <!-- FONDO OSCURO -->
+    <div id="categoriasOverlay"
+         class="categorias-overlay"
+         aria-hidden="true"></div>
+
+    <!-- PANEL LATERAL -->
+    <aside id="panelCategoriasLateral"
+           class="categorias-drawer"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="tituloCategorias"
+           aria-hidden="true"
+           inert>
+
+        <div class="categorias-drawer-header">
+            <h3 id="tituloCategorias">Categorías</h3>
+
+            <button type="button"
+                    id="btnCerrarCategorias"
+                    class="btn-cerrar-categorias"
+                    aria-label="Cerrar categorías">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.5"
+                     stroke-linecap="round"
+                     aria-hidden="true">
+                    <path d="M5 5 19 19M19 5 5 19" />
+                </svg>
+            </button>
+        </div>
+
+
+        <ul class="categorias-lista" id="listaCategoriasDinamicas">
+            <li class="categoria-cargando">Cargando categorías...</li>
+        </ul>
+
+        
+    </aside>
+    
 
     <div class="container">
         @RenderBody()
@@ -409,6 +574,17 @@
 
     </div>
 
+
+
+    <!-- MODAL AL COSTADO DE CATEGORÍAS -->
+    <div id="modalCategoriasDetalle" class="categorias-modal">
+        <div class="categorias-modal-contenido">
+            <h3>Explorar categorías</h3>
+            <p>Selecciona una categoría para ver más opciones.</p>
+        </div>
+    </div>
+
+
    
 
     
@@ -416,6 +592,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/assets/js/vendor-all.min.js"></script>
     <script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 
     @if (TempData["LoginError"] != null)
     {
@@ -429,3 +606,344 @@
 </body>
 
 </html>
+
+
+
+<script>
+    (() => {
+        const abrir = document.getElementById("btnAbrirCategorias");
+        const cerrar = document.getElementById("btnCerrarCategorias");
+        const panel = document.getElementById("panelCategoriasLateral");
+        const overlay = document.getElementById("categoriasOverlay");
+        const modal = document.getElementById("modalCategoriasDetalle");
+
+        if (!abrir || !cerrar || !panel || !overlay || !modal) return;
+
+
+
+    function abrirPanel() {
+        panel.inert = false;
+        modal.inert = false;
+
+        // Restablecer la visibilidad del modal
+        modal.style.display = "";
+
+        // Abrir el panel, el overlay y el modal
+        panel.classList.add("activo");
+        overlay.classList.add("activo");
+        modal.classList.add("activo");
+
+        // Bloquear el desplazamiento mientras están abiertos
+        document.body.classList.add("categorias-abiertas");
+
+        panel.setAttribute("aria-hidden", "false");
+        modal.setAttribute("aria-hidden", "false");
+        overlay.setAttribute("aria-hidden", "false");
+        abrir.setAttribute("aria-expanded", "true");
+
+        cerrar.focus();
+    }
+
+
+
+        function cerrarPanel() {
+            panel.classList.remove("activo");
+            modal.classList.remove("activo");
+            overlay.classList.remove("activo");
+
+            document.body.classList.remove("categorias-abiertas");
+
+            panel.setAttribute("aria-hidden", "true");
+            modal.setAttribute("aria-hidden", "true");
+            overlay.setAttribute("aria-hidden", "true");
+            abrir.setAttribute("aria-expanded", "false");
+
+            panel.inert = true;
+            modal.inert = true;
+
+            abrir.focus();
+        }
+
+        abrir.addEventListener("click", abrirPanel);
+        cerrar.addEventListener("click", cerrarPanel);
+        overlay.addEventListener("click", cerrarPanel);
+
+        document.addEventListener("keydown", function (event) {
+            if (
+                event.key === "Escape" &&
+                panel.classList.contains("activo")
+            ) {
+                cerrarPanel();
+            }
+        });
+    })();
+</script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        const lista = document.getElementById("listaCategoriasDinamicas");
+        const modal = document.getElementById("modalCategoriasDetalle");
+
+        if (!lista || !modal) return;
+
+        const contenido = modal.querySelector(".categorias-modal-contenido");
+
+        if (!contenido) return;
+
+        try {
+            const respuesta = await fetch(
+                "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos"
+            );
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudieron cargar las categorías.");
+            }
+
+            const categorias = await respuesta.json();
+            window.categoriasProductos = categorias;
+
+            lista.innerHTML = "";
+
+            categorias.forEach(function (categoria) {
+                const li = document.createElement("li");
+                li.className = "categoria-item";
+
+                const enlace = document.createElement("a");
+                enlace.href = "#";
+                enlace.className = "categoria-enlace";
+                enlace.dataset.categoriaId = categoria.idCategoria;
+
+                const icono = document.createElement("span");
+                icono.className = "categoria-icono";
+
+                const elementoIcono = document.createElement("i");
+                elementoIcono.setAttribute(
+                    "data-lucide",
+                    (categoria.icono || "package").trim().toLowerCase()
+                );
+                icono.appendChild(elementoIcono);
+
+                const nombre = document.createElement("span");
+                nombre.className = "categoria-nombre";
+                nombre.textContent = categoria.nombre;
+
+                const flecha = document.createElement("i");
+                flecha.setAttribute("data-lucide", "chevron-right");
+                flecha.className = "categoria-flecha";
+
+                enlace.append(icono, nombre, flecha);
+                li.appendChild(enlace);
+                lista.appendChild(li);
+
+                enlace.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    // Mostrar las subcategorías en el modal lateral.
+                    mostrarDetalleCategoria(categoria);
+
+                    // Mantener el filtro de productos por categoría.
+                    if (typeof seleccionarCategoria === "function") {
+                        seleccionarCategoria(categoria.idCategoria);
+                    }
+
+                    // Marcar la categoría seleccionada.
+                    lista.querySelectorAll(".categoria-enlace")
+                        .forEach(a => a.classList.remove("activa"));
+
+                    enlace.classList.add("activa");
+                });
+            });
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+
+            // Mostrar la primera categoría automáticamente.
+
+            // Mostrar la primera categoría automáticamente.
+            if (categorias.length > 0) {
+                const primera = categorias[0];
+
+                // Esperar a que se carguen los productos.
+                if (typeof cargarProductos === "function") {
+                    await cargarProductos();
+                }
+
+                // Mostrar las subcategorías con sus equipos.
+                mostrarDetalleCategoria(primera);
+
+                // Marcar la primera categoría como seleccionada.
+                const primerEnlace =
+                    lista.querySelector(".categoria-enlace");
+
+                if (primerEnlace) {
+                    primerEnlace.classList.add("activa");
+                }
+            }
+
+
+        } catch (error) {
+            console.error("Error al cargar las categorías:", error);
+            lista.innerHTML =
+                "<li>No se pudieron cargar las categorías.</li>";
+        }
+
+
+    function mostrarDetalleCategoria(categoria) {
+
+
+            // Volver a mostrar el modal de detalles
+    modal.style.display = "";
+
+    // Reconstruir el contenido de la categoría seleccionada
+    const equipos = window.productosAgrupados || [];
+
+    const subcategorias = (categoria.subcategorias || []).filter(subcategoria => {
+        return equipos.some(equipo => {
+            const idSubcategoria =
+                equipo.idSubcategoria ?? equipo.IdSubcategoria;
+
+            const estado = (equipo.estado || "").trim().toLowerCase();
+
+            // Debe pertenecer a la subcategoría.
+            if (Number(idSubcategoria) !== Number(subcategoria.idSubcategoria)) {
+                return false;
+            }
+
+            // No mostrar productos inactivos en el menú público.
+            if (estado === "inactivo") {
+                return false;
+            }
+
+            // Debe tener un nombre de equipo que se pueda mostrar.
+            const nombreEquipo =
+                equipo.tipo_Equipo ??
+                equipo.tipoEquipo ??
+                equipo.Tipo_Equipo ??
+                equipo.tipo_equipo;
+
+            return typeof nombreEquipo === "string" &&
+                   nombreEquipo.trim() !== "";
+        });
+    });
+
+
+        contenido.innerHTML = "";
+
+        const encabezado = document.createElement("div");
+        encabezado.className = "categorias-detalle-encabezado";
+
+            const titulo = document.createElement("h3");
+
+    const icono = document.createElement("i");
+    icono.setAttribute(
+        "data-lucide",
+        (categoria.icono || "package").trim().toLowerCase()
+    );
+
+    icono.className = "categoria-icono-modal";
+
+    const nombre = document.createElement("span");
+    nombre.textContent = categoria.nombre;
+
+    titulo.append(icono, nombre);
+
+    encabezado.appendChild(titulo);
+    contenido.appendChild(encabezado);
+
+    // Dibujar el ícono de Lucide en el modal
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+        const columnas = document.createElement("div");
+        columnas.className = "categorias-subcategorias-grid";
+
+        subcategorias.forEach(function (subcategoria) {
+            const columna = document.createElement("div");
+            columna.className = "categoria-subcategoria-columna";
+
+                const tituloSubcategoria = document.createElement("h4");
+    tituloSubcategoria.textContent = subcategoria.nombre;
+    tituloSubcategoria.style.cursor = "pointer";
+
+    tituloSubcategoria.addEventListener("click", function () {
+        seleccionarSubcategoria(
+            subcategoria.idSubcategoria,
+            categoria.idCategoria
+        );
+
+        tipoEquipoSeleccionado = null;
+    });
+
+    columna.appendChild(tituloSubcategoria);
+
+            // Buscar productos que pertenecen a esta subcategoría.
+            const equiposSubcategoria = equipos.filter(function (equipo) {
+                const idSubcategoria =
+                    equipo.idSubcategoria ?? equipo.IdSubcategoria;
+
+                return Number(idSubcategoria) ===
+                    Number(subcategoria.idSubcategoria);
+            });
+
+            // Obtener los nombres de equipo que muestra la tarjeta.
+            const nombresEquipos = [
+                ...new Set(
+                    equiposSubcategoria
+                        .map(equipo =>
+                            equipo.tipo_Equipo ??
+                            equipo.tipoEquipo ??
+                            equipo.Tipo_Equipo ??
+                            equipo.tipo_equipo
+                        )
+                        .filter(nombre =>
+                            typeof nombre === "string" && nombre.trim() !== ""
+                        )
+                        .map(nombre => nombre.trim())
+                )
+            ];
+
+            if (nombresEquipos.length === 0) {
+                const mensaje = document.createElement("p");
+                mensaje.textContent = "No hay equipos disponibles.";
+                columna.appendChild(mensaje);
+            } else {
+                nombresEquipos.forEach(function (nombreEquipo) {
+                    const enlace = document.createElement("a");
+
+                    enlace.href = "#";
+                    enlace.className = "categoria-detalle-enlace";
+                    enlace.textContent = nombreEquipo;
+
+                       enlace.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        seleccionarTipoEquipo(
+            nombreEquipo,
+            subcategoria.idSubcategoria,
+            categoria.idCategoria
+        );
+    });
+
+                    columna.appendChild(enlace);
+                });
+            }
+
+            columnas.appendChild(columna);
+        });
+
+        contenido.appendChild(columnas);
+    }
+
+
+
+
+
+    });
+</script>
+
+

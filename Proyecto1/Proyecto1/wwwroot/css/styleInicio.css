@@ -1,5 +1,4 @@
-﻿
-:root {
+﻿:root {
     /* ================= COLORES ================= */
     --primary-purple: #d7007c;
     --primary-purple-dark: #a90061;
@@ -7,7 +6,11 @@
     --card-gray: #F3F4F6;
     --border-gray: #D1D5DB;
     --text-gray: #374151;
-    --bg: #F5F5F5;
+    --bg: #FFFFFF;
+}
+
+body {
+    background-color: var(--bg);
 }
 
 
@@ -64,7 +67,7 @@ body {
 }
 
     .product-gallery:hover {
-        transform: translateY(-5px);
+        transform: none;
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
     }
 
@@ -110,8 +113,8 @@ body {
 }
 
 .thumbnail-image {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
     border-radius: 5px;
     object-fit: cover;
     border: 1px solid transparent;
@@ -1957,4 +1960,96 @@ body:has(#contenedorProductos) .container-xxl {
     width: 36px;
     height: 36px;
     margin: 0 auto;
+}
+
+
+
+#panelFiltros {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.filtro-busqueda {
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .filtro-busqueda input {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        flex: 1;
+        width: 100%;
+    }
+
+
+
+/* Cuadritos de los filtros de precio */
+.filtro-opcion input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 19px;
+    height: 19px;
+    min-width: 19px;
+    background-color: #FFFFFF;
+    border: 1.5px solid #D1D5DB;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-grid;
+    place-content: center;
+    transition: all 0.2s ease;
+}
+
+    /* Cuando el cuadrito está seleccionado */
+    .filtro-opcion input[type="checkbox"]:checked {
+        background-color: #D7007C;
+        border-color: #D7007C;
+    }
+
+        /* Marca de verificación blanca */
+        .filtro-opcion input[type="checkbox"]:checked::after {
+            content: "";
+            width: 5px;
+            height: 9px;
+            border: solid #FFFFFF;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-top: -2px;
+        }
+
+    /* Efecto al pasar el cursor */
+    .filtro-opcion input[type="checkbox"]:hover {
+        border-color: #D7007C;
+    }
+
+    /* Accesibilidad al navegar con teclado */
+    .filtro-opcion input[type="checkbox"]:focus-visible {
+        outline: 2px solid #D7007C;
+        outline-offset: 3px;
+    }
+
+
+
+
+
+.producto-precios-bloque {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2;
+}
+
+.producto-precio-actual {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2;
+}
+
+.producto-info-contenido {
+    padding-bottom: 4px !important;
 }

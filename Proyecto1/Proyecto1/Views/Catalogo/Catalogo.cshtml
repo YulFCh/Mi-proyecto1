@@ -646,6 +646,7 @@ font-family: 'Montserrat', sans-serif;
 </div>
 
 
+
 <div class="modal fade"
      id="modalAgregar"
      tabindex="-1"
@@ -655,9 +656,7 @@ font-family: 'Montserrat', sans-serif;
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">
-                    Nuevo Equipo
-                </h5>
+                <h5 class="modal-title">Nuevo Equipo</h5>
 
                 <button type="button"
                         class="close"
@@ -670,67 +669,87 @@ font-family: 'Montserrat', sans-serif;
 
                 <div class="modal-body">
 
-                    <!-- Tipo y Color -->
+                    <!-- Categoría y Subcategoría -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Tipo Equipo</label>
-                            <select id="tipoEquipo" class="form-control">
-                                <option value="">Seleccione un tipo</option>
-                                <option value="LAPTOP">LAPTOP</option>
-                                <option value="CPU">CPU</option>
-                                <option value="MONITOR">MONITOR</option>
-                                <option value="TABLET">TABLET</option>
-                                <option value="IMPRESORA">IMPRESORA</option>
-                                <option value="ANTIVIRUS">ANTIVIRUS</option>
+                            <label for="categoria">Categoría</label>
+                            <select id="categoria"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Color</label>
-                            <input type="text"
-                                   id="color"
-                                   class="form-control" />
+                            <label for="subcategoria">Subcategoría</label>
+                            <select id="subcategoria"
+                                    class="form-control"
+                                    required
+                                    disabled>
+                                <option value="">Seleccione una categoría primero</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tipo de equipo y Color -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tipoEquipo">Tipo de equipo</label>
+                            <select id="tipoEquipo"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando tipos...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="color">Color</label>
+                            <select id="color" class="form-control">
+                                <option value="">Cargando colores...</option>
+                            </select>
                         </div>
                     </div>
 
                     <!-- Marca y Modelo -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Marca</label>
-                            <input type="text"
-                                   id="marca"
-                                   class="form-control" />
+                            <label for="marca">Marca</label>
+                            <select id="marca"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando marcas...</option>
+                            </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Modelo</label>
+                            <label for="modelo">Modelo</label>
                             <input type="text"
                                    id="modelo"
                                    class="form-control" />
                         </div>
                     </div>
 
-                    <!-- Código y Descripción Corta -->
+                    <!-- Código y Descripción corta -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Código Producto</label>
+                            <label for="codigoProducto">Código Producto</label>
                             <input type="text"
                                    id="codigoProducto"
                                    class="form-control" />
                         </div>
 
                         <div class="col-md-8 mb-3">
-                            <label>Descripción corta</label>
+                            <label for="descripcion">Descripción corta</label>
                             <textarea id="descripcion"
                                       class="form-control"
                                       rows="1"></textarea>
                         </div>
                     </div>
 
-                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <!-- Descripción detallada -->
                     <div class="row">
                         <div class="col-12 mb-3">
-                            <label>Descripción detallada</label>
+                            <label for="descripcion1">Descripción detallada</label>
                             <textarea id="descripcion1"
                                       class="form-control"
                                       rows="3"
@@ -741,7 +760,7 @@ font-family: 'Montserrat', sans-serif;
                     <!-- Garantía y Estado -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Garantía</label>
+                            <label for="garantia">Garantía</label>
                             <select id="garantia" class="form-control">
                                 <option value="">Seleccione garantía...</option>
                                 <option value="3 Meses">3 Meses</option>
@@ -752,7 +771,7 @@ font-family: 'Montserrat', sans-serif;
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Estado</label>
+                            <label for="estado">Estado</label>
                             <select id="estado" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="ACTIVO">ACTIVO</option>
@@ -765,7 +784,7 @@ font-family: 'Montserrat', sans-serif;
                     <!-- Precios -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Precio actual</label>
+                            <label for="precio">Precio actual</label>
                             <input type="number"
                                    id="precio"
                                    step="0.01"
@@ -773,7 +792,7 @@ font-family: 'Montserrat', sans-serif;
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label>Precio anterior</label>
+                            <label for="precioAntes">Precio anterior</label>
                             <input type="number"
                                    id="precioAntes"
                                    step="0.01"
@@ -781,7 +800,7 @@ font-family: 'Montserrat', sans-serif;
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label>Descuento</label>
+                            <label for="descuento">Descuento</label>
                             <input type="number"
                                    id="descuento"
                                    step="0.01"
@@ -792,7 +811,7 @@ font-family: 'Montserrat', sans-serif;
 
                     <!-- Imágenes -->
                     <div class="mb-3">
-                        <label>Imágenes del equipo (máx 4)</label>
+                        <label for="fileImage">Imágenes del equipo (máx. 4)</label>
                         <input type="file"
                                id="fileImage"
                                accept="image/*"
@@ -800,7 +819,7 @@ font-family: 'Montserrat', sans-serif;
                                class="form-control" />
                     </div>
 
-                    <!-- Preview -->
+                    <!-- Vista previa -->
                     <div id="previewContainer"
                          style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
                     </div>
@@ -823,6 +842,8 @@ font-family: 'Montserrat', sans-serif;
 </div>
 
 
+
+
 <div class="modal fade"
      id="modalEditar"
      tabindex="-1"
@@ -832,9 +853,7 @@ font-family: 'Montserrat', sans-serif;
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">
-                    Editar Equipo
-                </h5>
+                <h5 class="modal-title">Editar Equipo</h5>
 
                 <button type="button"
                         class="close"
@@ -848,27 +867,43 @@ font-family: 'Montserrat', sans-serif;
 
                 <div class="modal-body">
 
-                    <!-- Tipo y Color -->
+                    <!-- Categoría y Subcategoría -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Tipo Equipo</label>
-                            <select id="editar_tipoEquipo" class="form-control">
-                                <option value="">Seleccione un tipo</option>
-                                <option value="LAPTOP">LAPTOP</option>
-                                <option value="CPU">CPU</option>
-                                <option value="MONITOR">MONITOR</option>
-                                <option value="TABLET">TABLET</option>
-                                <option value="IMPRESORA">IMPRESORA</option>
-                                <option value="ANTIVIRUS">ANTIVIRUS</option>
+                            <label for="editar_categoria">Categoría</label>
+                            <select id="editar_categoria"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Color</label>
+                            <label for="editar_subcategoria">Subcategoría</label>
+                            <select id="editar_subcategoria"
+                                    class="form-control"
+                                    required
+                                    disabled>
+                                <option value="">Seleccione una categoría primero</option>
+                            </select>
+                        </div>
+                    </div>
 
-                            <select id="editar_color"
-                                    class="form-control">
-                                <option value="">Seleccione un color</option>
+                    <!-- Tipo y Color -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_tipoEquipo">Tipo de equipo</label>
+                            <select id="editar_tipoEquipo"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando tipos...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_color">Color</label>
+                            <select id="editar_color" class="form-control">
+                                <option value="">Cargando colores...</option>
                             </select>
                         </div>
                     </div>
@@ -876,41 +911,43 @@ font-family: 'Montserrat', sans-serif;
                     <!-- Marca y Modelo -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Marca</label>
-                            <input type="text"
-                                   id="editar_marca"
-                                   class="form-control" />
+                            <label for="editar_marca">Marca</label>
+                            <select id="editar_marca"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando marcas...</option>
+                            </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Modelo</label>
+                            <label for="editar_modelo">Modelo</label>
                             <input type="text"
                                    id="editar_modelo"
                                    class="form-control" />
                         </div>
                     </div>
 
-                    <!-- Código y Descripción Corta -->
+                    <!-- Código y Descripción -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Código Producto</label>
+                            <label for="editar_codigoProducto">Código Producto</label>
                             <input type="text"
                                    id="editar_codigoProducto"
                                    class="form-control" />
                         </div>
 
                         <div class="col-md-8 mb-3">
-                            <label>Descripción</label>
+                            <label for="editar_descripcion">Descripción</label>
                             <textarea id="editar_descripcion"
                                       class="form-control"
                                       rows="1"></textarea>
                         </div>
                     </div>
 
-                    <!-- Descripción Detallada (SOLA EN UNA FILA COMPLETA) -->
+                    <!-- Descripción detallada -->
                     <div class="row">
                         <div class="col-12 mb-3">
-                            <label>Descripción detallada</label>
+                            <label for="editar_descripcion1">Descripción detallada</label>
                             <textarea id="editar_descripcion1"
                                       class="form-control"
                                       rows="3"
@@ -921,7 +958,7 @@ font-family: 'Montserrat', sans-serif;
                     <!-- Garantía y Estado -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Garantía</label>
+                            <label for="editar_garantia">Garantía</label>
                             <select id="editar_garantia" class="form-control">
                                 <option value="">Seleccione garantía...</option>
                                 <option value="3 Meses">3 Meses</option>
@@ -932,7 +969,7 @@ font-family: 'Montserrat', sans-serif;
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Estado</label>
+                            <label for="editar_estado">Estado</label>
                             <select id="editar_estado" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="ACTIVO">ACTIVO</option>
@@ -945,15 +982,16 @@ font-family: 'Montserrat', sans-serif;
                     <!-- Precios -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Precio actual</label>
+                            <label for="editar_precio">Precio actual</label>
                             <input type="number"
                                    id="editar_precio"
                                    step="0.01"
-                                   class="form-control" readonly />
+                                   class="form-control"
+                                   readonly />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label>Precio anterior</label>
+                            <label for="editar_precioAntes">Precio anterior</label>
                             <input type="number"
                                    id="editar_precioAntes"
                                    step="0.01"
@@ -961,7 +999,7 @@ font-family: 'Montserrat', sans-serif;
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label>Descuento</label>
+                            <label for="editar_descuento">Descuento</label>
                             <input type="number"
                                    id="editar_descuento"
                                    step="0.01"
@@ -972,7 +1010,7 @@ font-family: 'Montserrat', sans-serif;
 
                     <!-- Imágenes -->
                     <div class="mb-3">
-                        <label>Imágenes del equipo (máx 4)</label>
+                        <label for="editar_fileImage">Imágenes del equipo (máx. 4)</label>
                         <input type="file"
                                id="editar_fileImage"
                                accept="image/*"
@@ -980,7 +1018,6 @@ font-family: 'Montserrat', sans-serif;
                                class="form-control" />
                     </div>
 
-                    <!-- Preview -->
                     <div id="editar_previewContainer"
                          style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
                     </div>
@@ -999,8 +1036,8 @@ font-family: 'Montserrat', sans-serif;
 
         </div>
     </div>
-
 </div>
+
 
 
 <script>
