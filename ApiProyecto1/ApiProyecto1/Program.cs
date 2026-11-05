@@ -1,5 +1,6 @@
 ﻿using ApiProyecto1.Services;
 using ApiProyecto1.Services.Pedidos;
+using ApiProyecto1.Services.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<VerPedidosService>();
 builder.Services.AddScoped<RegistroPromocionesService>();
 builder.Services.AddScoped<CaracteristicasEquiposService>();
+builder.Services.AddScoped<ServiciosService>();
 
 
 var app = builder.Build();
