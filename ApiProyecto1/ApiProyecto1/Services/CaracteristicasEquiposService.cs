@@ -37,7 +37,8 @@ namespace ApiProyecto1.Services
                     ON c.IdCategoria = s.IdCategoria
                     AND s.Estado = 1
                 WHERE c.Estado = 1
-                ORDER BY c.IdCategoria, s.IdSubcategoria;";
+                ORDER BY c.OrdenCat ASC, c.IdCategoria, s.OrdenSub ASC, s.IdSubcategoria;";
+
 
             using SqlCommand cmd = new SqlCommand(query, con)
             {
