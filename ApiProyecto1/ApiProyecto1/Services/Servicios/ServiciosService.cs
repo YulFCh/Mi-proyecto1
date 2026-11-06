@@ -27,36 +27,62 @@ namespace ApiProyecto1.Services.Servicios
 
         public List<ListarServiciosModel> Listar()
         {
+            return ListarServicios(false);
+        }
+
+        // ==========================================
+        // LISTAR SERVICIOS PÚBLICOS (SOLO ACTIVOS)
+        // ==========================================
+
+        public List<ListarServiciosModel> ListarPublicos()
+        {
+            return ListarServicios(true);
+        }
+
+        // ==========================================
+        // CONSULTA GENERAL DE SERVICIOS
+        // ==========================================
+
+        private List<ListarServiciosModel> ListarServicios(bool soloActivos)
+        {
             var servicios = new List<ListarServiciosModel>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = @"
-                    SELECT
-                        IdServicio,
-                        Titulo,
-                        Resumen,
-                        Descripcion,
-                        Icono,
-                        OrdenServicio,
-                        Estado,
-                        FechRegist,
-                        UsuaRegist,
-                        FechModif,
-                        UsuarModif
-                    FROM Servicios
-                    ORDER BY OrdenServicio ASC, IdServicio ASC;
+                string filtroEstado = soloActivos
+                    ? "WHERE Estado = 1"
+                    : "";
 
-                    SELECT
-                        IdImagen,
-                        IdServicio,
-                        UrlImagen,
-                        PublicId,
-                        DescImagen,
-                        OrdenFoto
-                    FROM ServicioImagenes
-                    ORDER BY IdServicio, OrdenFoto;
-                ";
+                string query = $@"
+            SELECT
+                IdServicio,
+                Titulo,
+                Resumen,
+                Descripcion,
+                Icono,
+                OrdenServicio,
+                Estado,
+                FechRegist,
+                UsuaRegist,
+                FechModif,
+                UsuarModif
+            FROM Servicios
+            {filtroEstado}
+            ORDER BY OrdenServicio ASC, IdServicio ASC;
+
+            SELECT
+                si.IdImagen,
+                si.IdServicio,
+                si.UrlImagen,
+                si.PublicId,
+                si.DescImagen,
+                si.OrdenFoto
+            FROM ServicioImagenes si
+            INNER JOIN Servicios s
+                ON s.IdServicio = si.IdServicio
+            {(soloActivos ? "WHERE s.Estado = 1" : "")}
+            ORDER BY si.IdServicio, si.OrdenFoto;
+        ";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -96,7 +122,8 @@ namespace ApiProyecto1.Services.Servicios
                             int idServicio = Convert.ToInt32(dr["IdServicio"]);
 
                             var servicio = servicios.FirstOrDefault(
-                                x => x.IdServicio == idServicio);
+                                x => x.IdServicio == idServicio
+                            );
 
                             if (servicio != null)
                             {

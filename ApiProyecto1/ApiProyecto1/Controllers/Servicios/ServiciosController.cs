@@ -1,6 +1,7 @@
 ﻿
 using ApiProyecto1.Models.Servicios;
 using ApiProyecto1.Services.Servicios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProyecto1.Controllers.Servicios
@@ -138,5 +139,19 @@ namespace ApiProyecto1.Controllers.Servicios
                 });
             }
         }
+
+
+        // ==========================================
+        // LISTAR SERVICIOS PÚBLICOS
+        // ==========================================
+
+        [HttpGet("publicos")]
+        [AllowAnonymous]
+        public IActionResult ListarPublicos()
+        {
+            var data = _service.ListarPublicos();
+            return Ok(data);
+        }
+
     }
 }
