@@ -1,4 +1,5 @@
-﻿using ApiProyecto1.Models.Servicios;
+﻿
+using ApiProyecto1.Models.Servicios;
 using ApiProyecto1.Services.Servicios;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,11 +60,18 @@ namespace ApiProyecto1.Controllers.Servicios
         // ==========================================
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] GuardarServicioModel model)
+        public async Task<IActionResult> Put(
+            int id,
+            [FromBody] GuardarServicioModel model,
+            CancellationToken cancellationToken)
         {
             try
             {
-                bool actualizado = _service.Editar(id, model);
+                bool actualizado = await _service.EditarAsync(
+                    id,
+                    model,
+                    cancellationToken
+                );
 
                 if (!actualizado)
                 {
@@ -86,6 +94,47 @@ namespace ApiProyecto1.Controllers.Servicios
                 {
                     success = false,
                     message = ex.Message
+                });
+            }
+        }
+
+        // ==========================================
+        // ELIMINAR
+        // ==========================================
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(
+            int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                bool eliminado = await _service.EliminarAsync(
+                    id,
+                    cancellationToken
+                );
+
+                if (!eliminado)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "No se encontró el servicio."
+                    });
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Servicio eliminado correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Ocurrió un error al eliminar el servicio."
                 });
             }
         }

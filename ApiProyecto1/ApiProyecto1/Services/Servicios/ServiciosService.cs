@@ -7,12 +7,18 @@ namespace ApiProyecto1.Services.Servicios
     public class ServiciosService
     {
         private readonly string _connectionString;
+        private readonly CloudinaryService _cloudinary;
+        private readonly ILogger<ServiciosService> _logger;
 
-        public ServiciosService(IConfiguration config)
+
+        public ServiciosService(IConfiguration config, CloudinaryService cloudinary,
+    ILogger<ServiciosService> logger)
         {
             _connectionString = config.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
                     "No se encontró DefaultConnection.");
+            _cloudinary = cloudinary;
+            _logger = logger;
         }
 
         // ==========================================
@@ -181,31 +187,62 @@ namespace ApiProyecto1.Services.Servicios
         // EDITAR SERVICIO
         // ==========================================
 
-        public bool Editar(int id, GuardarServicioModel model)
+        public async Task<bool> EditarAsync(
+            int id,
+            GuardarServicioModel model,
+            CancellationToken cancellationToken = default)
         {
             ValidarModelo(model);
 
+            var publicIdsAnteriores = new List<string>();
+
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                con.Open();
+                await con.OpenAsync(cancellationToken);
 
                 using (SqlTransaction trans = con.BeginTransaction())
                 {
                     try
                     {
+                        // Obtener los PublicId de las fotografías anteriores.
+                        string consultarImagenes = @"
+                    SELECT PublicId
+                    FROM ServicioImagenes
+                    WHERE IdServicio = @IdServicio
+                      AND PublicId IS NOT NULL;
+                ";
+
+                        using (SqlCommand cmd = new SqlCommand(
+                            consultarImagenes, con, trans))
+                        {
+                            cmd.Parameters.Add("@IdServicio", SqlDbType.Int).Value = id;
+
+                            using (SqlDataReader dr = await cmd.ExecuteReaderAsync(cancellationToken))
+                            {
+                                while (await dr.ReadAsync(cancellationToken))
+                                {
+                                    string publicId = dr["PublicId"].ToString() ?? "";
+
+                                    if (!string.IsNullOrWhiteSpace(publicId))
+                                        publicIdsAnteriores.Add(publicId);
+                                }
+                            }
+                        }
+
+                        // Actualizar el servicio.
                         string query = @"
-                            UPDATE Servicios
-                            SET
-                                Titulo = @Titulo,
-                                Resumen = @Resumen,
-                                Descripcion = @Descripcion,
-                                Icono = @Icono,
-                                OrdenServicio = @OrdenServicio,
-                                Estado = @Estado,
-                                FechModif = GETDATE(),
-                                UsuarModif = @Usuario
-                            WHERE IdServicio = @IdServicio;
-                        ";
+                    UPDATE Servicios
+                    SET
+                        Titulo = @Titulo,
+                        Resumen = @Resumen,
+                        Descripcion = @Descripcion,
+                        Icono = @Icono,
+                        OrdenServicio = @OrdenServicio,
+                        Estado = @Estado,
+                        FechModif = GETDATE(),
+                        UsuarModif = @Usuario
+                    WHERE IdServicio = @IdServicio;
+                ";
 
                         int filas;
 
@@ -215,7 +252,7 @@ namespace ApiProyecto1.Services.Servicios
 
                             cmd.Parameters.Add("@IdServicio", SqlDbType.Int).Value = id;
 
-                            filas = cmd.ExecuteNonQuery();
+                            filas = await cmd.ExecuteNonQueryAsync(cancellationToken);
                         }
 
                         if (filas == 0)
@@ -224,24 +261,22 @@ namespace ApiProyecto1.Services.Servicios
                             return false;
                         }
 
-                        // Reemplazar la galería anterior
+                        // Reemplazar la galería anterior.
                         string eliminar = @"
-                            DELETE FROM ServicioImagenes
-                            WHERE IdServicio = @IdServicio;
-                        ";
+                    DELETE FROM ServicioImagenes
+                    WHERE IdServicio = @IdServicio;
+                ";
 
                         using (SqlCommand cmd = new SqlCommand(eliminar, con, trans))
                         {
                             cmd.Parameters.Add("@IdServicio", SqlDbType.Int).Value = id;
-                            cmd.ExecuteNonQuery();
+                            await cmd.ExecuteNonQueryAsync(cancellationToken);
                         }
 
-                        // Insertar las fotografías recibidas
+                        // Insertar las fotografías recibidas.
                         InsertarImagenes(con, trans, id, model.Imagenes);
 
                         trans.Commit();
-
-                        return true;
                     }
                     catch
                     {
@@ -250,6 +285,38 @@ namespace ApiProyecto1.Services.Servicios
                     }
                 }
             }
+
+            // Identificar las fotografías que se conservaron.
+            var publicIdsConservados = new HashSet<string>(
+                model.Imagenes
+                    .Where(x => !string.IsNullOrWhiteSpace(x.PublicId))
+                    .Select(x => x.PublicId!),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            // Eliminar de Cloudinary solamente las fotografías retiradas.
+            var publicIdsEliminar = publicIdsAnteriores
+                .Where(x => !publicIdsConservados.Contains(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var publicId in publicIdsEliminar)
+            {
+                try
+                {
+                    await _cloudinary.EliminarImagenAsync(
+                        publicId,
+                        cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "No se pudo eliminar la imagen {PublicId} de Cloudinary.",
+                        publicId);
+                }
+            }
+
+            return true;
         }
 
         // ==========================================
@@ -379,5 +446,98 @@ namespace ApiProyecto1.Services.Servicios
                 throw new ArgumentException("No se puede repetir el orden de las fotografías.");
             }
         }
+
+
+        public async Task<bool> EliminarAsync(
+    int id,
+    CancellationToken cancellationToken = default)
+        {
+            var publicIds = new List<string>();
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                await con.OpenAsync(cancellationToken);
+
+                using (SqlTransaction trans = con.BeginTransaction())
+                {
+                    try
+                    {
+                        // Obtener las fotografías del servicio.
+                        string consultar = @"
+                    SELECT PublicId
+                    FROM ServicioImagenes
+                    WHERE IdServicio = @IdServicio
+                      AND PublicId IS NOT NULL;
+                ";
+
+                        using (SqlCommand cmd = new SqlCommand(consultar, con, trans))
+                        {
+                            cmd.Parameters.Add("@IdServicio", SqlDbType.Int).Value = id;
+
+                            using (SqlDataReader dr = await cmd.ExecuteReaderAsync(cancellationToken))
+                            {
+                                while (await dr.ReadAsync(cancellationToken))
+                                {
+                                    string publicId = dr["PublicId"].ToString() ?? "";
+
+                                    if (!string.IsNullOrWhiteSpace(publicId))
+                                        publicIds.Add(publicId);
+                                }
+                            }
+                        }
+
+                        // Eliminar el servicio.
+                        string eliminar = @"
+                    DELETE FROM Servicios
+                    WHERE IdServicio = @IdServicio;
+                ";
+
+                        int filas;
+
+                        using (SqlCommand cmd = new SqlCommand(eliminar, con, trans))
+                        {
+                            cmd.Parameters.Add("@IdServicio", SqlDbType.Int).Value = id;
+
+                            filas = await cmd.ExecuteNonQueryAsync(cancellationToken);
+                        }
+
+                        if (filas == 0)
+                        {
+                            trans.Rollback();
+                            return false;
+                        }
+
+                        // Las fotografías se eliminan de SQL por ON DELETE CASCADE.
+                        trans.Commit();
+                    }
+                    catch
+                    {
+                        trans.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+            // Eliminar las fotografías de Cloudinary.
+            foreach (var publicId in publicIds.Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    await _cloudinary.EliminarImagenAsync(
+                        publicId,
+                        cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "No se pudo eliminar la imagen {PublicId} de Cloudinary.",
+                        publicId);
+                }
+            }
+
+            return true;
+        }
+
     }
 }
