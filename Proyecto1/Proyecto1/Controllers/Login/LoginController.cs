@@ -1,21 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Text;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Proyecto1.Services.Interfaces;
 
 namespace Proyecto1.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiBaseUrl;
+        private readonly IApiClientService _apiClient;
 
-        public LoginController(IConfiguration config)
+        public LoginController(IApiClientService apiClient)
         {
-            _httpClient = new HttpClient();
-            _apiBaseUrl = config["ApiSettings:BaseUrl"];
+            _apiClient = apiClient;
         }
 
         [HttpGet]
@@ -25,9 +24,11 @@ namespace Proyecto1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(string Usuario, string Password)
+        public async Task<IActionResult> Index(
+            string Usuario,
+            string Password,
+            CancellationToken cancellationToken)
         {
-
             if (string.IsNullOrWhiteSpace(Usuario))
             {
                 TempData["LoginError"] = "Ingrese el nombre de usuario";
@@ -48,51 +49,70 @@ namespace Proyecto1.Controllers
                 password = Password
             };
 
-            var json = JsonSerializer.Serialize(loginData);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync($"{_apiBaseUrl}/api/usuario/login", content);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                TempData["LoginError"] = "Error al conectar con la API";
-                TempData["OpenLoginModal"] = "true";
-                return RedirectToAction("Index", "Inicio");
-            }
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            var result = JsonSerializer.Deserialize<LoginResponse>(responseBody,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
- 
-            if (result != null && result.success)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, Usuario)
-                };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal
+                using var response = await _apiClient.PostAsync(
+                    "api/usuario/login",
+                    loginData,
+                    cancellationToken
                 );
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["LoginError"] = "Error al conectar con la API";
+                    TempData["OpenLoginModal"] = "true";
+
+                    return RedirectToAction("Index", "Inicio");
+                }
+
+                var responseBody = await response.Content.ReadAsStringAsync(
+                    cancellationToken
+                );
+
+                var result = JsonSerializer.Deserialize<LoginResponse>(
+                    responseBody,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+
+                if (result != null && result.success)
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, Usuario)
+                    };
+
+                    var identity = new ClaimsIdentity(
+                        claims,
+                        CookieAuthenticationDefaults.AuthenticationScheme
+                    );
+
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal
+                    );
+
+                    return RedirectToAction("Index", "Inicio");
+                }
+
+                TempData["LoginError"] =
+                    result?.mensaje ?? "Error desconocido";
+
+                TempData["OpenLoginModal"] = "true";
+
                 return RedirectToAction("Index", "Inicio");
-                //return RedirectToAction("Index", "Home");
             }
+            catch (HttpRequestException)
+            {
+                TempData["LoginError"] = "No se pudo conectar con el servidor.";
+                TempData["OpenLoginModal"] = "true";
 
-            TempData["LoginError"] = result?.mensaje ?? "Error desconocido";
-            TempData["OpenLoginModal"] = "true";
-
-            return RedirectToAction("Index", "Inicio");
+                return RedirectToAction("Index", "Inicio");
+            }
         }
 
         [HttpPost]
@@ -100,16 +120,16 @@ namespace Proyecto1.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
             return RedirectToAction("Index", "Inicio");
         }
-
     }
 
     public class LoginResponse
     {
         public bool success { get; set; }
-        public string mensaje { get; set; }
+        public string? mensaje { get; set; }
     }
 }

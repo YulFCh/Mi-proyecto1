@@ -1,14 +1,51 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Proyecto1.Services;
+using Proyecto1.Services.Interfaces;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+
+// MVC
 builder.Services.AddControllersWithViews();
 
-// 🔥 AGREGAR AUTHENTICATION
+// AUTENTICACIÓN
 builder.Services.AddAuthentication("Cookies")
-.AddCookie("Cookies", options =>
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Login/Index";
+        options.AccessDeniedPath = "/Login/Index";
+    });
+
+// ========================================
+// CONFIGURACIÓN CENTRALIZADA DE LA API
+// ========================================
+
+var entornoActivo = builder.Configuration["ApiSettings:EntornoActivo"];
+
+if (string.IsNullOrWhiteSpace(entornoActivo))
 {
-    options.LoginPath = "/Login/Index";
+    throw new InvalidOperationException(
+        "No se ha configurado ApiSettings:EntornoActivo."
+    );
+}
+
+var apiUrl = builder.Configuration[$"ApiSettings:{entornoActivo}"];
+
+if (!Uri.TryCreate(apiUrl, UriKind.Absolute, out var apiUri) ||
+    (apiUri.Scheme != Uri.UriSchemeHttps &&
+     !builder.Environment.IsDevelopment()))
+{
+    throw new InvalidOperationException(
+        $"La URL configurada para '{entornoActivo}' no es válida."
+    );
+}
+
+// CLIENTE HTTP COMPARTIDO
+builder.Services.AddHttpClient<IApiClientService, ApiClientService>(client =>
+{
+    client.BaseAddress = apiUri;
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
+
+// ========================================
 
 var app = builder.Build();
 
@@ -23,7 +60,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// 🔥 ORDEN IMPORTA
 app.UseAuthentication();
 app.UseAuthorization();
 

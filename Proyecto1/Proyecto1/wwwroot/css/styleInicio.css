@@ -1,6 +1,6 @@
 ﻿:root {
     /* ================= COLORES ================= */
-    --primary-purple: #d7007c;
+    --primary-purple: #ff0094;
     --primary-purple-dark: #a90061;
     --light-gray: #E5E7EB;
     --card-gray: #F3F4F6;
@@ -562,7 +562,7 @@ body {
 
     #loginModal .login-close:hover {
         background: #fff0f8;
-        color: #d7007c;
+        color: #ff0094;
     }
 
 
@@ -574,7 +574,7 @@ body {
     height: 62px;
     margin: 0 auto 17px;
     border-radius: 18px;
-    color: #d7007c;
+    color: #ff0094;
     background: #fff0f8;
 }
 
@@ -623,7 +623,7 @@ body {
 }
 
     #loginModal .login-input-wrapper:focus-within {
-        border-color: #d7007c;
+        border-color: #ff0094;
         box-shadow: 0 0 0 3px rgba(215, 0, 124, .09);
     }
 
@@ -657,7 +657,7 @@ body {
 }
 
     #loginModal .login-toggle-password:hover {
-        color: #d7007c;
+        color: #ff0094;
     }
 
 #loginModal .login-submit {
@@ -670,7 +670,7 @@ body {
     margin-top: 25px;
     border: none;
     border-radius: 10px;
-    background: #d7007c;
+    background: #ff0094;
     color: #ffffff;
     font-family: inherit;
     font-size: 14px;
@@ -794,7 +794,7 @@ body {
     height: 47px;
     border-radius: 13px;
     background: #fff0f8;
-    color: #d7007c;
+    color: #ff0094;
 }
 
 #modalCarrito .carrito-header-text {
@@ -835,7 +835,7 @@ body {
 
     #modalCarrito .carrito-close:hover {
         background: #fff0f8;
-        color: #d7007c;
+        color: #ff0094;
     }
 
     #modalCarrito .carrito-close svg {
@@ -915,7 +915,7 @@ body {
 }
 
     #modalCarrito .carrito-total-fila strong {
-        color: #d7007c;
+        color: #ff0094;
         font-size: 21px;
         font-weight: 750;
         white-space: nowrap;
@@ -963,14 +963,14 @@ body {
 }
 
     #modalCarrito .carrito-btn-secundario:hover {
-        border-color: #d7007c;
+        border-color: #ff0094;
         background: #fff5fa;
-        color: #d7007c;
+        color: #ff0094;
     }
 
 #modalCarrito .carrito-btn-principal {
-    border: 1px solid #d7007c;
-    background: #d7007c;
+    border: 1px solid #ff0094;
+    background: #ff0094;
     color: #fff;
 }
 
@@ -1053,24 +1053,36 @@ body {
 
 
 /* Borde de los selectores de color */
+/* Borde de los selectores de color */
+/* Borde normal */
 .color-selector {
     border: 1px solid #ccc !important;
     box-shadow: none !important;
     outline: none !important;
+    box-sizing: border-box !important;
 }
 
-    /* Borde fucsia al seleccionar un color */
+    /* Color seleccionado: borde rosado delgado y anillo blanco */
     .color-selector.color-activo {
-        border: 1px solid #d7007c !important;
-        box-shadow: none !important;
+        border: 1px solid #ff0094 !important;
+        box-shadow: inset 0 0 0 2.5px #fff !important;
         outline: none !important;
+        box-sizing: border-box !important;
     }
 
     /* Evitar que el navegador cambie el borde al hacer clic */
+    /* Evitar cambios visuales al hacer clic */
     .color-selector:focus,
     .color-selector:active {
         outline: none !important;
-        box-shadow: none !important;
+    }
+
+    /* Mantener el borde rosado delgado y el anillo blanco */
+    .color-selector.color-activo,
+    .color-selector.color-activo:focus,
+    .color-selector.color-activo:active {
+        border: 1px solid #ff0094 !important;
+        box-shadow: inset 0 0 0 2.5px #fff !important;
     }
 
 
@@ -1117,7 +1129,7 @@ body {
 
     #modalZoom .modal-header .close:hover {
         background: #fce7f3;
-        color: #d7007c;
+        color: #ff0094;
     }
 
 /* Espaciado general */
@@ -1152,8 +1164,8 @@ body {
 
     #modalZoom #zoom-prev-btn:hover,
     #modalZoom #zoom-next-btn:hover {
-        background: #d7007c !important;
-        border-color: #d7007c !important;
+        background: #ff0094 !important;
+        border-color: #ff0094 !important;
         color: #ffffff !important;
     }
 
@@ -1163,7 +1175,7 @@ body {
 #modalZoom #zoom-tipo-badge {
     display: inline-block;
     background: #fce7f3 !important;
-    color: #d7007c !important;
+    color: #ff0094 !important;
     border-radius: 5px !important;
     padding: 5px 9px !important;
     font-size: 10px !important;
@@ -1189,7 +1201,7 @@ body {
 
 /* Más características */
 #modalZoom a[href="#zoom-caracteristicas-collapse"] {
-    color: #d7007c !important;
+    color: #ff0094 !important;
     font-size: 12px !important;
     transition: opacity .2s;
 }
@@ -1208,7 +1220,7 @@ body {
 }
 
 #modalZoom #zoom-descuento-badge {
-    background: #d7007c !important;
+    background: d7007c !important;
     border-radius: 4px !important;
     padding: 4px 7px !important;
     font-size: 11px !important;
@@ -1221,24 +1233,43 @@ body {
 
     #modalZoom #zoom-acciones-compra button:not(#zoom-btn-agregar):hover {
         background: #fce7f3 !important;
-        color: #d7007c !important;
+        color: #ff0094 !important;
     }
 
 /* Botón agregar al carrito */
+
+/* Botón agregar al carrito: estilo outline */
 #modalZoom #zoom-btn-agregar {
-    background: #d7007c !important;
-    border: 1px solid #d7007c !important;
+    background-color: transparent !important;
+    border: 1px solid #ff0094 !important;
     border-radius: 7px;
-    color: #ffffff !important;
+    color: #ff0094 !important;
     font-size: 13px;
-    transition: background .2s, transform .2s;
+    font-weight: bold;
+    transition: color .2s ease, background-color .2s ease, border-color .2s ease;
 }
 
+    /* Al pasar el cursor: se rellena de rosado */
     #modalZoom #zoom-btn-agregar:hover {
-        background: #a90061 !important;
-        border-color: #a90061 !important;
-        transform: translateY(-1px);
+        background-color: #ff0094 !important;
+        border-color: #ff0094 !important;
+        color: #ffffff !important;
     }
+
+    /* Al hacer clic */
+    #modalZoom #zoom-btn-agregar:active {
+        background-color: #d6007c !important;
+        border-color: #d6007c !important;
+        color: #ffffff !important;
+    }
+
+    /* Al recibir el foco del teclado */
+    #modalZoom #zoom-btn-agregar:focus-visible {
+        outline: 3px solid rgba(255, 0, 148, 0.3);
+        outline-offset: 2px;
+        box-shadow: none !important;
+    }
+
 
 /* Bloques de garantía, pagos y envíos */
 #modalZoom #zoom-garantia-container,
@@ -1416,7 +1447,7 @@ body {
 ===================================================== */
 
 :root {
-    --catalogo-rosa: #d7007c;
+    --catalogo-rosa: #ff0094;
     --catalogo-rosa-oscuro: #a90061;
     --catalogo-texto: #374151;
     --catalogo-texto-secundario: #4B5563;
@@ -2008,8 +2039,8 @@ body:has(#contenedorProductos) .container-xxl {
 
     /* Cuando el cuadrito está seleccionado */
     .filtro-opcion input[type="checkbox"]:checked {
-        background-color: #D7007C;
-        border-color: #D7007C;
+        background-color: #ff0094;
+        border-color: #ff0094;
     }
 
         /* Marca de verificación blanca */
@@ -2025,12 +2056,12 @@ body:has(#contenedorProductos) .container-xxl {
 
     /* Efecto al pasar el cursor */
     .filtro-opcion input[type="checkbox"]:hover {
-        border-color: #D7007C;
+        border-color: #ff0094;
     }
 
     /* Accesibilidad al navegar con teclado */
     .filtro-opcion input[type="checkbox"]:focus-visible {
-        outline: 2px solid #D7007C;
+        outline: 2px solid #ff0094;
         outline-offset: 3px;
     }
 
@@ -2052,4 +2083,186 @@ body:has(#contenedorProductos) .container-xxl {
 
 .producto-info-contenido {
     padding-bottom: 4px !important;
+}
+
+
+.logo-fractalica {
+    margin: 0 !important;
+    color: #b0a7af;
+    font-size: 18px !important;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+
+.modern-header {
+    padding-left: 8px !important;
+}
+
+
+/* CONTENEDOR DEL BUSCADOR */
+.fract-search {
+    display: flex;
+    align-items: center;
+    flex: 1 1 300px;
+    min-width: 100px;
+    max-width: 800px;
+    height: 36px;
+    margin: 0 18px;
+    border: 1px solid #d5d1d7;
+    border-radius: 24px;
+    background: #fff;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* BOTÓN DE LA LUPA */
+.fract-search-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #333;
+    cursor: pointer;
+}
+
+/* CAMPO DE TEXTO */
+.fract-search-input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0 14px 0 4px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent;
+    color: #333;
+    font-size: 14px;
+}
+
+    .fract-search-input::placeholder {
+        color: #88838d;
+        opacity: 1;
+    }
+
+.fract-search:focus-within {
+    border-color: #b0a7af;
+    box-shadow: 0 0 0 2px rgba(176, 167, 175, 0.12);
+}
+
+/* AJUSTES PARA PANTALLAS PEQUEÑAS */
+@media (max-width: 600px) {
+    .fract-search {
+        margin: 0 6px;
+        height: 38px;
+        flex-basis: 100px;
+    }
+
+    .fract-search-button {
+        width: 34px;
+    }
+
+    .fract-search-input {
+        font-size: 12px;
+        padding-right: 6px;
+    }
+
+        .fract-search-input::placeholder {
+            text-overflow: ellipsis;
+        }
+}
+
+
+/* TELÉFONO */
+.header-telefono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-right: 20px; /* Separa el teléfono del carrito */
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+    .header-telefono:hover {
+        color: #333333;
+        text-decoration: none;
+    }
+
+    .header-telefono svg {
+        flex-shrink: 0;
+    }
+
+/* En móviles, mostrar solo el ícono */
+@media (max-width: 600px) {
+    .header-telefono span {
+        display: none;
+    }
+
+    .header-telefono {
+        padding: 4px;
+        margin-right: 4px;
+    }
+}
+
+
+
+/* Evitar el contorno oscuro al hacer clic en los colores del zoom */
+#zoom-lista-colores .color-circle:focus,
+#zoom-lista-colores .color-circle:active {
+    outline: none !important;
+    border-color: #fff !important;
+}
+
+/* Mantener el borde rosado delgado al seleccionar */
+#zoom-lista-colores .color-circle:focus,
+#zoom-lista-colores .color-circle:active {
+    box-shadow: 0 0 0 1px #ff0094 !important;
+}
+
+
+#btnAplicarFiltros:hover {
+    background: #ff0094 !important;
+    color: #f3f4f6 !important;
+}
+
+#btnAplicarFiltros:focus,
+#btnAplicarFiltros:active,
+#btnAplicarFiltros:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.filtros-header {
+    flex-wrap: wrap;
+}
+
+    .filtros-header h4 {
+        flex: 0 1 auto;
+        min-width: max-content;
+    }
+
+
+
+/* Va encima del modal categorías */
+
+
+#modalCarrito {
+    z-index: 30000 !important;
+}
+
+#modalCheckout {
+    z-index: 30000 !important;
 }

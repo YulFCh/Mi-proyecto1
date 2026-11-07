@@ -27,28 +27,10 @@
 }
 
 /* FONDO OSCURO */
-.categorias-overlay {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 20000;
-    background: transparent;
-    opacity: 0;
-    visibility: hidden;
-    transition: visibility .25s ease;
-}
 
-    .categorias-overlay.activo {
-        opacity: 1;
-        visibility: visible;
-    }
+/* FONDO DE CATEGORÍAS */
 
-    .categorias-overlay.activo {
-        opacity: 1;
-        visibility: visible;
-    }
+
 
 
 /* PANEL LATERAL */
@@ -414,4 +396,455 @@ body.categorias-abiertas {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
+}
+
+
+
+
+
+/* ===== RUTA DE NAVEGACIÓN ===== */
+#breadcrumbCategorias.breadcrumb-categorias {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    /* Separación del extremo izquierdo */
+    margin: 14px 0 18px;
+    padding: 0 0 0 20px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #666;
+    /* Ayuda a que la ruta reciba los clics */
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
+}
+
+    #breadcrumbCategorias.breadcrumb-categorias a {
+        display: inline-block;
+        color: #555 !important;
+        text-decoration: none !important;
+        cursor: pointer;
+        font-weight: 200;
+        pointer-events: auto;
+        transition: color 0.2s ease;
+    }
+
+        #breadcrumbCategorias.breadcrumb-categorias a:hover {
+            color: #ff0094 !important;
+            text-decoration: underline !important;
+        }
+
+    /* Último nivel: rosado */
+    #breadcrumbCategorias.breadcrumb-categorias .breadcrumb-actual {
+        color: #ff0094 !important;
+        font-weight: 400;
+    }
+
+    /* Separadores */
+    #breadcrumbCategorias.breadcrumb-categorias .breadcrumb-separador {
+        color: #999 !important;
+        user-select: none;
+    }
+
+@media (max-width: 600px) {
+    #breadcrumbCategorias.breadcrumb-categorias {
+        gap: 5px;
+        padding-left: 14px;
+        margin: 10px 0 14px;
+        font-size: 11px;
+    }
+}
+
+
+
+
+/* LOGIN: mostrar por encima del panel de categorías */
+#loginModal {
+    z-index: 30000 !important;
+}
+
+
+
+
+
+
+
+/* SERVICIOS*/
+
+
+
+/* ==========================================
+   DETALLE DE SERVICIOS
+========================================== */
+
+.servicio-detalle-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    align-items: start;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Información del servicio */
+
+.servicio-detalle-info {
+    min-width: 0;
+}
+
+    .servicio-detalle-info h4 {
+        font-size: 23px;
+        font-weight: 700;
+        margin: 20px 0 15px;
+    }
+
+/* Galería */
+
+.servicio-detalle-galeria {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Imagen principal */
+
+.servicio-imagen-principal {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: #fff;
+    border-radius: 0px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .servicio-imagen-principal img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+/* Flechas */
+
+.servicio-galeria-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+
+
+.servicio-galeria-anterior {
+    left: 12px;
+}
+
+.servicio-galeria-siguiente {
+    right: 12px;
+}
+
+/* Miniaturas */
+
+.servicio-galeria-miniaturas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+
+
+.servicio-miniatura {
+    width: 85px;
+    height: 75px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #f5f5f5;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+    .servicio-miniatura:hover {
+        border-color: #d7007c;
+    }
+
+    .servicio-miniatura img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+/* Adaptación a celulares */
+
+@media (max-width: 768px) {
+
+    .servicio-detalle-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .servicio-imagen-principal {
+        height: 280px;
+    }
+
+    .servicio-detalle-info h4 {
+        font-size: 20px;
+    }
+}
+
+
+/* Flechas ocultas inicialmente */
+.servicio-galeria-flecha {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+/* Mostrar flechas al pasar el cursor por la imagen */
+.servicio-imagen-principal:hover .servicio-galeria-flecha {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+
+
+
+
+/* ==========================================
+   SERVICIO A PANTALLA COMPLETA
+========================================== */
+
+#modalCategoriasDetalle.servicio-pantalla-completa {
+    position: fixed !important;
+    top: 75px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 75px) !important;
+    height: calc(100dvh - 75px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    z-index: 20000 !important;
+    overflow-y: auto !important;
+    background: #fff;
+}
+
+    #modalCategoriasDetalle.servicio-pantalla-completa
+    .categorias-modal-contenido {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 100%;
+        box-sizing: border-box;
+        padding: 30px;
+    }
+
+
+
+.categorias-detalle-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
+    width: 100%;
+}
+
+    .categorias-detalle-encabezado h3 {
+        margin: 0;
+    }
+
+    .categorias-detalle-encabezado > a {
+        margin-left: 0;
+        white-space: nowrap;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+@media (max-width: 480px) {
+    .categorias-detalle-encabezado {
+        gap: 10px;
+    }
+
+        .categorias-detalle-encabezado > a {
+            font-size: 13px;
+        }
+}
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   BENEFICIOS DE SERVICIOS
+========================================== */
+
+.servicios-beneficios {
+    width: 100%;
+    margin: 40px auto 25px;
+    padding: 25px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.servicios-beneficios-titulo {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 30px;
+    color: #222;
+}
+
+/* Cuadrícula de beneficios */
+
+/* Cuadrícula de beneficios */
+
+.servicios-beneficios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 25px;
+    align-items: stretch;
+}
+
+/* Todas las tarjetas con el mismo tamaño */
+
+.servicio-beneficio-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    min-height: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .servicio-beneficio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
+    }
+
+/* Ícono rosado */
+
+.servicio-beneficio-icono {
+    width: 75px;
+    height: 75px;
+    margin-bottom: 20px;
+    color: #d7007c;
+}
+
+    .servicio-beneficio-icono svg {
+        width: 52px;
+        height: 52px;
+    }
+
+/* Título */
+
+.servicio-beneficio-card h4 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: #222;
+}
+
+.servicio-beneficio-resumen {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: #444;
+}
+
+.servicio-beneficio-descripcion {
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+    color: #666;
+}
+
+
+/* Adaptación a tabletas */
+
+@media (max-width: 900px) {
+    .servicios-beneficios-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+    }
+
+    .servicio-beneficio-card {
+        height: 100%;
+        min-height: 280px;
+        aspect-ratio: auto;
+    }
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 600px) {
+    .servicios-beneficios {
+        padding: 20px 10px;
+    }
+
+    .servicios-beneficios-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 1fr;
+    }
+
+    .servicio-beneficio-card {
+        width: 100%;
+        height: 100%;
+        min-height: 250px;
+        aspect-ratio: auto;
+        padding: 25px 20px;
+    }
+
+    .servicios-beneficios-titulo {
+        font-size: 20px;
+    }
+}
+
+
+.servicio-detalle-info .servicio-categoria-resumen,
+.servicio-detalle-info .servicio-categoria-descripcion {
+    color: #6E6E73 !important;
+    font-size: 24px !important;
+}
+
+.servicio-detalle-info h4 {
+    font-size: 38px !important;
 }

@@ -24,14 +24,409 @@
     </button>
 }
 
-<div class="products-container" id="contenedorProductos">
+<nav id="breadcrumbCategorias"
+     class="breadcrumb-categorias"
+     aria-label="Ruta de navegación">
+</nav>
 
-    <div id="loaderProductos" class="loader-productos">
-        <div class="spinner-productos"></div>
-        <span>Cargando productos...</span>
+<!-- CONTENEDOR GENERAL: FILTROS + PRODUCTOS -->
+<div class="catalogo-layout">
+
+    <!-- PANEL LATERAL DE FILTROS -->
+    <aside class="panel-filtros" id="panelFiltros"
+           style="
+        box-sizing:border-box;
+        width:100%;
+        min-width:0;
+        padding:10px;
+        border:1px solid #e4e4e7;
+        border-radius:14px;
+        background:#f3f4f6;
+        overflow:hidden;
+        "
+
+        <!-- ENCABEZADO -->
+        <div class="filtros-header"
+             style="
+             display:flex;
+             align-items:center;
+             justify-content:space-between;
+             gap:8px;
+             width:100%;
+             min-width:0;
+             box-sizing:border-box;
+             padding:0 0 15px;
+             margin:0 0 20px;
+             border-bottom:1px solid #f1d5e5;
+         ">
+
+            <!-- TÍTULO FILTROS -->
+            <h4 style="
+            display:flex;
+            align-items:center;
+            gap:9px;
+            min-width:0;
+            margin:0;
+            color:#27272a;
+            font-size:16px;
+            font-weight:750;
+            letter-spacing:.3px;
+        ">
+
+                <span style="
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                flex-shrink:0;
+                width:35px;
+                height:35px;
+                border-radius:10px;
+                background:#fce7f3;
+                color:#ff0094;
+            ">
+                    <svg width="19" height="19"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M4 7h9" />
+                        <path d="M17 7h3" />
+                        <path d="M4 17h3" />
+                        <path d="M11 17h9" />
+                        <circle cx="15" cy="7" r="2" />
+                        <circle cx="9" cy="17" r="2" />
+                    </svg>
+                </span>
+
+                FILTROS
+            </h4>
+
+            <!-- BOTÓN LIMPIAR -->
+            <button type="button"
+                    id="limpiarFiltros"
+                    class="btn-limpiar-filtros"
+                    style="
+                    display:inline-flex;
+                    align-items:center;
+                    justify-content:center;
+                    gap:5px;
+                    flex:0 0 auto;
+                    box-sizing:border-box;
+                    max-width:100%;
+                    min-width:0;
+                    padding:7px 9px;
+                    margin:0;
+                    border:1px solid #f0b8d8;
+                    border-radius:8px;
+                    background:#fff;
+                    color:#ff0094;
+                    font-family:inherit;
+                    font-size:11px;
+                    font-weight:600;
+                    line-height:1.2;
+                    white-space:nowrap;
+                    cursor:pointer;
+                    transition:background .2s,border-color .2s;
+                ">
+
+                <svg width="14" height="14"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                    <path d="M3 3v5h5" />
+                </svg>
+
+                Limpiar
+            </button>
+        </div>
+
+
+        <!-- MARCA -->
+        <section class="filtro-seccion"
+                 style="
+                 box-sizing:border-box;
+                 width:100%;
+                 min-width:0;
+                 margin:0 0 22px;
+             ">
+
+            <h5 style="
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:0 0 12px;
+            color:#27272a;
+            font-size:12px;
+            font-weight:750;
+            letter-spacing:1px;
+            text-transform:uppercase;
+        ">
+
+                <svg width="17" height="17"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="#ff0094"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z" />
+                    <circle cx="7.5" cy="7.5" r="1" />
+                </svg>
+
+                MARCA
+            </h5>
+
+            <!-- BUSCADOR DE MARCA -->
+            <div class="filtro-busqueda"
+                 style="
+                 display:flex;
+                 align-items:center;
+                 gap:10px;
+                 box-sizing:border-box;
+                 width:100%;
+                 min-width:0;
+                 min-height:42px;
+                 padding:0 12px;
+                 border:1px solid #e4e4e7;
+                 border-radius:10px;
+                 background:#fff;
+                 transition:border-color .2s,background .2s;
+             ">
+
+                <svg viewBox="0 0 24 24"
+                     width="18"
+                     height="18"
+                     fill="none"
+                     stroke="#71717a"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true"
+                     style="flex-shrink:0;">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m16 16 5 5" />
+                </svg>
+
+                <input type="search"
+                       id="filtroMarca"
+                       placeholder="Buscar marca..."
+                       autocomplete="off"
+                       style="
+                       display:block;
+                       flex:1;
+                       width:100%;
+                       min-width:0;
+                       box-sizing:border-box;
+                       padding:10px 0;
+                       margin:0;
+                       border:none;
+                       outline:none;
+                       box-shadow:none;
+                       background:transparent;
+                       color:#27272a;
+                       font-family:inherit;
+                       font-size:13px;
+                   ">
+            </div>
+        </section>
+
+
+        <!-- PRECIO -->
+        <section class="filtro-seccion"
+                 style="
+                 box-sizing:border-box;
+                 width:100%;
+                 min-width:0;
+                 margin:0 0 22px;
+             ">
+
+            <h5 style="
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:0 0 12px;
+            color:#27272a;
+            font-size:12px;
+            font-weight:750;
+            letter-spacing:1px;
+            text-transform:uppercase;
+        ">
+
+                <svg width="17" height="17"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="#ff0094"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="3" />
+                    <path d="M3 10h18" />
+                    <path d="M7 15h3" />
+                </svg>
+
+                PRECIO
+            </h5>
+
+            <!-- MENOS DE S/ 1000 -->
+            <label class="filtro-opcion"
+                   style="
+                   display:flex;
+                   align-items:center;
+                   gap:10px;
+                   box-sizing:border-box;
+                   width:100%;
+                   min-width:0;
+                   padding:11px 12px;
+                   margin:0 0 7px;
+                   border:1px solid #f0d7e6;
+                   border-radius:10px;
+                   background:#fff;
+                   color:#3f3f46;
+                   font-size:13px;
+                   cursor:pointer;
+                   transition:border-color .2s,background .2s;
+               ">
+
+                <input type="checkbox"
+                       name="filtroPrecio"
+                       value="menos1000"
+                       style="
+                       flex-shrink:0;
+                       accent-color:#ff0094;
+                       cursor:pointer;
+                   ">
+
+                <span>Menos de S/ 1000</span>
+            </label>
+
+            <!-- ENTRE S/ 1000 Y S/ 5000 -->
+            <label class="filtro-opcion"
+                   style="
+                   display:flex;
+                   align-items:center;
+                   gap:10px;
+                   box-sizing:border-box;
+                   width:100%;
+                   min-width:0;
+                   padding:11px 12px;
+                   margin:0 0 7px;
+                   border:1px solid #f0d7e6;
+                   border-radius:10px;
+                   background:#fff;
+                   color:#3f3f46;
+                   font-size:13px;
+                   cursor:pointer;
+                   transition:border-color .2s,background .2s;
+               ">
+
+                <input type="checkbox"
+                       name="filtroPrecio"
+                       value="1000a5000"
+                       style="
+                       flex-shrink:0;
+                       accent-color:#ff0094;
+                       cursor:pointer;
+                   ">
+
+                <span>S/ 1000 - S/ 5000</span>
+            </label>
+
+            <!-- MÁS DE S/ 5000 -->
+            <label class="filtro-opcion"
+                   style="
+                   display:flex;
+                   align-items:center;
+                   gap:10px;
+                   box-sizing:border-box;
+                   width:100%;
+                   min-width:0;
+                   padding:11px 12px;
+                   margin:0 0 7px;
+                   border:1px solid #f0d7e6;
+                   border-radius:10px;
+                   background:#fff;
+                   color:#3f3f46;
+                   font-size:13px;
+                   cursor:pointer;
+                   transition:border-color .2s,background .2s;
+               ">
+
+                <input type="checkbox"
+                       name="filtroPrecio"
+                       value="mas5000"
+                       style="
+                       flex-shrink:0;
+                       accent-color:#ff0094;
+                       cursor:pointer;
+                   ">
+
+                <span>Más de S/ 5000</span>
+            </label>
+
+        </section>
+
+
+        <!-- BOTÓN APLICAR FILTROS -->
+        <button type="button"
+                id="btnAplicarFiltros"
+                class="btn-aplicar-filtros"
+                style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                gap:9px;
+                box-sizing:border-box;
+                width:100%;
+                min-width:0;
+                padding:13px 16px;
+                margin:0;
+
+
+border: 1px solid #ff0094;
+background: #f3f4f6;
+color: #ff0094;
+                font-family:inherit;
+                font-size:12px;
+                font-weight:700;
+                letter-spacing:.3px;
+                cursor:pointer;
+                transition:background .2s,box-shadow .2s;
+            ">
+
+            FILTRAR PRODUCTOS
+        </button>
+
+
+        <!-- MENSAJE DE FILTROS -->
+        <p id="mensajeFiltros"
+           class="mensaje-filtros"
+           aria-live="polite"></p>
+
+    </aside>
+
+
+    <!-- PRODUCTOS: SE CONSERVA EL ID QUE USA TU JAVASCRIPT -->
+    <div class="products-container" id="contenedorProductos">
+
+        <div id="loaderProductos" class="loader-productos">
+            <div class="spinner-productos"></div>
+            <span>Cargando productos...</span>
+        </div>
+
     </div>
 
 </div>
+
 
 
 <div class="modal fade" id="modalZoom" tabindex="-1" role="dialog" aria-hidden="true">
@@ -92,7 +487,7 @@
 
                                 <a href="javascript:void(0)"
                                    id="zoom-btn-caracteristicas"
-                                   style="font-size:12px; font-weight:bold; color:#d7007c; text-decoration:none;">
+                                   style="font-size:12px; font-weight:bold; color:#ff0094; text-decoration:none;">
                                     ☷ Más características ▾
                                 </a>
 

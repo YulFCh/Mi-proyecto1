@@ -1,0 +1,441 @@
+﻿@{
+    ViewData["Title"] = "Servicios";
+
+    var estaLogueado = User.Identity?.IsAuthenticated == true;
+
+    Layout = estaLogueado
+        ? "~/Views/Shared/_LayoutNavegador.cshtml"
+        : "~/Views/Shared/_LayoutInicio.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/styleInicio.css" />
+</head>
+
+@if (estaLogueado)
+{
+    <!-- BOTÓN AGREGAR -->
+    <div style="display:flex; justify-content:flex-start;
+                    padding:0 20px; margin:10px 0;">
+
+        <button type="button"
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#modalAgregarServicio">
+
+            <i class="feather icon-plus"></i>
+            Agregar servicios
+
+        </button>
+    </div>
+
+    <!-- BOTÓN ADMINISTRAR -->
+    <div style="padding:10px 20px;">
+
+        <button type="button"
+                class="btn btn-primary"
+                onclick="cargarListaServicios()">
+
+            <i class="feather icon-edit"></i>
+            Administrar servicios
+
+        </button>
+
+    </div>
+
+    <!-- LISTA ADMINISTRAR -->
+    <div id="listaAdministrarServicios"
+         style="display:none; padding:20px;">
+
+        <h5>Servicios registrados</h5>
+
+        <div id="tablaServicios"></div>
+
+    </div>
+}
+
+
+
+<!-- MODAL AGREGAR SERVICIO -->
+<div class="modal fade"
+     id="modalAgregarServicio"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloAgregarServicio"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="tituloAgregarServicio">
+                    Agregar servicio
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+
+            <form id="formAgregarServicio">
+
+                <div class="modal-body">
+
+                    <!-- TÍTULO -->
+                    <div class="form-group">
+                        <label for="tituloServicio">
+                            Título <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="tituloServicio"
+                               maxlength="150"
+                               placeholder="Ej. Mantenimiento de equipos"
+                               required>
+                    </div>
+
+                    <!-- RESUMEN -->
+                    <div class="form-group">
+                        <label for="resumenServicio">
+                            Resumen
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="resumenServicio"
+                               maxlength="250"
+                               placeholder="Breve descripción del servicio">
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="form-group">
+                        <label for="descripcionServicio">
+                            Descripción
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="descripcionServicio"
+                                  rows="4"
+                                  placeholder="Describe detalladamente el servicio..."></textarea>
+                    </div>
+
+                    <!-- ICONO -->
+                    <div class="form-group">
+                        <label for="iconoServicio">
+                            Icono
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="iconoServicio"
+                               maxlength="100"
+                               placeholder="Ej. bi bi-tools">
+
+                        <small class="form-text text-muted">
+                            Puedes utilizar nombres de iconos de Bootstrap Icons.
+                        </small>
+                    </div>
+
+                    <div class="row">
+
+                        <!-- ORDEN -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ordenServicio">
+                                    Orden de visualización
+                                </label>
+
+                                <input type="number"
+                                       class="form-control"
+                                       id="ordenServicio"
+                                       min="0"
+                                       value="0"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="estadoServicio">
+                                    Estado
+                                </label>
+
+                                <select class="form-control"
+                                        id="estadoServicio"
+                                        required>
+
+                                    <option value="true" selected>
+                                        Activo
+                                    </option>
+
+                                    <option value="false">
+                                        Inactivo
+                                    </option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- FOTOGRAFÍAS -->
+                    <div class="form-group">
+
+                        <label for="imagenesServicio">
+                            Fotografías del servicio
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="file"
+                               class="form-control-file"
+                               id="imagenesServicio"
+                               accept="image/jpeg,image/png,image/webp"
+                               multiple>
+
+                        <small class="form-text text-muted">
+                            Seleccione fotografía que tengan 455 pixeles horixontal x 268 píxeles de alto
+                        </small>
+
+                    </div>
+
+                    <!-- VISTA PREVIA -->
+                    <div id="vistaPreviaImagenesServicio"
+                         style="display:grid;
+                                grid-template-columns:
+                                repeat(auto-fill,minmax(120px,1fr));
+                                gap:12px;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <!-- MENSAJE -->
+                    <div id="mensajeServicio"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; margin-top:12px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarServicio"
+                            class="btn btn-success">
+                        <i class="feather icon-save"></i>
+                        Guardar servicio
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- MODAL EDITAR SERVICIO -->
+<div class="modal fade"
+     id="modalEditarServicio"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloEditarServicio"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="tituloEditarServicio">
+                    Editar servicio
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+
+            <form id="formEditarServicio">
+
+                <div class="modal-body">
+
+                    <!-- TÍTULO -->
+                    <div class="form-group">
+                        <label for="tituloEditarServicioInput">
+                            Título
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="tituloEditarServicioInput"
+                               maxlength="150"
+                               required>
+                    </div>
+
+                    <!-- RESUMEN -->
+                    <div class="form-group">
+                        <label for="resumenEditarServicio">
+                            Resumen
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="resumenEditarServicio"
+                               maxlength="250">
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="form-group">
+                        <label for="descripcionEditarServicio">
+                            Descripción
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="descripcionEditarServicio"
+                                  rows="4"></textarea>
+                    </div>
+
+                    <!-- ICONO -->
+                    <div class="form-group">
+                        <label for="iconoEditarServicio">
+                            Icono
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="iconoEditarServicio"
+                               maxlength="100"
+                               placeholder="Ejemplo: briefcase">
+                    </div>
+
+                    <!-- ORDEN -->
+                    <div class="form-group">
+                        <label for="ordenEditarServicio">
+                            Orden de visualización
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               id="ordenEditarServicio"
+                               min="0"
+                               required>
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="form-group">
+                        <label for="estadoEditarServicio">
+                            Estado
+                        </label>
+
+                        <select class="form-control"
+                                id="estadoEditarServicio">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <hr>
+
+                    <!-- FOTOGRAFÍAS -->
+                    <div class="form-group">
+
+                        <label for="imagenesEditarServicio">
+                            Fotografías del servicio
+                        </label>
+
+                        <input type="file"
+                               class="form-control-file"
+                               id="imagenesEditarServicio"
+                               accept="image/jpeg,image/png,image/webp"
+                               multiple>
+
+                        <small class="form-text text-muted">
+                            Seleccione fotografía que tengan 455 pixeles horixontal x 268 píxeles de alto
+                        </small>
+
+                    </div>
+
+                    <!-- VISTA PREVIA -->
+                    <div id="vistaPreviaImagenesEditarServicio"
+                         style="display:flex; flex-wrap:wrap; gap:10px;">
+                    </div>
+
+                    <!-- MENSAJES -->
+                    <div id="mensajeEditarServicio"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; padding:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarEdicionServicio"
+                            class="btn btn-success">
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@if (!estaLogueado)
+{
+    <!-- SERVICIOS PÚBLICOS -->
+    <div id="serviciosPublicos">
+
+        <!-- Aquí mostraremos los servicios activos -->
+
+    </div>
+}
+
+<script>
+    const fractServiciosUsuarioActual = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(User.Identity?.Name ?? "")
+        );
+</script>
+
+<script src="~/js/Servicios.js"></script>

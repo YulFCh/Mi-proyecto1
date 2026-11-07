@@ -825,34 +825,47 @@ async function cargarProductos() {
 
         contenedor.innerHTML = "";
 
-        // 1. Filtrar por categoría
-        const productosCategoria = obtenerProductosPorCategoria(data);
 
-        // 2. Filtrar por subcategoría
-        const productosSubcategoria = subcategoriaSeleccionada
-            ? productosCategoria.filter(item =>
-                Number(item.idSubcategoria ?? item.IdSubcategoria) ===
-                Number(subcategoriaSeleccionada)
-            )
-            : productosCategoria;
+        let productosTipoEquipo;
 
-        // 3. Filtrar por tipo de equipo (Laptop, PC, etc.)
-        const productosTipoEquipo = tipoEquipoSeleccionado
-            ? productosSubcategoria.filter(item => {
-                const tipo =
-                    item.tipo_Equipo ??
-                    item.tipoEquipo ??
-                    item.Tipo_Equipo ??
-                    item.tipo_equipo;
+        // Cuando hay una búsqueda, buscar en todo el catálogo.
+        // Cuando no hay búsqueda, conservar los filtros de navegación.
+        if (terminoBusquedaProductos) {
+            productosTipoEquipo = filtrarProductosPorBusqueda(
+                data,
+                terminoBusquedaProductos
+            );
+        } else {
+            // 1. Categoría
+            const productosCategoria = obtenerProductosPorCategoria(data);
 
-                return String(tipo || "").trim().toLowerCase() ===
-                    String(tipoEquipoSeleccionado).trim().toLowerCase();
-            })
-            : productosSubcategoria;
+            // 2. Subcategoría
+            const productosSubcategoria = subcategoriaSeleccionada
+                ? productosCategoria.filter(item =>
+                    Number(item.idSubcategoria ?? item.IdSubcategoria) ===
+                    Number(subcategoriaSeleccionada)
+                )
+                : productosCategoria;
 
-        // 4. Mantener tus filtros actuales de marca y precio
+            // 3. Tipo de equipo
+            productosTipoEquipo = tipoEquipoSeleccionado
+                ? productosSubcategoria.filter(item => {
+                    const tipo =
+                        item.tipo_Equipo ??
+                        item.tipoEquipo ??
+                        item.Tipo_Equipo ??
+                        item.tipo_equipo;
+
+                    return String(tipo || "").trim().toLowerCase() ===
+                        String(tipoEquipoSeleccionado).trim().toLowerCase();
+                })
+                : productosSubcategoria;
+        }
+
+        // 4. Mantener los filtros existentes de marca y precio
         const productosFiltrados =
             obtenerProductosFiltrados(productosTipoEquipo);
+
 
         productosFiltrados.forEach(item => {
 
@@ -927,7 +940,7 @@ async function cargarProductos() {
                         padding:0;
                         cursor:pointer;
                         background-color:${colorCSS};
-                        border:1px solid ${seleccionado ? "#d7007c" : "#ccc"};
+                        border:1px solid ${seleccionado ? "#ff0094" : "#ccc"};
                         box-shadow:none;
                         transition:all .2s;
                     "
@@ -2409,7 +2422,7 @@ if (tituloCaracteristicas) {
                 ) {
 
                     thumb.style.borderColor =
-                        "#d7007c";
+                        "#ff0094";
 
                     thumb.style.boxShadow =
                         "0 0 4px rgba(0,123,255,.5)";
@@ -2520,7 +2533,9 @@ if (tituloCaracteristicas) {
                     const btnColor =
                         document.createElement(
                             "button"
-                        );
+                            );
+
+                        btnColor.classList.add("color-circle");
 
                     btnColor.type =
                         "button";
@@ -2566,7 +2581,7 @@ if (tituloCaracteristicas) {
                             "2px solid #fff";
 
                         btnColor.style.boxShadow =
-                            "0 0 0 1px #d7007c";
+                            "0 0 0 1px #ff0094";
 
                     } else {
 
@@ -2808,16 +2823,16 @@ if (tituloCaracteristicas) {
                                     btn.style.boxShadow = "none";
                                 });
 
-                            // Ocultar todos los nombres de colores
+                            // Mantener fijos los círculos y reservar espacio para los nombres
                             contenedorColores
                                 .querySelectorAll("span")
                                 .forEach(span => {
-
-                                    span.style.display = "none";
+                                    span.style.display = "block";
+                                    span.style.visibility = "hidden";
                                 });
 
-                            // Mostrar únicamente el nombre del color seleccionado
-                            textoColor.style.display = "block";
+                            // Mostrar el nombre del color seleccionado
+                            textoColor.style.visibility = "visible";
 
                             // Resaltar el círculo seleccionado
                             this.style.border = "2px solid #fff";
@@ -2843,10 +2858,16 @@ if (tituloCaracteristicas) {
                     textoColor.style.fontFamily = "Montserrat, sans-serif";
                     textoColor.style.textAlign = "center";
 
-                    textoColor.style.display =
-                        index === (item.varianteSeleccionadaIndex ?? 0)
-                            ? "block"
-                            : "none";
+                        textoColor.style.display = "block";
+                        textoColor.style.visibility =
+                            index === (item.varianteSeleccionadaIndex ?? 0)
+                                ? "visible"
+                                : "hidden";
+
+                        textoColor.style.height = "14px";
+                        textoColor.style.lineHeight = "14px";
+                        textoColor.style.whiteSpace = "nowrap";
+                        textoColor.style.margin = "0";
 
                     // Agregar círculo y texto
                     opcionColor.appendChild(btnColor);
@@ -2952,7 +2973,7 @@ function cambiarCantidadZoom(delta) {
     if (displayZoom) displayZoom.innerText = cantidadActualZoom;
 }
 
-function mostrarToast(mensaje, color = "#d7007c") {
+function mostrarToast(mensaje, color = "#ff0094") {
     const toast = document.getElementById("toastMensaje");
     if (toast) {
         toast.innerText = mensaje;
@@ -3277,7 +3298,7 @@ function actualizarBadgeYDropdown() {
         style="
             box-sizing: border-box;
             border: none;
-            background: #d7007c;
+            background: #ff0094;
             color: white;
             border-radius: 50%;
             width: 24px;
@@ -5058,15 +5079,28 @@ let categoriaSeleccionada = null;
 let subcategoriaSeleccionada = null;
 let tipoEquipoSeleccionado = null;
 
+let categoriaModalSeleccionada = null;
+
 function seleccionarCategoria(idCategoria) {
-    categoriaSeleccionada = Number(idCategoria) || null;
-    subcategoriaSeleccionada = null;
-    tipoEquipoSeleccionado = null;
-    cargarProductos();
+
+    // Solo seleccionar la categoría para mostrarla en el modal
+    categoriaModalSeleccionada = Number(idCategoria) || null;
+
 }
 
 
 function seleccionarSubcategoria(idSubcategoria, idCategoria) {
+
+    terminoBusquedaProductos = "";
+
+    const buscador = document.querySelector(
+        '.fract-search input[type="search"], .fract-search input'
+    );
+
+    if (buscador) buscador.value = "";
+
+    limpiarFiltrosProductos();
+
     categoriaSeleccionada = Number(idCategoria);
     subcategoriaSeleccionada = Number(idSubcategoria);
     tipoEquipoSeleccionado = null;
@@ -5096,6 +5130,8 @@ function seleccionarSubcategoria(idSubcategoria, idCategoria) {
     document.body.style.position = "";
     document.body.style.width = "";
     document.body.style.height = "";
+
+    actualizarBreadcrumb();
 }
 
 
@@ -5103,6 +5139,17 @@ function seleccionarSubcategoria(idSubcategoria, idCategoria) {
 
 
 function seleccionarTipoEquipo(nombreEquipo, idSubcategoria, idCategoria) {
+
+    terminoBusquedaProductos = "";
+
+    const buscador = document.querySelector(
+        '.fract-search input[type="search"], .fract-search input'
+    );
+
+    if (buscador) buscador.value = "";
+
+    limpiarFiltrosProductos();
+
     categoriaSeleccionada = Number(idCategoria);
     subcategoriaSeleccionada = Number(idSubcategoria);
     tipoEquipoSeleccionado = nombreEquipo;
@@ -5136,6 +5183,8 @@ function seleccionarTipoEquipo(nombreEquipo, idSubcategoria, idCategoria) {
     document.body.style.width = "";
     document.body.style.height = "";
 
+    actualizarBreadcrumb();
+
 }
 
 
@@ -5165,5 +5214,405 @@ function obtenerProductosPorCategoria(productos) {
 
 /////////////FIN Cargar por categoría
 
+
+/////////////RUTA DE NAVEGACIÓN
+function actualizarBreadcrumb() {
+    const breadcrumb = document.getElementById("breadcrumbCategorias");
+    if (!breadcrumb) return;
+
+    breadcrumb.style.display = "flex";
+    breadcrumb.innerHTML = "";
+
+    const agregarSeparador = () => {
+        const separador = document.createElement("span");
+        separador.className = "breadcrumb-separador";
+        separador.textContent = "❯";
+        separador.setAttribute("aria-hidden", "true");
+        breadcrumb.appendChild(separador);
+    };
+
+    const agregarEnlace = (texto, accion) => {
+        const enlace = document.createElement("a");
+
+        enlace.href = "javascript:void(0)";
+        enlace.textContent = texto;
+        enlace.style.cursor = "pointer";
+
+        enlace.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            accion();
+        });
+
+        breadcrumb.appendChild(enlace);
+    };
+
+    const agregarActual = (texto) => {
+        const actual = document.createElement("span");
+        actual.className = "breadcrumb-actual";
+        actual.textContent = texto;
+        actual.setAttribute("aria-current", "page");
+        breadcrumb.appendChild(actual);
+    };
+
+    // INICIO
+
+    // INICIO
+
+    // INICIO
+    agregarEnlace("Inicio", function () {
+        limpiarFiltrosProductos();
+
+        categoriaSeleccionada = null;
+        subcategoriaSeleccionada = null;
+        tipoEquipoSeleccionado = null;
+
+        cargarProductos();
+
+        // Ocultar el breadcrumb al regresar al catálogo completo
+        const breadcrumb = document.getElementById("breadcrumbCategorias");
+        if (breadcrumb) {
+            breadcrumb.innerHTML = "";
+            breadcrumb.style.display = "none";
+        }
+    });
+
+
+
+    if (!categoriaSeleccionada) return;
+
+    const categorias = window.categoriasProductos || [];
+
+    const categoria = categorias.find(
+        c => Number(c.idCategoria) === Number(categoriaSeleccionada)
+    );
+
+    if (!categoria) return;
+
+    agregarSeparador();
+
+    // CATEGORÍA
+    const haySubcategoria = Boolean(subcategoriaSeleccionada);
+
+    if (haySubcategoria) {
+        agregarEnlace(categoria.nombre, function () {
+            seleccionarCategoria(categoria.idCategoria);
+        });
+    } else {
+        agregarActual(categoria.nombre);
+        return;
+    }
+
+    const subcategorias = categoria.subcategorias || [];
+
+    const subcategoria = subcategorias.find(
+        s => Number(s.idSubcategoria) === Number(subcategoriaSeleccionada)
+    );
+
+    if (!subcategoria) return;
+
+    agregarSeparador();
+
+    // SUBCATEGORÍA
+    if (tipoEquipoSeleccionado) {
+        agregarEnlace(subcategoria.nombre, function () {
+            seleccionarSubcategoria(
+                subcategoria.idSubcategoria,
+                categoria.idCategoria
+            );
+        });
+
+        agregarSeparador();
+        agregarActual(tipoEquipoSeleccionado);
+    } else {
+        agregarActual(subcategoria.nombre);
+    }
+}
+
+
+
+
+
+function limpiarFiltrosProductos() {
+    // Limpiar filtro de marca
+    const filtroMarca = document.getElementById("filtroMarca");
+    if (filtroMarca) {
+        filtroMarca.value = "";
+    }
+
+    // Desmarcar todos los filtros de precio
+    document.querySelectorAll('input[name="filtroPrecio"]')
+        .forEach(input => {
+            input.checked = false;
+        });
+
+    // Limpiar búsqueda de productos
+    if (typeof terminoBusquedaProductos !== "undefined") {
+        terminoBusquedaProductos = "";
+    }
+
+    // Limpiar los campos de búsqueda visibles
+    document.querySelectorAll(
+        'input[type="search"], #busquedaProductos, #buscarProductos, #buscadorProductos'
+    ).forEach(input => {
+        input.value = "";
+    });
+}
+
+
+
+/////////////FIN
+
+
+
+////////////Buscar por barra horizontal
+
+let terminoBusquedaProductos = "";
+
+function normalizarTextoBusqueda(texto) {
+    return String(texto ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+}
+
+/* =========================================
+   SINÓNIMOS CONTROLADOS
+========================================= */
+
+const sinonimosBusqueda = {
+    celular: ["celular", "celulares", "telefono", "telefonos", "smartphone", "smartphones"],
+    celulares: ["celular", "celulares", "telefono", "telefonos", "smartphone", "smartphones"],
+    telefono: ["celular", "celulares", "telefono", "telefonos", "smartphone", "smartphones"],
+    telefonos: ["celular", "celulares", "telefono", "telefonos", "smartphone", "smartphones"],
+
+    laptop: ["laptop", "laptops", "portatil", "portatiles", "notebook", "notebooks"],
+    laptops: ["laptop", "laptops", "portatil", "portatiles", "notebook", "notebooks"],
+    notebook: ["laptop", "laptops", "portatil", "portatiles", "notebook", "notebooks"],
+
+    computadora: ["computadora", "computadoras", "pc", "ordenador", "ordenadores"],
+    computadoras: ["computadora", "computadoras", "pc", "ordenador", "ordenadores"]
+};
+
+/* =========================================
+   TEXTO BUSCABLE DE CADA PRODUCTO
+========================================= */
+
+function obtenerTextoBuscableProducto(item) {
+    const variantes = item.variantes || item.Variantes || [];
+
+    const datosProducto = [
+        item.marca,
+        item.modelo,
+        item.tipo_Equipo,
+        item.tipoEquipo,
+        item.Tipo_Equipo,
+        item.tipo_equipo,
+        item.nombre,
+        item.nombreProducto,
+        item.descripcion,
+        item.categoria,
+        item.nombreCategoria,
+        item.subcategoria,
+        item.nombreSubcategoria,
+        ...variantes.flatMap(v => [
+            v.descripcion,
+            v.color,
+            v.codigo_Producto,
+            v.codigoProducto
+        ])
+    ];
+
+    return normalizarTextoBusqueda(
+        datosProducto.filter(v => v != null).join(" ")
+    );
+}
+
+/* =========================================
+   COINCIDENCIA CONTROLADA
+========================================= */
+
+// Permite coincidencias parciales dentro de palabras.
+// Ejemplo: "samsu" encuentra "samsung".
+// No permite errores de escritura arbitrarios.
+function palabraCoincideBusqueda(palabra, texto) {
+    if (!palabra || !texto) return false;
+
+    const palabrasTexto = texto.split(/\s+/).filter(Boolean);
+
+    return palabrasTexto.some(p =>
+        p.includes(palabra)
+    );
+}
+
+// Busca cada palabra de la consulta en los datos del producto.
+// Los sinónimos solo se aplican a las palabras configuradas.
+function coincideTextoProducto(consulta, textoProducto) {
+    const palabras = normalizarTextoBusqueda(consulta)
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (!palabras.length) return true;
+
+    return palabras.every(palabra => {
+        const opciones = sinonimosBusqueda[palabra] || [palabra];
+
+        return opciones.some(opcion =>
+            palabraCoincideBusqueda(opcion, textoProducto)
+        );
+    });
+}
+
+/* =========================================
+   BÚSQUEDA POR CATEGORÍAS
+========================================= */
+
+function obtenerIdsSubcategoriasPorBusqueda(consulta) {
+    const categorias = window.categoriasProductos || [];
+    const textoConsulta = normalizarTextoBusqueda(consulta);
+    const idsSubcategorias = new Set();
+
+    if (!textoConsulta) return idsSubcategorias;
+
+    categorias.forEach(categoria => {
+        const nombreCategoria =
+            normalizarTextoBusqueda(categoria.nombre);
+
+        const subcategorias = categoria.subcategorias || [];
+
+        // Si coincide el nombre completo de una categoría,
+        // se incluyen sus subcategorías.
+        if (nombreCategoria.includes(textoConsulta)) {
+            subcategorias.forEach(sub => {
+                idsSubcategorias.add(Number(sub.idSubcategoria));
+            });
+
+            return;
+        }
+
+        // Si coincide una subcategoría, solo se incluye esa.
+        subcategorias.forEach(sub => {
+            const nombreSubcategoria =
+                normalizarTextoBusqueda(sub.nombre);
+
+            if (
+                nombreSubcategoria &&
+                (
+                    textoConsulta === nombreSubcategoria ||
+                    nombreSubcategoria.includes(textoConsulta)
+                )
+            ) {
+                idsSubcategorias.add(Number(sub.idSubcategoria));
+            }
+        });
+    });
+
+    return idsSubcategorias;
+}
+
+/* =========================================
+   FILTRAR PRODUCTOS
+========================================= */
+
+function filtrarProductosPorBusqueda(productos, consulta) {
+    const textoConsulta = normalizarTextoBusqueda(consulta);
+
+    if (!textoConsulta) return productos;
+
+    const idsSubcategorias =
+        obtenerIdsSubcategoriasPorBusqueda(textoConsulta);
+
+    return productos.filter(item => {
+        const textoProducto = obtenerTextoBuscableProducto(item);
+
+        const idSubcategoria = Number(
+            item.idSubcategoria ?? item.IdSubcategoria
+        );
+
+        const coincideTexto = coincideTextoProducto(
+            textoConsulta,
+            textoProducto
+        );
+
+        const coincideCategoria =
+            idsSubcategorias.has(idSubcategoria);
+
+        return coincideTexto || coincideCategoria;
+    });
+}
+
+/* =========================================
+   EVENTO DE LA BARRA DE BÚSQUEDA
+========================================= */
+
+async function buscarProductosHeader(event) {
+    if (event) event.preventDefault();
+
+    const formulario = event?.currentTarget ||
+        document.querySelector(".fract-search");
+
+    const entrada = formulario?.querySelector(
+        'input[type="search"], input[name="q"], input[name="busqueda"], input'
+    );
+
+    if (!entrada) {
+        console.error(
+            "No se encontró el campo de búsqueda dentro de .fract-search"
+        );
+        return;
+    }
+
+    terminoBusquedaProductos = entrada.value.trim();
+
+
+
+
+    // Cerrar el modal de categorías.
+    const modal = document.getElementById("modalCategoriasDetalle");
+
+    if (modal) {
+        modal.classList.remove("activo", "abierto", "visible");
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+    // Cerrar el panel lateral.
+    const panel = document.getElementById("panelCategoriasLateral");
+
+    if (panel) {
+        panel.classList.remove("activo", "abierto", "visible");
+    }
+
+    // Quitar el estado que mantiene abiertas las categorías.
+    document.body.classList.remove("categorias-abiertas");
+
+    // Liberar el bloqueo del desplazamiento.
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+
+    document.documentElement.style.overflow = "";
+
+
+    // La búsqueda abarca todas las categorías.
+    categoriaSeleccionada = null;
+    subcategoriaSeleccionada = null;
+    tipoEquipoSeleccionado = null;
+
+    if (typeof actualizarBreadcrumb === "function") {
+        actualizarBreadcrumb();
+    }
+
+    await cargarProductos();
+}
+
+
+////////////FIN
 
 

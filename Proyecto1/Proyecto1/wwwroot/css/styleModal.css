@@ -286,6 +286,14 @@ body {
 }
 
 
+/* Aumentar el ancho del modal de zoom */
+#modalZoom .modal-dialog {
+    max-width: 1100px;
+    width: 80%;
+}
+
+
+
 /* Corregir el desplazamiento del modal de checkout */
 #modalCheckout .modal-dialog {
     max-height: calc(100vh - 20px);
@@ -818,17 +826,9 @@ body {
 }
 
 
-
-
-
-/* Modal de login por encima del panel de categorías */
+/* Modal de login */
 #loginModal {
     z-index: 30000 !important;
-}
-
-/* Fondo oscuro del modal de login */
-.modal-backdrop {
-    z-index: 29999 !important;
 }
 
 

@@ -58,23 +58,89 @@
                     </svg>
                 </button>
 
-                <h2 style="
-                margin:0;
-                font-size:clamp(19px, 4vw, 27px);
-                white-space:nowrap;
-            ">
-                    FRACTÁLICA
-                </h2>
+               
+
+                <h2 class="logo-fractalica">FRACTÁLICA</h2>
 
             </div>
 
+            <!-- BUSCADOR DE PRODUCTOS -->
+            <form role="search"
+                  aria-label="Búsqueda de productos"
+                  class="fract-search"
+                  onsubmit="buscarProductosHeader(event)">
+
+                <button type="submit"
+                        class="fract-search-button"
+                        aria-label="Buscar">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         viewBox="0 0 16 16"
+                         fill="none"
+                         aria-hidden="true">
+                        <path stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.333"
+                              d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.867-2.867" />
+                    </svg>
+
+                </button>
+
+                <input type="search"
+                       id="busquedaProductosHeader"
+                       name="search"
+                       class="fract-search-input"
+                       aria-label="Ingresa tu búsqueda"
+                       placeholder="Buscar en Fractálica"
+                       autocomplete="off">
+
+            </form>
+            
+            
+            <!-- TELÉFONO DE CONTACTO -->
+            <a href="tel:+51987654321"
+               class="header-telefono"
+               aria-label="Llamar por teléfono">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="19"
+                     height="19"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.7"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                 19.79 19.79 0 0 1-8.63-3.07
+                 19.5 19.5 0 0 1-6-6
+                 19.79 19.79 0 0 1-3.07-8.67
+                 A2 2 0 0 1 4.11 2h3
+                 a2 2 0 0 1 2 1.72
+                 c.12.96.36 1.9.7 2.79
+                 a2 2 0 0 1-.45 2.11L8.09 9.91
+                 a16 16 0 0 0 6 6l1.27-1.27
+                 a2 2 0 0 1 2.11-.45
+                 c.89.34 1.83.58 2.79.7
+                 A2 2 0 0 1 22 16.92z" />
+                </svg>
+
+                <span>997793402</span>
+            </a>
+            
+
             <!-- CARRITO + INICIAR SESIÓN -->
             <div style="
-            display:flex;
-            align-items:center;
-            gap:12px;
-            flex-shrink:0;
-        ">
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    flex-shrink:0;
+">
 
                 <!-- CARRITO -->
                 <div style="position:relative;">
@@ -90,6 +156,7 @@
                             cursor:pointer;
                             color:inherit;
                             position:relative;
+                            display:flex;
                         ">
 
                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +181,7 @@
                               position:absolute;
                               top:-5px;
                               right:-5px;
-                              background:#d7007c;
+                              background:#ff0094;
                               color:white;
                               border-radius:50%;
                               padding:2px 6px;
@@ -194,7 +261,7 @@
                         border:none;
                         border-radius:8px;
                         background:transparent;
-                        color:#d7007c;
+                        color:#ff0094;
                         box-shadow:none;
                     ">
 
@@ -204,7 +271,7 @@
                          viewBox="0 0 20 20"
                          fill="none"
                          aria-hidden="true">
-                        <path stroke="#d7007c"
+                        <path stroke="#ff0094"
                               stroke-linecap="round"
                               stroke-linejoin="round"
                               stroke-width="1.667"
@@ -217,7 +284,7 @@
                          viewBox="0 0 12 12"
                          fill="none"
                          aria-hidden="true">
-                        <path stroke="#d7007c"
+                        <path stroke="#ff0094"
                               stroke-linecap="round"
                               stroke-linejoin="round"
                               d="m3 4.5 3 3 3-3" />
@@ -621,19 +688,35 @@
 
 
 
+
+
     function abrirPanel() {
+
+
+          // Si estamos viendo un servicio en pantalla completa,
+    // regresar primero al listado de servicios.
+    if (
+        modal.classList.contains("servicio-pantalla-completa") &&
+        typeof modal._volverAListadoServicios === "function"
+    ) {
+        modal._volverAListadoServicios();
+    }
+
+
         panel.inert = false;
         modal.inert = false;
 
-        // Restablecer la visibilidad del modal
+        // Restaurar la visibilidad del panel y del modal.
+        panel.style.display = "";
         modal.style.display = "";
+        overlay.style.display = "";
 
-        // Abrir el panel, el overlay y el modal
+        // Abrir el panel, el overlay y el modal.
         panel.classList.add("activo");
         overlay.classList.add("activo");
         modal.classList.add("activo");
 
-        // Bloquear el desplazamiento mientras están abiertos
+        // Restablecer el estado de desplazamiento.
         document.body.classList.add("categorias-abiertas");
 
         panel.setAttribute("aria-hidden", "false");
@@ -643,6 +726,7 @@
 
         cerrar.focus();
     }
+
 
 
 
@@ -738,23 +822,31 @@
                 li.appendChild(enlace);
                 lista.appendChild(li);
 
-                enlace.addEventListener("click", function (event) {
-                    event.preventDefault();
 
-                    // Mostrar las subcategorías en el modal lateral.
-                    mostrarDetalleCategoria(categoria);
 
-                    // Mantener el filtro de productos por categoría.
-                    if (typeof seleccionarCategoria === "function") {
-                        seleccionarCategoria(categoria.idCategoria);
-                    }
+                    enlace.addEventListener("click", async function (event) {
+        event.preventDefault();
 
-                    // Marcar la categoría seleccionada.
-                    lista.querySelectorAll(".categoria-enlace")
-                        .forEach(a => a.classList.remove("activa"));
+        const esServicios =
+            normalizarTextoBusqueda(categoria.nombre) === "servicios";
 
-                    enlace.classList.add("activa");
-                });
+        // Mostrar el contenido correspondiente a la categoría.
+        await mostrarDetalleCategoria(categoria);
+
+        // Las categorías de productos mantienen su comportamiento actual.
+        // Servicios no debe activar el filtro de productos.
+        if (!esServicios && typeof seleccionarCategoria === "function") {
+            seleccionarCategoria(categoria.idCategoria);
+        }
+
+        // Marcar la categoría seleccionada.
+        lista.querySelectorAll(".categoria-enlace")
+            .forEach(a => a.classList.remove("activa"));
+
+        enlace.classList.add("activa");
+    });
+
+
             });
 
             if (window.lucide) {
@@ -792,105 +884,590 @@
         }
 
 
-    function mostrarDetalleCategoria(categoria) {
 
 
-            // Volver a mostrar el modal de detalles
-    modal.style.display = "";
+    async function mostrarDetalleCategoria(categoria) {
 
-    // Reconstruir el contenido de la categoría seleccionada
-    const equipos = window.productosAgrupados || [];
-
-    const subcategorias = (categoria.subcategorias || []).filter(subcategoria => {
-        return equipos.some(equipo => {
-            const idSubcategoria =
-                equipo.idSubcategoria ?? equipo.IdSubcategoria;
-
-            const estado = (equipo.estado || "").trim().toLowerCase();
-
-            // Debe pertenecer a la subcategoría.
-            if (Number(idSubcategoria) !== Number(subcategoria.idSubcategoria)) {
-                return false;
-            }
-
-            // No mostrar productos inactivos en el menú público.
-            if (estado === "inactivo") {
-                return false;
-            }
-
-            // Debe tener un nombre de equipo que se pueda mostrar.
-            const nombreEquipo =
-                equipo.tipo_Equipo ??
-                equipo.tipoEquipo ??
-                equipo.Tipo_Equipo ??
-                equipo.tipo_equipo;
-
-            return typeof nombreEquipo === "string" &&
-                   nombreEquipo.trim() !== "";
-        });
-    });
-
+        // Volver a mostrar el modal de detalles.
+        modal.style.display = "";
 
         contenido.innerHTML = "";
 
+        // Encabezado de la categoría.
         const encabezado = document.createElement("div");
         encabezado.className = "categorias-detalle-encabezado";
 
-            const titulo = document.createElement("h3");
+        const titulo = document.createElement("h3");
 
-    const icono = document.createElement("i");
-    icono.setAttribute(
-        "data-lucide",
-        (categoria.icono || "package").trim().toLowerCase()
+        const icono = document.createElement("i");
+        icono.setAttribute(
+            "data-lucide",
+            (categoria.icono || "package").trim().toLowerCase()
+        );
+        icono.className = "categoria-icono-modal";
+
+        const nombre = document.createElement("span");
+        nombre.textContent = categoria.nombre;
+
+        titulo.append(icono, nombre);
+        encabezado.appendChild(titulo);
+        contenido.appendChild(encabezado);
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+
+        // ==========================================
+        // CATEGORÍA SERVICIOS
+        // ==========================================
+
+        if (normalizarTextoBusqueda(categoria.nombre) === "servicios") {
+
+            try {
+
+                const respuesta = await fetch("/Servicios/ListarPublicos");
+
+                if (!respuesta.ok) {
+                    throw new Error("No se pudieron cargar los servicios.");
+                }
+
+
+                    const servicios = await respuesta.json();
+
+    if (!Array.isArray(servicios) || servicios.length === 0) {
+
+        const mensaje = document.createElement("p");
+        mensaje.textContent = "No hay servicios disponibles.";
+        contenido.appendChild(mensaje);
+
+        return;
+    }
+
+    // Separar servicios normales y beneficios.
+    const serviciosNormales = servicios
+        .filter(s => Number(s.ordenServicio ?? s.OrdenServicio) > 0)
+        .sort((a, b) =>
+            Number(a.ordenServicio ?? a.OrdenServicio) -
+            Number(b.ordenServicio ?? b.OrdenServicio)
+        );
+
+    const beneficiosDestacados = servicios.filter(s =>
+        Number(s.ordenServicio ?? s.OrdenServicio) === 0
     );
 
-    icono.className = "categoria-icono-modal";
+                // ==========================================
+                // LISTADO DE SERVICIOS EN COLUMNAS
+                // ==========================================
 
-    const nombre = document.createElement("span");
-    nombre.textContent = categoria.nombre;
+                const columnas = document.createElement("div");
+                columnas.className = "categorias-subcategorias-grid";
 
-    titulo.append(icono, nombre);
 
-    encabezado.appendChild(titulo);
-    contenido.appendChild(encabezado);
+    serviciosNormales.forEach(servicio => {
 
-    // Dibujar el ícono de Lucide en el modal
+        const columna = document.createElement("div");
+        columna.className = "categoria-subcategoria-columna";
+
+        const enlace = document.createElement("a");
+        enlace.href = "#";
+        enlace.className = "categoria-detalle-enlace";
+        enlace.style.fontWeight = "bold";
+
+        // Mostrar icono del servicio
+        if (servicio.icono) {
+
+            const icono = document.createElement("i");
+
+            icono.setAttribute("data-lucide", servicio.icono);
+
+            icono.style.width = "18px";
+            icono.style.height = "18px";
+            icono.style.marginRight = "8px";
+            icono.style.verticalAlign = "middle";
+
+            enlace.appendChild(icono);
+        }
+
+        // Mostrar título del servicio
+        enlace.appendChild(document.createTextNode(servicio.titulo));
+
+        enlace.addEventListener("click", function (event) {
+            event.preventDefault();
+            mostrarDetalleServicio(servicio);
+        });
+
+        columna.appendChild(enlace);
+        columnas.appendChild(columna);
+
+    });
+
+        // Generar los iconos Lucide de los servicios
+    requestAnimationFrame(() => {
+        lucide.createIcons();
+    });
+
+    // Convertir los atributos data-lucide en iconos
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+
+                contenido.appendChild(columnas);
+
+                    // ==========================================
+    // SECCIÓN DE BENEFICIOS
+    // ==========================================
+
+    const seccionBeneficios = document.createElement("section");
+    seccionBeneficios.className = "servicios-beneficios";
+
+    if (beneficiosDestacados.length > 0) {
+
+        const tituloBeneficios = document.createElement("h3");
+        tituloBeneficios.className = "servicios-beneficios-titulo";
+        tituloBeneficios.textContent = "¿Por qué elegir el Servicio?";
+
+        const tarjetasBeneficios = document.createElement("div");
+        tarjetasBeneficios.className = "servicios-beneficios-grid";
+
+        beneficiosDestacados.forEach(beneficio => {
+
+            const tarjeta = document.createElement("div");
+            tarjeta.className = "servicio-beneficio-card";
+
+            const contenedorIcono = document.createElement("div");
+            contenedorIcono.className = "servicio-beneficio-icono";
+
+            if (beneficio.icono) {
+                const iconoBeneficio = document.createElement("i");
+
+                iconoBeneficio.setAttribute(
+                    "data-lucide",
+                    beneficio.icono.trim().toLowerCase()
+                );
+
+                contenedorIcono.appendChild(iconoBeneficio);
+            }
+
+            const tituloBeneficio = document.createElement("h4");
+            tituloBeneficio.textContent = beneficio.titulo || "";
+
+            const resumenBeneficio = document.createElement("p");
+            resumenBeneficio.className = "servicio-beneficio-resumen";
+            resumenBeneficio.textContent = beneficio.resumen || "";
+
+            const descripcionBeneficio = document.createElement("p");
+            descripcionBeneficio.className = "servicio-beneficio-descripcion";
+            descripcionBeneficio.textContent = beneficio.descripcion || "";
+
+            tarjeta.append(
+                contenedorIcono,
+                tituloBeneficio,
+                resumenBeneficio,
+                descripcionBeneficio
+            );
+
+            tarjetasBeneficios.appendChild(tarjeta);
+        });
+
+        seccionBeneficios.append(
+            tituloBeneficios,
+            tarjetasBeneficios
+        );
+    }
+
+    // Mostrar beneficios debajo del listado inicialmente.
+    if (beneficiosDestacados.length > 0) {
+        contenido.appendChild(seccionBeneficios);
+    }
+
     if (window.lucide) {
         window.lucide.createIcons();
     }
+
+                // ==========================================
+                // DETALLE DEL SERVICIO Y GALERÍA
+                // ==========================================
+
+                function mostrarDetalleServicio(servicio) {
+
+                    // Ocultar el panel lateral de categorías.
+    const panelCategorias = document.getElementById("panelCategoriasLateral");
+    const overlayCategorias = document.getElementById("categoriasOverlay");
+
+    if (panelCategorias) {
+        panelCategorias.style.display = "none";
+    }
+
+    if (overlayCategorias) {
+        overlayCategorias.style.display = "none";
+    }
+
+    // Convertir el modal en pantalla completa.
+    modal.classList.add("servicio-pantalla-completa");
+
+                    // Ocultar listado de servicios.
+                    columnas.remove();
+
+                    const detalle = document.createElement("div");
+                    detalle.className = "servicio-detalle-layout";
+
+                    // ==========================================
+                    // COLUMNA IZQUIERDA: INFORMACIÓN
+                    // ==========================================
+
+                    const informacion = document.createElement("div");
+                    informacion.className = "servicio-detalle-info";
+
+                    // Botón volver.
+                    const volver = document.createElement("a");
+
+                    volver.href = "#";
+                    volver.className = "categoria-detalle-enlace";
+                    volver.textContent = "← Volver a servicios";
+
+
+
+                        function volverAlListadoServicios() {
+
+        modal.classList.remove("servicio-pantalla-completa");
+
+        if (panelCategorias) panelCategorias.style.display = "";
+        if (overlayCategorias) overlayCategorias.style.display = "";
+
+            detalle.remove();
+    volver.remove();
+
+    // Restaurar el listado de servicios.
+    contenido.appendChild(columnas);
+
+    // Restaurar los beneficios debajo del listado.
+    if (beneficiosDestacados.length > 0) {
+        contenido.appendChild(seccionBeneficios);
+    }
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+        // Limpiar la función de restauración.
+        modal._volverAListadoServicios = null;
+    }
+
+    modal._volverAListadoServicios = volverAlListadoServicios;
+
+    volver.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        volverAlListadoServicios();
+    });
+
+
+
+                    encabezado.appendChild(volver);
+
+                    // Título.
+                    const tituloServicio = document.createElement("h4");
+                    tituloServicio.textContent = servicio.titulo || "";
+
+                    informacion.appendChild(tituloServicio);
+
+                    // Resumen.
+                    if (servicio.resumen) {
+
+                        const resumen = document.createElement("p");
+                        resumen.className = "servicio-categoria-resumen";
+                        resumen.textContent = servicio.resumen;
+
+                        informacion.appendChild(resumen);
+                    }
+
+                    // Descripción.
+                    if (servicio.descripcion) {
+
+                        const descripcion = document.createElement("p");
+                        descripcion.className = "servicio-categoria-descripcion";
+                        descripcion.textContent = servicio.descripcion;
+
+                        informacion.appendChild(descripcion);
+                    }
+
+                    detalle.appendChild(informacion);
+
+                    // ==========================================
+                    // COLUMNA DERECHA: GALERÍA
+                    // ==========================================
+
+                    const imagenes = [...(servicio.imagenes || [])]
+                        .filter(imagen => imagen.urlImagen)
+                        .sort((a, b) =>
+                            Number(a.ordenFoto || 0) -
+                            Number(b.ordenFoto || 0)
+                        );
+
+                    if (imagenes.length > 0) {
+
+                        const galeria = document.createElement("div");
+                        galeria.className = "servicio-detalle-galeria";
+
+                        // IMAGEN PRINCIPAL.
+                        const contenedorPrincipal =
+                            document.createElement("div");
+
+                        contenedorPrincipal.className =
+                            "servicio-imagen-principal";
+
+                        const imagenPrincipal = document.createElement("img");
+
+                        imagenPrincipal.alt =
+                            servicio.titulo || "Imagen del servicio";
+
+                        contenedorPrincipal.appendChild(imagenPrincipal);
+
+                        // FLECHA ANTERIOR.
+                        const anterior = document.createElement("button");
+
+                        anterior.type = "button";
+                        anterior.className =
+                            "servicio-galeria-flecha servicio-galeria-anterior";
+
+                        anterior.innerHTML = "&#10094;";
+                        anterior.setAttribute(
+                            "aria-label",
+                            "Imagen anterior"
+                        );
+
+                        // FLECHA SIGUIENTE.
+                        const siguiente = document.createElement("button");
+
+                        siguiente.type = "button";
+                        siguiente.className =
+                            "servicio-galeria-flecha servicio-galeria-siguiente";
+
+                        siguiente.innerHTML = "&#10095;";
+                        siguiente.setAttribute(
+                            "aria-label",
+                            "Imagen siguiente"
+                        );
+
+                        contenedorPrincipal.append(anterior, siguiente);
+
+                        // MINIATURAS.
+                        const miniaturas = document.createElement("div");
+                        miniaturas.className =
+                            "servicio-galeria-miniaturas";
+
+                        let indiceActual = 0;
+
+                        // ==========================================
+                        // ACTUALIZAR IMAGEN PRINCIPAL Y MINIATURAS
+                        // ==========================================
+
+                        function actualizarGaleria() {
+
+                            const imagenActual = imagenes[indiceActual];
+
+                            imagenPrincipal.src = imagenActual.urlImagen;
+
+                            imagenPrincipal.alt =
+                                imagenActual.descImagen ||
+                                servicio.titulo ||
+                                "Imagen del servicio";
+
+                            miniaturas.innerHTML = "";
+
+                            imagenes.forEach(function (imagen, indice) {
+
+                                // No mostrar como miniatura la imagen principal.
+                                if (indice === indiceActual) return;
+
+                                const miniatura =
+                                    document.createElement("button");
+
+                                miniatura.type = "button";
+                                miniatura.className = "servicio-miniatura";
+
+                                miniatura.setAttribute(
+                                    "aria-label",
+                                    "Ver imagen " + (indice + 1)
+                                );
+
+                                const img = document.createElement("img");
+
+                                img.src = imagen.urlImagen;
+                                img.alt =
+                                    imagen.descImagen ||
+                                    servicio.titulo ||
+                                    "Servicio";
+
+                                img.loading = "lazy";
+
+                                miniatura.appendChild(img);
+
+                                // Al pulsar una miniatura, mostrarla en grande.
+                                miniatura.addEventListener("click", function () {
+
+                                    indiceActual = indice;
+
+                                    actualizarGaleria();
+
+                                });
+
+                                miniaturas.appendChild(miniatura);
+
+                            });
+
+                            // Ocultar flechas si solo hay una fotografía.
+                            const mostrarFlechas = imagenes.length > 1;
+
+                            anterior.style.display =
+                                mostrarFlechas ? "" : "none";
+
+                            siguiente.style.display =
+                                mostrarFlechas ? "" : "none";
+                        }
+
+                        // ==========================================
+                        // NAVEGACIÓN CON FLECHAS
+                        // ==========================================
+
+                        anterior.addEventListener("click", function () {
+
+                            indiceActual =
+                                (indiceActual - 1 + imagenes.length) %
+                                imagenes.length;
+
+                            actualizarGaleria();
+
+                        });
+
+                        siguiente.addEventListener("click", function () {
+
+                            indiceActual =
+                                (indiceActual + 1) % imagenes.length;
+
+                            actualizarGaleria();
+
+                        });
+
+                        // Agregar galería.
+                        galeria.append(
+                            contenedorPrincipal,
+                            miniaturas
+                        );
+
+                        detalle.appendChild(galeria);
+
+                        // Mostrar primera fotografía inicialmente.
+                        actualizarGaleria();
+
+                    } else {
+
+                        const mensajeImagen =
+                            document.createElement("p");
+
+                        mensajeImagen.textContent =
+                            "Este servicio todavía no tiene fotografías.";
+
+                        detalle.appendChild(mensajeImagen);
+                    }
+
+
+                        // Mostrar el detalle del servicio con sus fotografías.
+    contenido.appendChild(detalle);
+
+    // Mover los beneficios debajo del detalle.
+    if (beneficiosDestacados.length > 0) {
+        contenido.appendChild(seccionBeneficios);
+    }
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+                }
+
+            } catch (error) {
+
+                console.error("Error al cargar los servicios:", error);
+
+                const mensaje = document.createElement("p");
+                mensaje.textContent = "No se pudieron cargar los servicios.";
+
+                contenido.appendChild(mensaje);
+            }
+
+            return;
+        }
+
+        // ==========================================
+        // RESTO DE CATEGORÍAS: COMPORTAMIENTO ACTUAL
+        // ==========================================
+
+        const equipos = window.productosAgrupados || [];
+
+        const subcategorias = (categoria.subcategorias || []).filter(subcategoria => {
+            return equipos.some(equipo => {
+
+                const idSubcategoria =
+                    equipo.idSubcategoria ?? equipo.IdSubcategoria;
+
+                const estado = (equipo.estado || "").trim().toLowerCase();
+
+                if (Number(idSubcategoria) !== Number(subcategoria.idSubcategoria)) {
+                    return false;
+                }
+
+                if (estado === "inactivo") {
+                    return false;
+                }
+
+                const nombreEquipo =
+                    equipo.tipo_Equipo ??
+                    equipo.tipoEquipo ??
+                    equipo.Tipo_Equipo ??
+                    equipo.tipo_equipo;
+
+                return typeof nombreEquipo === "string" &&
+                    nombreEquipo.trim() !== "";
+            });
+        });
 
         const columnas = document.createElement("div");
         columnas.className = "categorias-subcategorias-grid";
 
         subcategorias.forEach(function (subcategoria) {
+
             const columna = document.createElement("div");
             columna.className = "categoria-subcategoria-columna";
 
-                const tituloSubcategoria = document.createElement("h4");
-    tituloSubcategoria.textContent = subcategoria.nombre;
-    tituloSubcategoria.style.cursor = "pointer";
+            const tituloSubcategoria = document.createElement("h4");
+            tituloSubcategoria.textContent = subcategoria.nombre;
+            tituloSubcategoria.style.cursor = "pointer";
 
-    tituloSubcategoria.addEventListener("click", function () {
-        seleccionarSubcategoria(
-            subcategoria.idSubcategoria,
-            categoria.idCategoria
-        );
+            tituloSubcategoria.addEventListener("click", function () {
 
-        tipoEquipoSeleccionado = null;
-    });
+                seleccionarSubcategoria(
+                    subcategoria.idSubcategoria,
+                    categoria.idCategoria
+                );
 
-    columna.appendChild(tituloSubcategoria);
+                tipoEquipoSeleccionado = null;
 
-            // Buscar productos que pertenecen a esta subcategoría.
+            });
+
+            columna.appendChild(tituloSubcategoria);
+
             const equiposSubcategoria = equipos.filter(function (equipo) {
+
                 const idSubcategoria =
                     equipo.idSubcategoria ?? equipo.IdSubcategoria;
 
                 return Number(idSubcategoria) ===
                     Number(subcategoria.idSubcategoria);
+
             });
 
-            // Obtener los nombres de equipo que muestra la tarjeta.
             const nombresEquipos = [
                 ...new Set(
                     equiposSubcategoria
@@ -908,37 +1485,45 @@
             ];
 
             if (nombresEquipos.length === 0) {
+
                 const mensaje = document.createElement("p");
                 mensaje.textContent = "No hay equipos disponibles.";
+
                 columna.appendChild(mensaje);
+
             } else {
+
                 nombresEquipos.forEach(function (nombreEquipo) {
+
                     const enlace = document.createElement("a");
 
                     enlace.href = "#";
                     enlace.className = "categoria-detalle-enlace";
                     enlace.textContent = nombreEquipo;
 
-                       enlace.addEventListener("click", function (event) {
-        event.preventDefault();
+                    enlace.addEventListener("click", function (event) {
 
-        seleccionarTipoEquipo(
-            nombreEquipo,
-            subcategoria.idSubcategoria,
-            categoria.idCategoria
-        );
-    });
+                        event.preventDefault();
+
+                        seleccionarTipoEquipo(
+                            nombreEquipo,
+                            subcategoria.idSubcategoria,
+                            categoria.idCategoria
+                        );
+
+                    });
 
                     columna.appendChild(enlace);
+
                 });
             }
 
             columnas.appendChild(columna);
+
         });
 
         contenido.appendChild(columnas);
     }
-
 
 
 
