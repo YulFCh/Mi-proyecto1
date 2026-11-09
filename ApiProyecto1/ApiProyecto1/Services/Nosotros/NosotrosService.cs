@@ -545,6 +545,13 @@ namespace ApiProyecto1.Services.Nosotros
                 throw new ArgumentException("No puede haber dos fotografías con el mismo orden.");
             }
         }
+
+        public List<ListarNosotrosModel> ListarPublicos()
+        {
+            return Listar()
+                .Where(n => n.Estado)
+                .ToList();
+        }
     }
 }
 
