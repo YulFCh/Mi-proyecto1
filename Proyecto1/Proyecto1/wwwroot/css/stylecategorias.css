@@ -496,7 +496,7 @@ body.categorias-abiertas {
 }
 
     .servicio-detalle-info h4 {
-        font-size: 23px;
+        font-size: 38px;
         font-weight: 700;
         margin: 20px 0 15px;
     }
@@ -585,7 +585,10 @@ body.categorias-abiertas {
 }
 
     .servicio-miniatura:hover {
-        border-color: #d7007c;
+        border-color: #ff0094;
+    }
+    .servicio-miniatura.activa {
+        border-color: #ff0094;
     }
 
     .servicio-miniatura img {
@@ -594,6 +597,8 @@ body.categorias-abiertas {
         object-fit: cover;
         display: block;
     }
+
+
 
 /* Adaptación a celulares */
 
@@ -845,6 +850,419 @@ body.categorias-abiertas {
     font-size: 24px !important;
 }
 
-.servicio-detalle-info h4 {
-    font-size: 38px !important;
+
+
+.servicio-beneficio-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
 }
+
+.servicio-beneficio-icono {
+    width: 75px;
+    height: 75px;
+    min-height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    flex-shrink: 0;
+}
+
+    .servicio-beneficio-icono svg {
+        width: 42px;
+        height: 42px;
+    }
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   ENCABEZADO DE NOSOTROS
+========================================== */
+
+/* ==========================================
+   NOSOTROS
+========================================== */
+
+/* Encabezado institucional */
+
+.nosotros-categoria-encabezado {
+    margin-bottom: 25px;
+}
+
+    .nosotros-categoria-encabezado h2 {
+        font-size: 25px;
+        font-weight: 700;
+        color: #292929;
+        margin-bottom: 8px;
+    }
+
+    .nosotros-categoria-encabezado p {
+        font-size: 14px;
+        color: #777;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+/* Cuadrícula de tarjetas */
+
+.nosotros-tarjetas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+}
+
+/* Tarjeta */
+
+.nosotros-tarjeta {
+    min-width: 0;
+    padding: 25px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+    .nosotros-tarjeta:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.07);
+    }
+
+/* Distribución horizontal: información + galería */
+
+.nosotros-tarjeta-contenido {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 455px;
+    gap: 30px;
+    align-items: start;
+    width: 100%;
+}
+
+.nosotros-tarjeta-info {
+    min-width: 0;
+    align-self: start;
+}
+
+.nosotros-titulo-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 15px;
+}
+
+/* Icono */
+
+.nosotros-tarjeta-icono {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff0f7;
+    color: #ff0094;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+    .nosotros-tarjeta-icono svg {
+        width: 25px;
+        height: 25px;
+    }
+
+/* Título */
+.nosotros-tarjeta-info h3 {
+    font-size: 38px !important;
+    font-weight: 700;
+    color: #292929;
+    margin-bottom: 12px;
+}
+
+/* Resumen */
+.nosotros-tarjeta-resumen {
+    font-size: 24px !important;
+    color: #6E6E73 !important;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Descripción */
+.nosotros-tarjeta-descripcion {
+    font-size: 24px !important;
+    color: #6E6E73 !important;
+    line-height: 1.7;
+    margin-bottom: 0;
+    white-space: pre-line;
+}
+
+/* ==========================================
+   GALERÍA DE NOSOTROS
+========================================== */
+
+.nosotros-tarjeta-galeria {
+    width: 455px;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 0;
+}
+
+/* Imagen principal */
+
+.nosotros-imagen-principal {
+    position: relative;
+    width: 100%;
+    height: 268px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .nosotros-imagen-principal > img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+/* Flechas */
+
+.nosotros-galeria-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+}
+
+.nosotros-galeria-anterior {
+    left: 12px;
+}
+
+.nosotros-galeria-siguiente {
+    right: 12px;
+}
+
+.nosotros-imagen-principal:hover .nosotros-galeria-flecha {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Miniaturas */
+
+.nosotros-galeria-miniaturas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.nosotros-miniatura {
+    width: 75px;
+    height: 65px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #f5f5f5;
+    cursor: pointer;
+    transition: border-color .2s ease;
+}
+
+    .nosotros-miniatura img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .nosotros-miniatura:hover,
+    .nosotros-miniatura.activa {
+        border-color: #ff0094;
+    }
+
+/* Mensaje sin registros */
+
+.nosotros-sin-registros {
+    color: #777;
+    font-size: 14px;
+    padding: 20px 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width: 900px) {
+
+    .nosotros-tarjeta-contenido {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .nosotros-tarjeta-galeria {
+        width: 100%;
+    }
+}
+
+@media(max-width: 650px) {
+
+    .nosotros-tarjetas-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .nosotros-tarjeta {
+        padding: 18px;
+    }
+
+    .nosotros-categoria-encabezado h2 {
+        font-size: 21px;
+    }
+
+    .nosotros-imagen-principal {
+        height: 268px;
+    }
+
+    .nosotros-miniatura {
+        width: 65px;
+        height: 58px;
+    }
+}
+
+
+
+
+
+
+
+
+/* ==========================================
+   VISIÓN, MISIÓN Y VALORES
+========================================== */
+
+.nosotros-especiales {
+    width: 100%;
+    margin-top: 35px;
+}
+
+/* Distribución automática de columnas */
+
+.nosotros-especiales-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 30px;
+    width: 100%;
+}
+
+/* Tarjeta especial */
+
+.nosotros-especial-card {
+    min-width: 0;
+    padding: 20px 10px;
+    background: #fff;
+}
+
+/* Título subrayado */
+
+.nosotros-especial-titulo {
+    display: inline-block;
+    font-size: 26px;
+    font-weight: 700;
+    color: #292929;
+    margin-bottom: 18px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d7007c;
+}
+
+/* Contenido justificado */
+
+.nosotros-especial-contenido {
+    font-size: 18px;
+    color: #6E6E73 !important;
+    line-height: 1.7;
+    text-align: justify;
+    margin-bottom: 12px;
+    white-space: pre-line;
+}
+
+/* Adaptación a pantallas medianas */
+
+@media (max-width: 1000px) {
+
+    .nosotros-especiales-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 600px) {
+
+    .nosotros-especiales-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .nosotros-especial-card {
+        padding: 15px 5px;
+    }
+
+    .nosotros-especial-titulo {
+        font-size: 23px;
+    }
+
+    .nosotros-especial-contenido {
+        font-size: 16px;
+    }
+}
+
+
+.nosotros-especial-icono {
+    width: 25px;
+    height: 25px;
+    color: #d7007c;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+
+.nosotros-especial-contenido strong {
+    font-weight: 700;
+    color: #6E6E73;
+}
+
+
+
+.nosotros-volver-categorias {
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+    .nosotros-volver-categorias:hover {
+        color: #ff0094;
+    }

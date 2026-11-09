@@ -690,18 +690,32 @@
 
 
 
+
     function abrirPanel() {
 
+        // Si estamos viendo un servicio en pantalla completa,
+        // regresar primero al listado de servicios.
+        if (
+            modal.classList.contains("servicio-pantalla-completa") &&
+            typeof modal._volverAListadoServicios === "function"
+        ) {
+            modal._volverAListadoServicios();
+        }
+        // Si estamos viendo Nosotros en pantalla completa,
+        // contraer el modal para mostrar nuevamente el panel.
+        else if (
+            modal.classList.contains("servicio-pantalla-completa")
+        ) {
+            modal.classList.remove("servicio-pantalla-completa");
+             // Ocultar el enlace "Volver a Nosotros".
+    const volverNosotros = modal.querySelector(
+        ".nosotros-volver-categorias"
+    );
 
-          // Si estamos viendo un servicio en pantalla completa,
-    // regresar primero al listado de servicios.
-    if (
-        modal.classList.contains("servicio-pantalla-completa") &&
-        typeof modal._volverAListadoServicios === "function"
-    ) {
-        modal._volverAListadoServicios();
+    if (volverNosotros) {
+        volverNosotros.style.display = "none";
     }
-
+        }
 
         panel.inert = false;
         modal.inert = false;
@@ -726,6 +740,7 @@
 
         cerrar.focus();
     }
+
 
 
 
@@ -885,6 +900,10 @@
 
 
 
+        let cargandoServiciosCategoria = false;
+
+        let cargandoNosotrosCategoria = false;
+
 
     async function mostrarDetalleCategoria(categoria) {
 
@@ -922,6 +941,13 @@
         // ==========================================
 
         if (normalizarTextoBusqueda(categoria.nombre) === "servicios") {
+
+
+
+            // Evitar solicitudes simultáneas al hacer doble clic.
+    if (cargandoServiciosCategoria) return;
+
+    cargandoServiciosCategoria = true;
 
             try {
 
@@ -1276,46 +1302,48 @@
 
                             miniaturas.innerHTML = "";
 
-                            imagenes.forEach(function (imagen, indice) {
+                                imagenes.forEach(function (imagen, indice) {
 
-                                // No mostrar como miniatura la imagen principal.
-                                if (indice === indiceActual) return;
+        const miniatura = document.createElement("button");
 
-                                const miniatura =
-                                    document.createElement("button");
+        miniatura.type = "button";
 
-                                miniatura.type = "button";
-                                miniatura.className = "servicio-miniatura";
+        // Marcar la fotografía seleccionada.
+        miniatura.className = "servicio-miniatura";
 
-                                miniatura.setAttribute(
-                                    "aria-label",
-                                    "Ver imagen " + (indice + 1)
-                                );
+        if (indice === indiceActual) {
+            miniatura.classList.add("activa");
+        }
 
-                                const img = document.createElement("img");
+        miniatura.setAttribute(
+            "aria-label",
+            "Ver imagen " + (indice + 1)
+        );
 
-                                img.src = imagen.urlImagen;
-                                img.alt =
-                                    imagen.descImagen ||
-                                    servicio.titulo ||
-                                    "Servicio";
+        const img = document.createElement("img");
 
-                                img.loading = "lazy";
+        img.src = imagen.urlImagen;
+        img.alt =
+            imagen.descImagen ||
+            servicio.titulo ||
+            "Servicio";
 
-                                miniatura.appendChild(img);
+        img.loading = "lazy";
 
-                                // Al pulsar una miniatura, mostrarla en grande.
-                                miniatura.addEventListener("click", function () {
+        miniatura.appendChild(img);
 
-                                    indiceActual = indice;
+        miniatura.addEventListener("click", function () {
 
-                                    actualizarGaleria();
+            indiceActual = indice;
 
-                                });
+            actualizarGaleria();
 
-                                miniaturas.appendChild(miniatura);
+        });
 
-                            });
+        miniaturas.appendChild(miniatura);
+
+    });
+
 
                             // Ocultar flechas si solo hay una fotografía.
                             const mostrarFlechas = imagenes.length > 1;
@@ -1395,7 +1423,11 @@
                 mensaje.textContent = "No se pudieron cargar los servicios.";
 
                 contenido.appendChild(mensaje);
-            }
+                }finally {
+
+        // Permitir una nueva carga cuando termine la actual.
+        cargandoServiciosCategoria = false;
+    }
 
             return;
         }
@@ -1403,6 +1435,558 @@
         // ==========================================
         // RESTO DE CATEGORÍAS: COMPORTAMIENTO ACTUAL
         // ==========================================
+
+
+    // ==========================================
+    // CATEGORÍA NOSOTROS
+    // ==========================================
+
+
+    if (normalizarTextoBusqueda(categoria.nombre) === "nosotros") {
+
+        // ==========================================
+        // CONFIGURACIÓN DEL PANEL Y MODAL
+        // ==========================================
+
+        const panelLateral = document.getElementById("panelCategoriasLateral");
+        const overlayLateral = document.getElementById("categoriasOverlay");
+
+        if (panelLateral) {
+            panelLateral.style.display = "none";
+        }
+
+        modal.classList.add("servicio-pantalla-completa");
+
+        // ==========================================
+        // ENLACE VOLVER A NOSOTROS
+        // ==========================================
+
+        const encabezadoCategoria = contenido.querySelector(
+            ".categorias-detalle-encabezado"
+        );
+
+        const volverNosotros = document.createElement("a");
+        volverNosotros.href = "#";
+        volverNosotros.className = "nosotros-volver-categorias";
+        volverNosotros.textContent = "← Volver a Nosotros";
+
+        volverNosotros.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            modal.classList.remove("servicio-pantalla-completa");
+            volverNosotros.style.display = "none";
+
+            if (panelLateral) {
+                panelLateral.style.display = "";
+            }
+
+            if (overlayLateral) {
+                overlayLateral.style.display = "";
+            }
+        });
+
+        if (encabezadoCategoria) {
+
+
+                const tituloEncabezado = encabezadoCategoria.querySelector("h3");
+
+    if (tituloEncabezado) {
+
+        // Cambiar únicamente el texto del encabezado.
+        const nombreCategoria = tituloEncabezado.querySelector("span");
+
+        if (nombreCategoria) {
+            nombreCategoria.textContent = "Conoce nuestra empresa";
+        } else {
+            tituloEncabezado.textContent = "Conoce nuestra empresa";
+        }
+    }
+
+            encabezadoCategoria.appendChild(volverNosotros);
+        }
+
+        // Evitar solicitudes simultáneas.
+        if (cargandoNosotrosCategoria) return;
+
+        cargandoNosotrosCategoria = true;
+
+        try {
+
+            const respuesta = await fetch("/Nosotros/ListarPublicos");
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudo cargar la información de Nosotros.");
+            }
+
+            const registros = await respuesta.json();
+
+            if (!Array.isArray(registros) || registros.length === 0) {
+
+                const mensaje = document.createElement("p");
+                mensaje.className = "nosotros-sin-registros";
+                mensaje.textContent =
+                    "No hay información institucional disponible.";
+
+                contenido.appendChild(mensaje);
+                return;
+            }
+
+            // ==========================================
+            // ORDENAR APARTADOS
+            // ==========================================
+
+                // ==========================================
+    // SEPARAR Y ORDENAR APARTADOS
+    // ==========================================
+
+    const apartadosNormales = registros
+        .filter(apartado =>
+            Number(apartado.ordenNosotros ?? apartado.OrdenNosotros ?? 0) > 0
+        )
+        .sort((a, b) =>
+            Number(a.ordenNosotros ?? a.OrdenNosotros) -
+            Number(b.ordenNosotros ?? b.OrdenNosotros)
+        );
+
+    const apartadosEspeciales = registros
+        .filter(apartado =>
+            Number(apartado.ordenNosotros ?? apartado.OrdenNosotros ?? 0) === 0
+        );
+
+            // ==========================================
+            // ENCABEZADO INSTITUCIONAL
+            // ==========================================
+
+            
+
+            // ==========================================
+            // CUADRÍCULA DE TARJETAS
+            // ==========================================
+
+            const tarjetas = document.createElement("div");
+            tarjetas.className = "nosotros-tarjetas-grid";
+
+ 
+                apartadosNormales.forEach(apartado => {
+
+                const titulo =
+                    apartado.titulo ?? apartado.Titulo ?? "";
+
+                const resumen =
+                    apartado.resumen ?? apartado.Resumen ?? "";
+
+                const descripcion =
+                    apartado.descripcion ?? apartado.Descripcion ?? "";
+
+                const icono =
+                    apartado.icono ?? apartado.Icono ?? "building-2";
+
+                const imagenes =
+                    apartado.imagenes ?? apartado.Imagenes ?? [];
+
+                // ==========================================
+                // TARJETA
+                // ==========================================
+
+                const tarjeta = document.createElement("article");
+                tarjeta.className = "nosotros-tarjeta";
+
+                // Contenedor de las dos columnas.
+                const contenidoTarjeta = document.createElement("div");
+                contenidoTarjeta.className = "nosotros-tarjeta-contenido";
+
+                // ==========================================
+                // COLUMNA IZQUIERDA: INFORMACIÓN
+                // ==========================================
+
+                const informacion = document.createElement("div");
+                informacion.className = "nosotros-tarjeta-info";
+
+                // Icono.
+
+    // ==========================================
+    // ENCABEZADO: ICONO + TÍTULO
+    // ==========================================
+
+    // Contenedor horizontal.
+    const encabezadoInfo = document.createElement("div");
+    encabezadoInfo.className = "nosotros-titulo-contenedor";
+
+    // Icono.
+    const contenedorIcono = document.createElement("div");
+    contenedorIcono.className = "nosotros-tarjeta-icono";
+
+    const elementoIcono = document.createElement("i");
+
+    elementoIcono.setAttribute(
+        "data-lucide",
+        String(icono).trim().toLowerCase()
+    );
+
+    contenedorIcono.appendChild(elementoIcono);
+
+    // Título.
+    const tituloTarjeta = document.createElement("h3");
+    tituloTarjeta.textContent = titulo;
+
+    // Agrupar icono y título.
+    encabezadoInfo.append(
+        contenedorIcono,
+        tituloTarjeta
+    );
+
+    informacion.appendChild(encabezadoInfo);
+
+    // ==========================================
+    // RESUMEN
+    // ==========================================
+
+    const resumenTarjeta = document.createElement("p");
+    resumenTarjeta.className = "nosotros-tarjeta-resumen";
+    resumenTarjeta.textContent = resumen;
+
+    // ==========================================
+    // DESCRIPCIÓN
+    // ==========================================
+
+    const descripcionTarjeta = document.createElement("p");
+    descripcionTarjeta.className = "nosotros-tarjeta-descripcion";
+    descripcionTarjeta.textContent = descripcion;
+
+
+                if (resumen) {
+                    informacion.appendChild(resumenTarjeta);
+                }
+
+                if (descripcion) {
+                    informacion.appendChild(descripcionTarjeta);
+                }
+
+                // ==========================================
+                // COLUMNA DERECHA: GALERÍA
+                // ==========================================
+
+                const galeria = document.createElement("div");
+                galeria.className = "nosotros-tarjeta-galeria";
+
+                const imagenesOrdenadas = Array.isArray(imagenes)
+                    ? [...imagenes]
+                        .filter(imagen =>
+                            imagen.urlImagen ?? imagen.UrlImagen ?? ""
+                        )
+                        .sort((a, b) =>
+                            Number(a.ordenFoto ?? a.OrdenFoto ?? 0) -
+                            Number(b.ordenFoto ?? b.OrdenFoto ?? 0)
+                        )
+                    : [];
+
+                if (imagenesOrdenadas.length > 0) {
+
+                    // Imagen principal.
+                    const contenedorPrincipal = document.createElement("div");
+                    contenedorPrincipal.className = "nosotros-imagen-principal";
+
+                    const imagenPrincipal = document.createElement("img");
+                    imagenPrincipal.alt = titulo;
+                    imagenPrincipal.loading = "lazy";
+
+                    // Flecha anterior.
+                    const anterior = document.createElement("button");
+                    anterior.type = "button";
+                    anterior.className =
+                        "nosotros-galeria-flecha nosotros-galeria-anterior";
+                    anterior.innerHTML = "&#10094;";
+                    anterior.setAttribute("aria-label", "Imagen anterior");
+
+                    // Flecha siguiente.
+                    const siguiente = document.createElement("button");
+                    siguiente.type = "button";
+                    siguiente.className =
+                        "nosotros-galeria-flecha nosotros-galeria-siguiente";
+                    siguiente.innerHTML = "&#10095;";
+                    siguiente.setAttribute("aria-label", "Imagen siguiente");
+
+                    contenedorPrincipal.append(
+                        imagenPrincipal,
+                        anterior,
+                        siguiente
+                    );
+
+                    // Miniaturas.
+                    const miniaturas = document.createElement("div");
+                    miniaturas.className = "nosotros-galeria-miniaturas";
+
+                    let indiceActual = 0;
+
+                    imagenesOrdenadas.forEach((imagen, indice) => {
+
+                        const botonMiniatura = document.createElement("button");
+                        botonMiniatura.type = "button";
+                        botonMiniatura.className = "nosotros-miniatura";
+
+                        const imgMiniatura = document.createElement("img");
+
+                        imgMiniatura.src =
+                            imagen.urlImagen ?? imagen.UrlImagen;
+
+                        imgMiniatura.alt =
+                            imagen.descImagen ??
+                            imagen.DescImagen ??
+                            titulo;
+
+                        imgMiniatura.loading = "lazy";
+
+                        botonMiniatura.appendChild(imgMiniatura);
+
+                        botonMiniatura.addEventListener("click", function () {
+                            indiceActual = indice;
+                            actualizarGaleriaNosotros();
+                        });
+
+                        miniaturas.appendChild(botonMiniatura);
+                    });
+
+                    // Actualizar fotografía principal y selección.
+                    function actualizarGaleriaNosotros() {
+
+                        const imagenActual = imagenesOrdenadas[indiceActual];
+
+                        imagenPrincipal.src =
+                            imagenActual.urlImagen ?? imagenActual.UrlImagen;
+
+                        imagenPrincipal.alt =
+                            imagenActual.descImagen ??
+                            imagenActual.DescImagen ??
+                            titulo;
+
+                        Array.from(miniaturas.children).forEach((boton, indice) => {
+                            boton.classList.toggle(
+                                "activa",
+                                indice === indiceActual
+                            );
+                        });
+
+                        const mostrarControles = imagenesOrdenadas.length > 1;
+
+                        anterior.style.display =
+                            mostrarControles ? "" : "none";
+
+                        siguiente.style.display =
+                            mostrarControles ? "" : "none";
+
+                        miniaturas.style.display =
+                            mostrarControles ? "" : "none";
+                    }
+
+                    // Navegación anterior.
+                    anterior.addEventListener("click", function () {
+
+                        indiceActual =
+                            (indiceActual - 1 + imagenesOrdenadas.length) %
+                            imagenesOrdenadas.length;
+
+                        actualizarGaleriaNosotros();
+                    });
+
+                    // Navegación siguiente.
+                    siguiente.addEventListener("click", function () {
+
+                        indiceActual =
+                            (indiceActual + 1) % imagenesOrdenadas.length;
+
+                        actualizarGaleriaNosotros();
+                    });
+
+                    galeria.append(
+                        contenedorPrincipal,
+                        miniaturas
+                    );
+
+                    actualizarGaleriaNosotros();
+                }
+
+                // ==========================================
+                // UNIR LAS DOS COLUMNAS
+                // ==========================================
+
+                contenidoTarjeta.appendChild(informacion);
+
+                if (galeria.children.length > 0) {
+                    contenidoTarjeta.appendChild(galeria);
+                }
+
+                tarjeta.appendChild(contenidoTarjeta);
+
+                    tarjetas.appendChild(tarjeta);
+    });
+
+    // ==========================================
+    // MOSTRAR APARTADOS NORMALES
+    // ==========================================
+
+    if (tarjetas.children.length > 0) {
+        contenido.appendChild(tarjetas);
+    }
+
+
+    // ==========================================
+    // SECCIÓN ESPECIAL: VISIÓN, MISIÓN Y VALORES
+    // ORDEN = 0
+    // ==========================================
+
+    if (apartadosEspeciales.length > 0) {
+
+        const seccionEspecial = document.createElement("section");
+        seccionEspecial.className = "nosotros-especiales";
+
+        const especialesGrid = document.createElement("div");
+        especialesGrid.className = "nosotros-especiales-grid";
+
+        apartadosEspeciales.forEach(apartado => {
+
+            const titulo =
+                apartado.titulo ?? apartado.Titulo ?? "";
+
+            const resumen =
+                apartado.resumen ?? apartado.Resumen ?? "";
+
+            const descripcion =
+                apartado.descripcion ?? apartado.Descripcion ?? "";
+
+            // Tarjeta especial.
+            const tarjetaEspecial = document.createElement("article");
+            tarjetaEspecial.className = "nosotros-especial-card";
+
+            // Título.
+            const tituloEspecial = document.createElement("h3");
+            tituloEspecial.className = "nosotros-especial-titulo";
+            tituloEspecial.textContent = titulo;
+
+                const icono = apartado.icono ?? apartado.Icono ?? "";
+
+    if (icono) {
+        const iconoEspecial = document.createElement("i");
+        iconoEspecial.setAttribute("data-lucide", icono);
+        iconoEspecial.className = "nosotros-especial-icono";
+        tarjetaEspecial.appendChild(iconoEspecial);
+    }
+
+            tarjetaEspecial.appendChild(tituloEspecial);
+
+                // ==========================================
+    // RESUMEN CON ETIQUETAS EN NEGRITA
+    // ==========================================
+
+    if (resumen) {
+        renderizarTextoConEtiquetas(tarjetaEspecial, resumen);
+    }
+
+    // ==========================================
+    // DESCRIPCIÓN CON ETIQUETAS EN NEGRITA
+    // ==========================================
+
+    if (descripcion) {
+        renderizarTextoConEtiquetas(tarjetaEspecial, descripcion);
+    }
+
+            especialesGrid.appendChild(tarjetaEspecial);
+
+        });
+
+        seccionEspecial.appendChild(especialesGrid);
+
+        // Agregar siempre debajo de los apartados normales.
+        contenido.appendChild(seccionEspecial);
+    }
+
+
+    // Generar iconos Lucide de las tarjetas normales.
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+
+
+        } catch (error) {
+
+            console.error("Error al cargar Nosotros:", error);
+
+            const mensaje = document.createElement("p");
+            mensaje.className = "nosotros-sin-registros";
+            mensaje.textContent =
+                "No se pudo cargar la información de la empresa.";
+
+            contenido.appendChild(mensaje);
+
+        } finally {
+
+            cargandoNosotrosCategoria = false;
+        }
+
+        return;
+    }
+
+
+        // ==========================================
+    // FORMATEAR TEXTO CON ETIQUETAS EN NEGRITA
+    // ==========================================
+
+    function renderizarTextoConEtiquetas(elemento, texto) {
+
+        const lineas = String(texto || "").split(/\r?\n/);
+
+        lineas.forEach(linea => {
+
+            if (!linea.trim()) return;
+
+            const parrafo = document.createElement("p");
+            parrafo.className = "nosotros-especial-contenido";
+
+            // Detectar viñeta.
+            const tieneVineta = linea.trim().startsWith("•");
+
+            if (tieneVineta) {
+                linea = linea.trim().substring(1).trim();
+
+                parrafo.style.paddingLeft = "15px";
+                parrafo.style.textIndent = "-15px";
+
+                parrafo.appendChild(
+                    document.createTextNode("• ")
+                );
+            }
+
+            // Buscar los dos puntos.
+            const posicionDosPuntos = linea.indexOf(":");
+
+            if (posicionDosPuntos !== -1) {
+
+                // Texto anterior a los dos puntos en negrita.
+                const etiqueta = document.createElement("strong");
+
+                etiqueta.textContent =
+                    linea.substring(0, posicionDosPuntos + 1);
+
+                parrafo.appendChild(etiqueta);
+
+                // Texto posterior en formato normal.
+                parrafo.appendChild(
+                    document.createTextNode(
+                        linea.substring(posicionDosPuntos + 1)
+                    )
+                );
+
+            } else {
+
+                parrafo.appendChild(
+                    document.createTextNode(linea)
+                );
+            }
+
+            elemento.appendChild(parrafo);
+        });
+    }
+
 
         const equipos = window.productosAgrupados || [];
 

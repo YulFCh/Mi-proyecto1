@@ -1,0 +1,495 @@
+﻿@{
+    ViewData["Title"] = "Nosotros";
+
+    var estaLogueado = User.Identity?.IsAuthenticated == true;
+
+    Layout = estaLogueado
+        ? "~/Views/Shared/_LayoutNavegador.cshtml"
+        : "~/Views/Shared/_LayoutInicio.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/styleInicio.css" />
+</head>
+
+@if (estaLogueado)
+{
+    <!-- BOTÓN AGREGAR -->
+    <div style="display:flex; justify-content:flex-start;
+                    padding:0 20px; margin:10px 0;">
+
+        <button type="button"
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#modalAgregarNosotros">
+
+            <i class="feather icon-plus"></i>
+            Agregar apartado
+
+        </button>
+    </div>
+
+    <!-- BOTÓN ADMINISTRAR -->
+    <div style="padding:10px 20px;">
+
+        <button type="button"
+                class="btn btn-primary"
+                onclick="cargarListaNosotros()">
+
+            <i class="feather icon-edit"></i>
+            Administrar Nosotros
+
+        </button>
+
+    </div>
+
+    <!-- LISTA ADMINISTRAR -->
+    <div id="listaAdministrarNosotros"
+         style="display:none; padding:20px;">
+
+        <h5>Apartados registrados</h5>
+
+        <div id="tablaNosotros"></div>
+
+    </div>
+}
+
+<!-- ========================================= -->
+<!-- MODAL AGREGAR NOSOTROS -->
+<!-- ========================================= -->
+
+<div class="modal fade"
+     id="modalAgregarNosotros"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloAgregarNosotros"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="tituloAgregarNosotros">
+
+                    Agregar apartado
+
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+
+                    <span aria-hidden="true">&times;</span>
+
+                </button>
+
+            </div>
+
+            <form id="formAgregarNosotros">
+
+                <div class="modal-body">
+
+                    <!-- TÍTULO -->
+                    <div class="form-group">
+
+                        <label for="tituloNosotros">
+                            Título <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="tituloNosotros"
+                               maxlength="150"
+                               placeholder="Ej. Quiénes somos"
+                               required>
+
+                    </div>
+
+                    <!-- RESUMEN -->
+                    <div class="form-group">
+
+                        <label for="resumenNosotros">
+                            Resumen
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="resumenNosotros"
+                               maxlength="250"
+                               placeholder="Breve presentación del apartado">
+
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="form-group">
+
+                        <label for="descripcionNosotros">
+                            Descripción
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="descripcionNosotros"
+                                  rows="4"
+                                  placeholder="Describe detalladamente este apartado..."></textarea>
+
+                    </div>
+
+                    <!-- ICONO -->
+                    <div class="form-group">
+
+                        <label for="iconoNosotros">
+                            Icono
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="iconoNosotros"
+                               maxlength="100"
+                               placeholder="Ej. users">
+
+                        <small class="form-text text-muted">
+                            Escribe el nombre del icono que deseas utilizar.
+                        </small>
+
+                    </div>
+
+                    <div class="row">
+
+                        <!-- ORDEN -->
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+
+                                <label for="ordenNosotros">
+                                    Orden de visualización
+                                </label>
+
+                                <input type="number"
+                                       class="form-control"
+                                       id="ordenNosotros"
+                                       min="0"
+                                       value="1"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+
+                                <label for="estadoNosotros">
+                                    Estado
+                                </label>
+
+                                <select class="form-control"
+                                        id="estadoNosotros"
+                                        required>
+
+                                    <option value="true" selected>
+                                        Activo
+                                    </option>
+
+                                    <option value="false">
+                                        Inactivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- FOTOGRAFÍAS -->
+                    <div class="form-group">
+
+                        <label for="imagenesNosotros">
+                            Fotografías del apartado
+                        </label>
+
+                        <input type="file"
+                               class="form-control-file"
+                               id="imagenesNosotros"
+                               accept="image/jpeg,image/png,image/webp"
+                               multiple>
+
+                        <small class="form-text text-muted">
+                            Puedes seleccionar hasta 15 fotografías.
+                            Formatos permitidos: JPG, PNG y WEBP.
+                        </small>
+
+                    </div>
+
+                    <!-- VISTA PREVIA -->
+                    <div id="vistaPreviaImagenesNosotros"
+                         style="display:grid;
+                                grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+                                gap:12px;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <!-- MENSAJE -->
+                    <div id="mensajeNosotros"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; margin-top:12px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarNosotros"
+                            class="btn btn-success">
+
+                        <i class="feather icon-save"></i>
+                        Guardar apartado
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- MODAL EDITAR NOSOTROS -->
+<!-- ========================================= -->
+
+<div class="modal fade"
+     id="modalEditarNosotros"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloEditarNosotros"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="tituloEditarNosotros">
+
+                    Editar apartado
+
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+
+                    <span aria-hidden="true">&times;</span>
+
+                </button>
+
+            </div>
+
+            <form id="formEditarNosotros">
+
+                <div class="modal-body">
+
+                    <!-- TÍTULO -->
+                    <div class="form-group">
+
+                        <label for="tituloEditarNosotrosInput">
+                            Título
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="tituloEditarNosotrosInput"
+                               maxlength="150"
+                               required>
+
+                    </div>
+
+                    <!-- RESUMEN -->
+                    <div class="form-group">
+
+                        <label for="resumenEditarNosotros">
+                            Resumen
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="resumenEditarNosotros"
+                               maxlength="250">
+
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="form-group">
+
+                        <label for="descripcionEditarNosotros">
+                            Descripción
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="descripcionEditarNosotros"
+                                  rows="4"></textarea>
+
+                    </div>
+
+                    <!-- ICONO -->
+                    <div class="form-group">
+
+                        <label for="iconoEditarNosotros">
+                            Icono
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="iconoEditarNosotros"
+                               maxlength="100"
+                               placeholder="Ej. users">
+
+                    </div>
+
+                    <!-- ORDEN -->
+                    <div class="form-group">
+
+                        <label for="ordenEditarNosotros">
+                            Orden de visualización
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               id="ordenEditarNosotros"
+                               min="0"
+                               required>
+
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="form-group">
+
+                        <label for="estadoEditarNosotros">
+                            Estado
+                        </label>
+
+                        <select class="form-control"
+                                id="estadoEditarNosotros">
+
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+
+                        </select>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- FOTOGRAFÍAS -->
+                    <div class="form-group">
+
+                        <label for="imagenesEditarNosotros">
+                            Fotografías del apartado
+                        </label>
+
+                        <input type="file"
+                               class="form-control-file"
+                               id="imagenesEditarNosotros"
+                               accept="image/jpeg,image/png,image/webp"
+                               multiple>
+
+                        <small class="form-text text-muted">
+                            Puedes conservar, agregar o quitar fotografías.
+                            Máximo 15 fotografías por apartado.
+                        </small>
+
+                    </div>
+
+                    <!-- VISTA PREVIA -->
+                    <div id="vistaPreviaImagenesEditarNosotros"
+                         style="display:grid;
+                                grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+                                gap:12px;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <!-- MENSAJES -->
+                    <div id="mensajeEditarNosotros"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; padding:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarEdicionNosotros"
+                            class="btn btn-success">
+
+                        <i class="feather icon-save"></i>
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@if (!estaLogueado)
+{
+    <!-- NOSOTROS PÚBLICO -->
+    <div id="nosotrosPublicos">
+
+        <!-- Aquí mostraremos los apartados activos -->
+
+    </div>
+}
+
+<script>
+    const fractNosotrosUsuarioActual = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(User.Identity?.Name ?? "")
+        );
+</script>
+
+<script src="~/js/Nosotros.js"></script>

@@ -1164,8 +1164,8 @@ body {
 
     #modalZoom #zoom-prev-btn:hover,
     #modalZoom #zoom-next-btn:hover {
-        background: #ff0094 !important;
-        border-color: #ff0094 !important;
+        background: #333333 !important;
+        border-color: #333333 !important;
         color: #ffffff !important;
     }
 
