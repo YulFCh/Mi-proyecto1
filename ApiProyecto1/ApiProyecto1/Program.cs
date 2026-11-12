@@ -1,4 +1,5 @@
 ﻿using ApiProyecto1.Services;
+using ApiProyecto1.Services.Informes;
 using ApiProyecto1.Services.Nosotros;
 using ApiProyecto1.Services.Pedidos;
 using ApiProyecto1.Services.Servicios;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<ServiciosService>();
 builder.Services.AddHttpClient<CloudinaryService>();
 builder.Services.AddScoped<NosotrosService>();
 builder.Services.AddHttpClient<CloudinaryNosotrosService>();
+builder.Services.AddScoped<InformesService>();
 
 
 var app = builder.Build();
