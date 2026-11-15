@@ -36,5 +36,47 @@ namespace ApiProyecto1.Controllers.Catalogos
                 message = "Registro guardado correctamente"
             });
         }
+
+
+        // ==========================================
+        // OBTENER VARIANTES PARA EDITAR
+        // ==========================================
+
+        [HttpGet("{id:int}/variantes")]
+        public IActionResult ObtenerVariantes(int id)
+        {
+            var data = _service.ObtenerVariantes(id);
+
+            if (data == null || data.Count == 0)
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No se encontraron variantes para este equipo."
+                });
+
+            return Ok(data);
+        }
+
+        // ==========================================
+        // EDITAR EQUIPO
+        // ==========================================
+
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Editar(
+            int id,
+            [FromBody] EditarEquiposModel model)
+        {
+            var publicIdsFallidos = await _service.PatchAsync(id, model);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Equipo actualizado correctamente.",
+                advertencia = publicIdsFallidos.Count > 0
+                    ? "Algunas imágenes antiguas no pudieron eliminarse de Cloudinary."
+                    : null,
+                imagenesNoEliminadas = publicIdsFallidos
+            });
+        }
     }
 }
