@@ -129,10 +129,15 @@ namespace ApiProyecto1.Controllers
         // ============================================
         // PUT: api/RegistroPromociones/5
         // ============================================
+
+        // ============================================
+        // PUT: api/RegistroPromociones/5
+        // ============================================
         [HttpPut("{id:int}")]
-        public IActionResult Actualizar(
+        public async Task<IActionResult> Actualizar(
             int id,
-            [FromBody] RegistroPromocionesModel model)
+            [FromBody] RegistroPromocionesModel model,
+            CancellationToken cancellationToken)
         {
             if (id != model.Id_Prom)
             {
@@ -168,13 +173,27 @@ namespace ApiProyecto1.Controllers
 
             try
             {
-                // Si tienes autenticación configurada,
-                // puedes obtener aquí el usuario autenticado.
+                // Obtener el registro actual
+                var imagenAnterior = _service.ObtenerPorId(id);
+
+                if (imagenAnterior == null)
+                {
+                    return NotFound(new
+                    {
+                        mensaje = "La imagen promocional no existe."
+                    });
+                }
+
+                // Conservar el PublicId anterior
+                string? publicIdAnterior = imagenAnterior.PublicId_Prom;
+
+                // Asignar usuario de modificación
                 model.Usuarmodif_Prom =
                     User.Identity?.IsAuthenticated == true
                     ? User.Identity.Name
                     : "API";
 
+                // Actualizar primero SQL Server
                 bool actualizado = _service.Actualizar(model);
 
                 if (!actualizado)
@@ -183,6 +202,43 @@ namespace ApiProyecto1.Controllers
                     {
                         mensaje = "La imagen promocional no existe."
                     });
+                }
+
+                // Comprobar si se reemplazó la imagen
+                bool imagenReemplazada =
+                    !string.IsNullOrWhiteSpace(publicIdAnterior) &&
+                    !string.Equals(
+                        publicIdAnterior,
+                        model.PublicId_Prom,
+                        StringComparison.Ordinal
+                    );
+
+                // Eliminar imagen anterior de Cloudinary
+                if (imagenReemplazada)
+                {
+                    try
+                    {
+                        bool eliminada =
+                            await _cloudinaryService.EliminarImagenAsync(
+                                publicIdAnterior!,
+                                cancellationToken
+                            );
+
+                        if (!eliminada)
+                        {
+                            return Ok(new
+                            {
+                                mensaje = "La promoción se actualizó correctamente, pero no se pudo confirmar la eliminación de la imagen anterior en Cloudinary."
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        return Ok(new
+                        {
+                            mensaje = "La promoción se actualizó correctamente, pero ocurrió un error al eliminar la imagen anterior de Cloudinary."
+                        });
+                    }
                 }
 
                 return Ok(new
@@ -199,7 +255,6 @@ namespace ApiProyecto1.Controllers
                 });
             }
         }
-
 
 
         // ============================================
