@@ -1,4 +1,5 @@
 ﻿using ApiProyecto1.Services;
+using ApiProyecto1.Services.Catalogos;
 using ApiProyecto1.Services.Informes;
 using ApiProyecto1.Services.Nosotros;
 using ApiProyecto1.Services.Pedidos;
@@ -27,6 +28,11 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.FullName);
+});
+
 // 👉 REGISTRAR SERVICES (IMPORTANTE)
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
@@ -41,9 +47,11 @@ builder.Services.AddHttpClient<CloudinaryService>();
 builder.Services.AddScoped<NosotrosService>();
 builder.Services.AddHttpClient<CloudinaryNosotrosService>();
 builder.Services.AddScoped<InformesService>();
+builder.Services.AddScoped<EquiposService>();
 
 
 var app = builder.Build();
+
 
 
 // 👉 Swagger
