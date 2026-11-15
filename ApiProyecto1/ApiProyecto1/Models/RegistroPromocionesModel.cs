@@ -23,5 +23,6 @@ namespace ApiProyecto1.Models
         public string? Usuarmodif_Prom { get; set; }
 
         public DateTime? Fechmodif_Prom { get; set; }
+        public string? PublicId_Prom { get; set; }
     }
 }

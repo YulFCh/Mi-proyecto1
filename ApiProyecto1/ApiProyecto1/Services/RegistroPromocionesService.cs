@@ -29,6 +29,7 @@ namespace ApiProyecto1.Services
             INSERT INTO dbo.ImagenesPromocionales
             (
                 url_imagen_prom,
+                public_id_prom,
                 fila_prom,
                 orden_prom,
                 enlace_prom,
@@ -39,6 +40,7 @@ namespace ApiProyecto1.Services
             VALUES
             (
                 @url,
+                @publicId,
                 @fila,
                 @orden,
                 @enlace,
@@ -51,6 +53,9 @@ namespace ApiProyecto1.Services
                 {
                     cmd.Parameters.Add("@url", SqlDbType.VarChar, 500)
                         .Value = model.Url_Imagen_Prom;
+
+                    cmd.Parameters.Add("@publicId", SqlDbType.VarChar, 300)
+                        .Value = (object?)model.PublicId_Prom ?? DBNull.Value;
 
                     cmd.Parameters.Add("@fila", SqlDbType.Int)
                         .Value = model.Fila_Prom;
@@ -87,6 +92,7 @@ namespace ApiProyecto1.Services
                     SELECT
                         id_prom,
                         url_imagen_prom,
+                        public_id_prom,
                         fila_prom,
                         orden_prom,
                         enlace_prom,
@@ -114,6 +120,11 @@ namespace ApiProyecto1.Services
                                 Url_Imagen_Prom =
                                     dr["url_imagen_prom"].ToString()
                                     ?? "",
+
+                                PublicId_Prom =
+                                    dr["public_id_prom"] == DBNull.Value
+                                         ? null
+                                   : dr["public_id_prom"].ToString(),
 
                                 Fila_Prom = Convert.ToInt32(
                                     dr["fila_prom"]),
@@ -169,6 +180,7 @@ namespace ApiProyecto1.Services
                     SELECT
                         id_prom,
                         url_imagen_prom,
+                        public_id_prom,
                         fila_prom,
                         orden_prom,
                         enlace_prom,
@@ -198,6 +210,11 @@ namespace ApiProyecto1.Services
 
                             Url_Imagen_Prom =
                                 dr["url_imagen_prom"].ToString() ?? "",
+
+                            PublicId_Prom =
+                                dr["public_id_prom"] == DBNull.Value
+                                  ? null
+                               : dr["public_id_prom"].ToString(),
 
                             Fila_Prom = Convert.ToInt32(
                                 dr["fila_prom"]),
@@ -249,6 +266,7 @@ namespace ApiProyecto1.Services
                     UPDATE dbo.ImagenesPromocionales
                     SET
                         url_imagen_prom = @url,
+                        public_id_prom = @publicId,
                         fila_prom = @fila,
                         orden_prom = @orden,
                         enlace_prom = @enlace,
@@ -264,6 +282,9 @@ namespace ApiProyecto1.Services
 
                     cmd.Parameters.Add("@url", SqlDbType.VarChar, 500)
                         .Value = model.Url_Imagen_Prom;
+
+                    cmd.Parameters.Add("@publicId", SqlDbType.VarChar, 300)
+                        .Value = (object?)model.PublicId_Prom ?? DBNull.Value;
 
                     cmd.Parameters.Add("@fila", SqlDbType.Int)
                         .Value = model.Fila_Prom;
