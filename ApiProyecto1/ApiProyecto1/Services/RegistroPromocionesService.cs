@@ -309,5 +309,33 @@ namespace ApiProyecto1.Services
                 }
             }
         }
+
+
+
+        // ============================================
+        // ELIMINAR IMAGEN PROMOCIONAL
+        // ============================================
+        public bool Eliminar(int id)
+        {
+            using (SqlConnection con =
+                   new SqlConnection(_connectionString))
+            {
+                string query = @"
+            DELETE FROM dbo.ImagenesPromocionales
+            WHERE id_prom = @id;";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.Int)
+                        .Value = id;
+
+                    con.Open();
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+
     }
 }

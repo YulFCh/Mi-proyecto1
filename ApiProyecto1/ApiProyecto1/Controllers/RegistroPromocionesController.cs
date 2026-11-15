@@ -1,6 +1,7 @@
 ﻿
 using ApiProyecto1.Models;
 using ApiProyecto1.Services;
+using ApiProyecto1.Services.Servicios;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProyecto1.Controllers
@@ -11,10 +12,12 @@ namespace ApiProyecto1.Controllers
     {
         private readonly RegistroPromocionesService _service;
 
+        private readonly CloudinaryService _cloudinaryService;
         public RegistroPromocionesController(
-            RegistroPromocionesService service)
+            RegistroPromocionesService service, CloudinaryService cloudinaryService)
         {
             _service = service;
+            _cloudinaryService = cloudinaryService;
         }
 
         // ============================================
@@ -196,5 +199,73 @@ namespace ApiProyecto1.Controllers
                 });
             }
         }
+
+
+
+        // ============================================
+        // DELETE: api/RegistroPromociones/5
+        // ELIMINAR IMAGEN PROMOCIONAL
+        // ============================================
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Eliminar(
+            int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                // 1. Buscar la promoción
+                var imagen = _service.ObtenerPorId(id);
+
+                if (imagen == null)
+                {
+                    return NotFound(new
+                    {
+                        mensaje = "La imagen promocional no existe."
+                    });
+                }
+
+                // 2. Eliminar imagen de Cloudinary
+                if (!string.IsNullOrWhiteSpace(imagen.PublicId_Prom))
+                {
+                    bool eliminada = await _cloudinaryService.EliminarImagenAsync(
+                        imagen.PublicId_Prom,
+                        cancellationToken);
+
+                    if (!eliminada)
+                    {
+                        return StatusCode(500, new
+                        {
+                            mensaje = "No se pudo confirmar la eliminación de la imagen en Cloudinary."
+                        });
+                    }
+                }
+
+                // 3. Eliminar registro de SQL Server
+                bool eliminado = _service.Eliminar(id);
+
+                if (!eliminado)
+                {
+                    return StatusCode(500, new
+                    {
+                        mensaje = "La imagen fue eliminada de Cloudinary, pero no se pudo eliminar el registro de SQL Server."
+                    });
+                }
+
+                return Ok(new
+                {
+                    mensaje = "Imagen promocional eliminada correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = "Error al eliminar la imagen promocional.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
     }
 }
