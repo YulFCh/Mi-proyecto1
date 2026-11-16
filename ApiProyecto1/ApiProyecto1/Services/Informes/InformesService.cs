@@ -65,6 +65,7 @@ namespace ApiProyecto1.Services.Informes
                     SELECT
                         IdSeccion,
                         Titulo,
+                        Icono,
                         Descripcion,
                         OrdenSeccion,
                         Estado,
@@ -116,6 +117,8 @@ namespace ApiProyecto1.Services.Informes
                             {
                                 IdSeccion = Convert.ToInt32(dr["IdSeccion"]),
                                 Titulo = dr["Titulo"].ToString() ?? "",
+                                Icono = dr["Icono"] == DBNull.Value
+                               ? null : dr["Icono"].ToString(),
                                 Descripcion = dr["Descripcion"] == DBNull.Value
                                     ? null : dr["Descripcion"].ToString(),
                                 OrdenSeccion = Convert.ToInt32(dr["OrdenSeccion"]),
@@ -200,6 +203,7 @@ namespace ApiProyecto1.Services.Informes
                             INSERT INTO SeccionesWeb
                             (
                                 Titulo,
+                                Icono,
                                 Descripcion,
                                 OrdenSeccion,
                                 Estado,
@@ -209,6 +213,7 @@ namespace ApiProyecto1.Services.Informes
                             VALUES
                             (
                                 @Titulo,
+                                @Icono,
                                 @Descripcion,
                                 @OrdenSeccion,
                                 @Estado,
@@ -309,6 +314,7 @@ namespace ApiProyecto1.Services.Informes
                             UPDATE SeccionesWeb
                             SET
                                 Titulo = @Titulo,
+                                Icono = @Icono,
                                 Descripcion = @Descripcion,
                                 OrdenSeccion = @OrdenSeccion,
                                 Estado = @Estado,
@@ -612,6 +618,9 @@ namespace ApiProyecto1.Services.Informes
             cmd.Parameters.Add("@Titulo", SqlDbType.NVarChar, 150).Value =
                 model.Titulo.Trim();
 
+            cmd.Parameters.Add("@Icono", SqlDbType.NVarChar, 100).Value =
+                (object?)model.Icono ?? DBNull.Value;
+
             cmd.Parameters.Add("@Descripcion", SqlDbType.NVarChar, 250).Value =
                 (object?)model.Descripcion ?? DBNull.Value;
 
@@ -683,6 +692,10 @@ namespace ApiProyecto1.Services.Informes
             if (model.Titulo.Trim().Length > 150)
                 throw new ArgumentException(
                     "El título no puede superar 150 caracteres.");
+
+            if (model.Icono?.Length > 100)
+                throw new ArgumentException(
+                    "El icono no puede superar 100 caracteres.");
 
             if (model.Descripcion?.Length > 250)
                 throw new ArgumentException(

@@ -7,7 +7,7 @@ namespace ApiProyecto1.Models.Informes
         public string? Descripcion { get; set; }
         public int OrdenSeccion { get; set; }
         public bool Estado { get; set; } = true;
-
+        public string? Icono { get; set; }
         public string Usuario { get; set; } = string.Empty;
 
         public List<GuardarElementoSeccionWebModel> Elementos { get; set; } = new();

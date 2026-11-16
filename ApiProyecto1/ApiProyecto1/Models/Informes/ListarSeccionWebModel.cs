@@ -8,7 +8,7 @@ namespace ApiProyecto1.Models.Informes
         public string? Descripcion { get; set; }
         public int OrdenSeccion { get; set; }
         public bool Estado { get; set; }
-
+        public string? Icono { get; set; }
         public DateTime FechRegist { get; set; }
         public string UsuaRegist { get; set; } = string.Empty;
         public DateTime? FechModif { get; set; }
