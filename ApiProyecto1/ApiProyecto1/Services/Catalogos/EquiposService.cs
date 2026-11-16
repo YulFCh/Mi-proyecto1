@@ -887,5 +887,229 @@ namespace ApiProyecto1.Services.Catalogos
 
 
 
+        // ============================================================
+        // ELIMINAR VARIANTE O PRODUCTO COMPLETO
+        // ============================================================
+
+        public async Task<(int CantidadEliminada, List<string> ImagenesNoEliminadas)>
+            EliminarAsync(int id, bool eliminarProductoCompleto)
+        {
+            var publicIdsFallidos = new List<string>();
+            var publicIdsParaEliminar = new List<string>();
+            var idsEquipos = new List<int>();
+
+            using SqlConnection con = new SqlConnection(_connectionString);
+            await con.OpenAsync();
+
+            using SqlTransaction transaction = con.BeginTransaction();
+
+            try
+            {
+                // ====================================================
+                // IDENTIFICAR LOS EQUIPOS QUE SE VAN A ELIMINAR
+                // ====================================================
+
+                string queryEquipos = @"
+                    SELECT e.id
+                    FROM dbo.equipos e
+                    INNER JOIN dbo.equipos base
+                        ON base.id = @id
+                    WHERE
+                        (
+                            @completo = 0
+                            AND e.id = base.id
+                        )
+                        OR
+                        (
+                            @completo = 1
+                            AND LOWER(LTRIM(RTRIM(ISNULL(e.tipo_equipo, ''))))
+                                = LOWER(LTRIM(RTRIM(ISNULL(base.tipo_equipo, ''))))
+                            AND LOWER(LTRIM(RTRIM(ISNULL(e.marca, ''))))
+                                = LOWER(LTRIM(RTRIM(ISNULL(base.marca, ''))))
+                            AND LOWER(LTRIM(RTRIM(ISNULL(e.modelo, ''))))
+                                = LOWER(LTRIM(RTRIM(ISNULL(base.modelo, ''))))
+                        );";
+
+                using (SqlCommand cmd = new SqlCommand(
+                    queryEquipos, con, transaction))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
+                    cmd.Parameters.Add("@completo", SqlDbType.Bit)
+                        .Value = eliminarProductoCompleto;
+
+                    using SqlDataReader dr = await cmd.ExecuteReaderAsync();
+
+                    while (await dr.ReadAsync())
+                    {
+                        idsEquipos.Add(Convert.ToInt32(dr["id"]));
+                    }
+                }
+
+                if (idsEquipos.Count == 0)
+                    throw new KeyNotFoundException("El equipo no existe.");
+
+                // ====================================================
+                // PREPARAR PARÁMETROS DE LOS EQUIPOS
+                // ====================================================
+
+                var parametrosIds = idsEquipos
+                    .Select((_, i) => $"@id{i}")
+                    .ToArray();
+
+                string listaIds = string.Join(",", parametrosIds);
+
+                // ====================================================
+                // COMPROBAR SI TIENEN PEDIDOS ASOCIADOS
+                // ====================================================
+
+                string queryPedidos = $@"
+                    SELECT COUNT(1)
+                    FROM dbo.detalle_pedidos
+                    WHERE id_producto IN ({listaIds});";
+
+                using (SqlCommand cmdPedidos = new SqlCommand(
+                    queryPedidos, con, transaction))
+                {
+                    for (int i = 0; i < idsEquipos.Count; i++)
+                    {
+                        cmdPedidos.Parameters.Add(
+                            parametrosIds[i], SqlDbType.Int
+                        ).Value = idsEquipos[i];
+                    }
+
+                    int pedidos = Convert.ToInt32(
+                        await cmdPedidos.ExecuteScalarAsync());
+
+                    if (pedidos > 0)
+                    {
+                        throw new InvalidOperationException(
+                            "No se puede eliminar el equipo porque tiene pedidos asociados."
+                        );
+                    }
+                }
+
+                // ====================================================
+                // OBTENER PUBLICID DE TODAS LAS IMÁGENES
+                // ====================================================
+
+                string queryImagenes = $@"
+                    SELECT DISTINCT PublicId
+                    FROM dbo.EquipoImagenes
+                    WHERE IdEquipo IN ({listaIds})
+                    AND NULLIF(LTRIM(RTRIM(PublicId)), '') IS NOT NULL;";
+
+                using (SqlCommand cmdImagenes = new SqlCommand(
+                    queryImagenes, con, transaction))
+                {
+                    for (int i = 0; i < idsEquipos.Count; i++)
+                    {
+                        cmdImagenes.Parameters.Add(
+                            parametrosIds[i], SqlDbType.Int
+                        ).Value = idsEquipos[i];
+                    }
+
+                    using SqlDataReader dr =
+                        await cmdImagenes.ExecuteReaderAsync();
+
+                    while (await dr.ReadAsync())
+                    {
+                        publicIdsParaEliminar.Add(
+                            dr["PublicId"].ToString()!
+                        );
+                    }
+                }
+
+                // ====================================================
+                // ELIMINAR EQUIPOS DE SQL SERVER
+                // EquipoImagenes se elimina mediante ON DELETE CASCADE
+                // ====================================================
+
+                string queryEliminar = $@"
+                    DELETE FROM dbo.equipos
+                    WHERE id IN ({listaIds});";
+
+                using (SqlCommand cmdEliminar = new SqlCommand(
+                    queryEliminar, con, transaction))
+                {
+                    for (int i = 0; i < idsEquipos.Count; i++)
+                    {
+                        cmdEliminar.Parameters.Add(
+                            parametrosIds[i], SqlDbType.Int
+                        ).Value = idsEquipos[i];
+                    }
+
+                    await cmdEliminar.ExecuteNonQueryAsync();
+                }
+
+                // ====================================================
+                // COMPROBAR QUE LAS IMÁGENES NO SE USEN EN OTROS
+                // EQUIPOS ANTES DE ELIMINARLAS DE CLOUDINARY
+                // ====================================================
+
+                var imagenesSinReferencias = new List<string>();
+
+                foreach (var publicId in publicIdsParaEliminar.Distinct())
+                {
+                    using SqlCommand cmdReferencia = new SqlCommand(@"
+                        SELECT COUNT(1)
+                        FROM dbo.EquipoImagenes
+                        WHERE PublicId = @publicId;",
+                        con, transaction);
+
+                    cmdReferencia.Parameters.Add(
+                        "@publicId", SqlDbType.VarChar, 300
+                    ).Value = publicId;
+
+                    int referencias = Convert.ToInt32(
+                        await cmdReferencia.ExecuteScalarAsync());
+
+                    if (referencias == 0)
+                    {
+                        imagenesSinReferencias.Add(publicId);
+                    }
+                }
+
+                // ====================================================
+                // CONFIRMAR ELIMINACIÓN EN SQL SERVER
+                // ====================================================
+
+                transaction.Commit();
+
+                // ====================================================
+                // ELIMINAR IMÁGENES DE CLOUDINARY
+                // ====================================================
+
+                foreach (var publicId in imagenesSinReferencias)
+                {
+                    try
+                    {
+                        bool eliminado =
+                            await _cloudinaryService.EliminarImagenAsync(publicId);
+
+                        if (!eliminado)
+                            publicIdsFallidos.Add(publicId);
+                    }
+                    catch
+                    {
+                        publicIdsFallidos.Add(publicId);
+                    }
+                }
+
+                return (idsEquipos.Count, publicIdsFallidos);
+            }
+            catch
+            {
+                if (transaction.Connection != null)
+                    transaction.Rollback();
+
+                throw;
+            }
+        }
+
+
+
+
+
     }
 }

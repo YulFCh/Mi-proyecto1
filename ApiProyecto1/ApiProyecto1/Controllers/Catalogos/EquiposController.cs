@@ -78,5 +78,87 @@ namespace ApiProyecto1.Controllers.Catalogos
                 imagenesNoEliminadas = publicIdsFallidos
             });
         }
+
+
+
+        // ============================================================
+        // ELIMINAR UNA SOLA VARIANTE
+        // ============================================================
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> EliminarVariante(int id)
+        {
+            return await EjecutarEliminacion(id, false);
+        }
+
+        // ============================================================
+        // ELIMINAR PRODUCTO COMPLETO Y TODAS SUS VARIANTES
+        // ============================================================
+
+        [HttpDelete("{id:int}/producto")]
+        public async Task<IActionResult> EliminarProductoCompleto(int id)
+        {
+            return await EjecutarEliminacion(id, true);
+        }
+
+        // ============================================================
+        // PROCESAR ELIMINACIÓN
+        // ============================================================
+
+        private async Task<IActionResult> EjecutarEliminacion(
+            int id,
+            bool eliminarProductoCompleto)
+        {
+            try
+            {
+                var resultado = await _service.EliminarAsync(
+                    id,
+                    eliminarProductoCompleto
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = eliminarProductoCompleto
+                        ? "Producto y variantes eliminados correctamente."
+                        : "Variante eliminada correctamente.",
+
+                    cantidadEliminada = resultado.CantidadEliminada,
+
+                    advertencia = resultado.ImagenesNoEliminadas.Count > 0
+                        ? "Algunas imágenes no pudieron eliminarse de Cloudinary."
+                        : null,
+
+                    imagenesNoEliminadas = resultado.ImagenesNoEliminadas
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Microsoft.Data.SqlClient.SqlException ex)
+                when (ex.Number == 547)
+            {
+                return Conflict(new
+                {
+                    success = false,
+                    message = "No se puede eliminar porque existen registros relacionados."
+                });
+            }
+        }
+
+
     }
 }
