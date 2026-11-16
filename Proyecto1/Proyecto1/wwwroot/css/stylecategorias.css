@@ -1266,3 +1266,18 @@ body.categorias-abiertas {
     .nosotros-volver-categorias:hover {
         color: #ff0094;
     }
+
+
+
+
+/* EFECTO HOVER - BOTÓN LIMPIAR */
+.btn-limpiar-filtros:hover {
+    background: #ff0094 !important;
+    border-color: #ff0094 !important;
+    color: #fff !important;
+}
+
+/* TRANSICIÓN SUAVE */
+.btn-limpiar-filtros {
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+}

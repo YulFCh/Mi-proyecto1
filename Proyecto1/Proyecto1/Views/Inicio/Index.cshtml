@@ -102,8 +102,7 @@
                                required>
 
                         <small class="form-text text-muted">
-                            Puedes seleccionar varias imágenes.
-                            Se subirán a Cloudinary.
+                            Seleccione fotografías que tengan 1920 px x 38 px para fila 1 y 1920 px x 189 px para fila 2
                         </small>
                     </div>
 
@@ -214,6 +213,199 @@
 </div>
 
 
+<div class="modal fade"
+     id="modalEditar"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Equipo</h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form id="formEditarEquipo" enctype="multipart/form-data">
+                <input type="hidden" id="editar_id" />
+
+                <div class="modal-body">
+
+                    <!-- Categoría y Subcategoría -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_categoria">Categoría</label>
+                            <select id="editar_categoria"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando categorías...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_subcategoria">Subcategoría</label>
+                            <select id="editar_subcategoria"
+                                    class="form-control"
+                                    required
+                                    disabled>
+                                <option value="">Seleccione una categoría primero</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tipo y Color -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_tipoEquipo">Tipo de equipo</label>
+                            <select id="editar_tipoEquipo"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando tipos...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_color">Color</label>
+                            <select id="editar_color" class="form-control">
+                                <option value="">Cargando colores...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Marca y Modelo -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_marca">Marca</label>
+                            <select id="editar_marca"
+                                    class="form-control"
+                                    required>
+                                <option value="">Cargando marcas...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_modelo">Modelo</label>
+                            <input type="text"
+                                   id="editar_modelo"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Código y Descripción -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="editar_codigoProducto">Código Producto</label>
+                            <input type="text"
+                                   id="editar_codigoProducto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label for="editar_descripcion">Descripción</label>
+                            <textarea id="editar_descripcion"
+                                      class="form-control"
+                                      rows="1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Descripción detallada -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="editar_descripcion1">Descripción detallada</label>
+                            <textarea id="editar_descripcion1"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Garantía y Estado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_garantia">Garantía</label>
+                            <select id="editar_garantia" class="form-control">
+                                <option value="">Seleccione garantía...</option>
+                                <option value="3 Meses">3 Meses</option>
+                                <option value="6 Meses">6 Meses</option>
+                                <option value="12 Meses">12 Meses</option>
+                                <option value="24 Meses">24 Meses</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editar_estado">Estado</label>
+                            <select id="editar_estado" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                                <option value="AGOTADO">AGOTADO</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Precios -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="editar_precio">Precio actual</label>
+                            <input type="number"
+                                   id="editar_precio"
+                                   step="0.01"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="editar_precioAntes">Precio anterior</label>
+                            <input type="number"
+                                   id="editar_precioAntes"
+                                   step="0.01"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="editar_descuento">Descuento</label>
+                            <input type="number"
+                                   id="editar_descuento"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="20" />
+                        </div>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="mb-3">
+                        <label for="editar_fileImage">Imágenes del equipo (máx. 4)</label>
+                        <input type="file"
+                               id="editar_fileImage"
+                               accept="image/*"
+                               multiple
+                               class="form-control" />
+                    </div>
+
+                    <div id="editar_previewContainer"
+                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            id="btnActualizar"
+                            class="btn btn-primary w-100">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
 
 
 <!-- MODAL EDITAR PROMOCIÓN -->
@@ -356,36 +548,56 @@
      aria-label="Ruta de navegación">
 </nav>
 
-<!-- BOTÓN VER TODO -->
-<div style="display:flex;
-            justify-content:flex-end;
-            padding:0 20px;
-            margin-top:15px;
-            margin-bottom:10px;">
-
-    <a href="@Url.Action("Catalogo", "Catalogo")"
-       class="btn btn-sm"
-       style="background:#d7007c;
-              color:white;
-              font-weight:600;
-              border-radius:6px;
-              padding:7px 15px;">
-        Ver todo →
-    </a>
-
-</div>
-
 <!-- CARRUSEL PROMOCIONAL -->
 <div id="carruselPromociones" class="promo-carousel">
 
     <!-- FILA 1: publicidad pequeña -->
+    <!-- FILA 1: PUBLICIDAD PEQUEÑA -->
     <div class="promo-fila promo-fila-1">
-        <div id="pistaPromociones1" class="promo-pista"></div>
+
+        <!-- CONTENEDOR DE LA IMAGEN -->
+        <div class="promo-fila-1-visor">
+            <div id="pistaPromociones1" class="promo-pista"></div>
+        </div>
+
+        <!-- BOTÓN VER TODO -->
+        <a href="@Url.Action("Catalogo", "Catalogo")"
+           class="btn-ver-todo">
+            <span>Ver todo</span>
+            <span class="btn-ver-todo-flecha" aria-hidden="true"></span>
+        </a>
+
     </div>
 
-    <!-- FILA 2: publicidad grande -->
+    <!-- FILA 2: PUBLICIDAD GRANDE -->
     <div class="promo-fila promo-fila-2">
-        <div id="pistaPromociones2" class="promo-pista"></div>
+
+        <!-- VISOR DE IMÁGENES -->
+        <div class="promo-fila-2-visor">
+
+            <div id="pistaPromociones2" class="promo-pista"></div>
+
+            <!-- FLECHA ANTERIOR -->
+            <button type="button"
+                    class="promo-flecha promo-flecha-anterior"
+                    aria-label="Imagen anterior">
+                <span></span>
+            </button>
+
+            <!-- FLECHA SIGUIENTE -->
+            <button type="button"
+                    class="promo-flecha promo-flecha-siguiente"
+                    aria-label="Imagen siguiente">
+                <span></span>
+            </button>
+
+        </div>
+
+        <!-- INDICADORES -->
+        <div id="indicadoresPromociones2"
+             class="promo-indicadores">
+        </div>
+
     </div>
 
 </div>
@@ -1417,5 +1629,5 @@ font-family: 'Montserrat', sans-serif;
                 : "null");
 </script>
 
-<script src="~/js/InicioMuestra.js"></script>
+<script src="~/js/InicioMuestra_actualizado.js"></script>
 <script src="~/js/carruselPromociones.js"></script>

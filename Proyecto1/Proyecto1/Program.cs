@@ -63,6 +63,38 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ========================================
+// RUTAS DEL CATÁLOGO DE PRODUCTOS
+// ========================================
+
+// Categoría: Tecnologías
+app.MapControllerRoute(
+    name: "catalogoTecnologias",
+    pattern: "Tecnologías/{subcategoria?}/{tipoEquipo?}",
+    defaults: new
+    {
+        controller = "Inicio",
+        action = "Index"
+    }
+);
+
+// Categoría: Electrohogar
+app.MapControllerRoute(
+    name: "catalogoElectrohogar",
+    pattern: "Electrohogar/{subcategoria?}/{tipoEquipo?}",
+    defaults: new
+    {
+        controller = "Inicio",
+        action = "Index"
+    }
+);
+
+// ========================================
+// RUTA PREDETERMINADA
+// ========================================
+
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Inicio}/{action=Index}/{id?}");

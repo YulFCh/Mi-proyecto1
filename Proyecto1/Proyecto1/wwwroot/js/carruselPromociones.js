@@ -92,6 +92,9 @@ function mostrarMensaje(texto, tipo = "info") {
 // =====================================================
 // SUBIR UNA IMAGEN A CLOUDINARY
 // =====================================================
+// =====================================================
+// SUBIR UNA IMAGEN A CLOUDINARY
+// =====================================================
 async function subirPromocionCloudinary(archivo) {
     const formData = new FormData();
 
@@ -105,13 +108,17 @@ async function subirPromocionCloudinary(archivo) {
 
     const datos = await respuesta.json();
 
-    if (!respuesta.ok || !datos.secure_url) {
+    if (!respuesta.ok || !datos.secure_url || !datos.public_id) {
         throw new Error(
-            datos.error?.message || "No se pudo subir la imagen a Cloudinary."
+            datos.error?.message ||
+            "No se pudo subir la imagen a Cloudinary."
         );
     }
 
-    return datos.secure_url;
+    return {
+        url: datos.secure_url,
+        publicId: datos.public_id
+    };
 }
 
 // =====================================================
@@ -183,7 +190,7 @@ formPromociones.addEventListener("submit", async function (evento) {
             );
 
             // 1. Subir el archivo a Cloudinary
-            const urlImagen = await subirPromocionCloudinary(archivo);
+            const imagenCloudinary = await subirPromocionCloudinary(archivo);
 
             // 2. Enviar los datos a la API
             const respuesta = await fetch(API_PROMOCIONES, {
@@ -192,7 +199,8 @@ formPromociones.addEventListener("submit", async function (evento) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    Url_Imagen_Prom: urlImagen,
+                    Url_Imagen_Prom: imagenCloudinary.url,
+                    PublicId_Prom: imagenCloudinary.publicId,
                     Fila_Prom: fila,
                     Orden_Prom: ordenInicial + registradas,
                     Enlace_Prom: enlace || null,
@@ -319,6 +327,8 @@ function crearSlidePromocional(imagen) {
 // =====================================================
 // INICIAR UNA FILA DEL CARRUSEL
 // =====================================================
+
+
 function iniciarFilaPromocional(
     imagenes,
     idPista,
@@ -343,11 +353,37 @@ function iniciarFilaPromocional(
     pista.style.transition = "none";
     pista.style.transform = "translateX(0)";
 
+    // Elementos exclusivos del carrusel 2
+    const visor = tipoFila === 2
+        ? pista.closest(".promo-fila-2-visor")
+        : null;
+
+    const btnAnterior = visor
+        ? visor.querySelector(".promo-flecha-anterior")
+        : null;
+
+    const btnSiguiente = visor
+        ? visor.querySelector(".promo-flecha-siguiente")
+        : null;
+
+    const indicadores = tipoFila === 2
+        ? document.getElementById("indicadoresPromociones2")
+        : null;
+
+    if (indicadores) {
+        indicadores.innerHTML = "";
+        indicadores.style.display = "none";
+    }
+
     if (imagenes.length === 0) {
         const vacio = document.createElement("div");
         vacio.className = "promo-vacio";
         vacio.textContent = "No hay promociones disponibles.";
         pista.appendChild(vacio);
+
+        if (btnAnterior) btnAnterior.hidden = true;
+        if (btnSiguiente) btnSiguiente.hidden = true;
+
         return;
     }
 
@@ -357,26 +393,112 @@ function iniciarFilaPromocional(
 
     let indice = 0;
 
-    if (imagenes.length < 2) return;
+    if (imagenes.length < 2) {
+        if (btnAnterior) btnAnterior.hidden = true;
+        if (btnSiguiente) btnSiguiente.hidden = true;
+        return;
+    }
 
-    const avanzar = () => {
+    if (btnAnterior) btnAnterior.hidden = false;
+    if (btnSiguiente) btnSiguiente.hidden = false;
+
+    // Crear indicadores
+    const botonesIndicadores = [];
+
+    if (indicadores) {
+        indicadores.style.display = "flex";
+
+        imagenes.forEach((imagen, posicion) => {
+            const boton = document.createElement("button");
+
+            boton.type = "button";
+            boton.className = "promo-indicador";
+            boton.setAttribute(
+                "aria-label",
+                `Mostrar imagen ${posicion + 1}`
+            );
+
+            boton.addEventListener("click", () => {
+                indice = posicion;
+                mostrarImagen();
+                reiniciarTemporizador();
+            });
+
+            indicadores.appendChild(boton);
+            botonesIndicadores.push(boton);
+        });
+    }
+
+    // Actualizar indicador activo
+    const actualizarIndicadores = () => {
+        botonesIndicadores.forEach((boton, posicion) => {
+            const activo = posicion === indice;
+
+            boton.classList.toggle("activo", activo);
+            boton.setAttribute("aria-current", activo ? "true" : "false");
+        });
+    };
+
+    // Mostrar imagen correspondiente
+    const mostrarImagen = () => {
         const primeraImagen = pista.querySelector(".promo-slide");
 
         if (!primeraImagen) return;
 
-        // Ancho real de una imagen, incluido su contenedor
         const ancho = primeraImagen.getBoundingClientRect().width;
 
         if (!ancho) return;
 
-        indice = (indice + 1) % imagenes.length;
-
         pista.style.transition = "transform 0.7s ease-in-out";
         pista.style.transform =
             `translateX(-${indice * ancho}px)`;
+
+        actualizarIndicadores();
     };
 
-    const temporizador = setInterval(avanzar, intervalo);
+    // Avanzar
+    const avanzar = () => {
+        indice = (indice + 1) % imagenes.length;
+        mostrarImagen();
+    };
+
+    // Retroceder
+    const retroceder = () => {
+        indice = (indice - 1 + imagenes.length) % imagenes.length;
+        mostrarImagen();
+    };
+
+    // Reiniciar temporizador automático
+    let temporizador = null;
+
+    const reiniciarTemporizador = () => {
+        if (temporizador) {
+            clearInterval(temporizador);
+        }
+
+        temporizador = setInterval(avanzar, intervalo);
+    };
+
+    // Eventos de las flechas
+    if (btnAnterior) {
+        btnAnterior.onclick = () => {
+            retroceder();
+            reiniciarTemporizador();
+        };
+    }
+
+    if (btnSiguiente) {
+        btnSiguiente.onclick = () => {
+            avanzar();
+            reiniciarTemporizador();
+        };
+    }
+
+    // Mostrar el primer indicador activo
+    actualizarIndicadores();
+
+    // Iniciar desplazamiento automático
+    reiniciarTemporizador();
 
     if (tipoFila === 1) {
         temporizadorPromociones1 = temporizador;
@@ -384,6 +506,7 @@ function iniciarFilaPromocional(
         temporizadorPromociones2 = temporizador;
     }
 }
+
 
 // =====================================================
 // CONSULTAR API Y CARGAR LOS DOS CARRUSELES
@@ -488,6 +611,8 @@ document.addEventListener(
 const formEditarPromocion =
     document.getElementById("formEditarPromocion");
 
+let publicIdPromocionEditando = null;
+
 // =====================================================
 // LISTAR TODAS LAS PROMOCIONES
 // =====================================================
@@ -590,6 +715,18 @@ async function cargarListaPromociones() {
 
             tdAccion.appendChild(botonEditar);
 
+            const botonEliminar = document.createElement("button");
+
+            botonEliminar.type = "button";
+            botonEliminar.className = "btn btn-sm btn-danger ms-2";
+            botonEliminar.textContent = "Eliminar";
+
+            botonEliminar.addEventListener("click", () => {
+                eliminarPromocion(id, botonEliminar);
+            });
+
+            tdAccion.appendChild(botonEliminar);
+
             tr.append(
                 tdImagen,
                 tdFila,
@@ -612,6 +749,48 @@ async function cargarListaPromociones() {
     }
 }
 
+
+async function eliminarPromocion(id, boton) {
+
+    if (!confirm("¿Estás seguro de que deseas eliminar esta promoción?")) {
+        return;
+    }
+
+    try {
+        boton.disabled = true;
+        boton.textContent = "Eliminando...";
+
+        const respuesta = await fetch(
+            `${API_PROMOCIONES}/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                resultado.mensaje ||
+                "No se pudo eliminar la promoción."
+            );
+        }
+
+        alert(resultado.mensaje);
+
+        await cargarListaPromociones();
+        await cargarCarruselPromociones();
+
+    } catch (error) {
+
+        console.error("Error al eliminar promoción:", error);
+
+        alert(error.message);
+
+        boton.disabled = false;
+        boton.textContent = "Eliminar";
+    }
+}
 // =====================================================
 // OBTENER PROMOCIÓN POR ID Y ABRIR EL MODAL
 // =====================================================
@@ -624,6 +803,9 @@ async function abrirEditarPromocion(id) {
         }
 
         const imagen = await respuesta.json();
+
+        publicIdPromocionEditando =
+            obtenerCampo(imagen, "PublicId_Prom") || null;
 
         document.getElementById("editarIdProm").value =
             obtenerCampo(imagen, "Id_Prom");
@@ -744,34 +926,17 @@ formEditarPromocion.addEventListener("submit", async function (evento) {
             "editarVistaPrevia"
         ).src;
 
+        let publicIdImagen = publicIdPromocionEditando;
+
         if (archivo) {
             mensaje.textContent = "Subiendo nueva imagen...";
             mensaje.style.display = "block";
 
-            const formData = new FormData();
-            formData.append("file", archivo);
-            formData.append("upload_preset", CLOUDINARY_PRESET);
+            const imagenCloudinary =
+                await subirPromocionCloudinary(archivo);
 
-            const respuestaCloudinary = await fetch(
-                CLOUDINARY_URL,
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-            const datosCloudinary =
-                await respuestaCloudinary.json();
-
-            if (!respuestaCloudinary.ok ||
-                !datosCloudinary.secure_url) {
-                throw new Error(
-                    datosCloudinary.error?.message ||
-                    "No se pudo subir la nueva imagen."
-                );
-            }
-
-            urlImagen = datosCloudinary.secure_url;
+            urlImagen = imagenCloudinary.url;
+            publicIdImagen = imagenCloudinary.publicId;
         }
 
         const respuesta = await fetch(
@@ -781,9 +946,11 @@ formEditarPromocion.addEventListener("submit", async function (evento) {
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify({
                     Id_Prom: id,
                     Url_Imagen_Prom: urlImagen,
+                    PublicId_Prom: publicIdImagen,
                     Fila_Prom: fila,
                     Orden_Prom: orden,
                     Enlace_Prom: enlace || null,

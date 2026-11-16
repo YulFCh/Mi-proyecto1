@@ -1,7 +1,7 @@
 ﻿
 /* =====================================================
    CARRUSEL PROMOCIONAL
-   ===================================================== */
+===================================================== */
 
 /* CONTENEDOR GENERAL */
 #carruselPromociones {
@@ -18,7 +18,7 @@
 
     /* =====================================================
    FILAS DEL CARRUSEL
-   ===================================================== */
+===================================================== */
 
     #carruselPromociones .promo-fila {
         position: relative;
@@ -34,7 +34,15 @@
 
     /* FILA 1: PUBLICIDAD PEQUEÑA */
     #carruselPromociones .promo-fila-1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 70%;
+        max-width: 1400px;
         height: 1cm;
+        margin: 0 auto;
+        overflow: visible;
     }
 
     /* FILA 2: PUBLICIDAD A PANTALLA COMPLETA */
@@ -53,8 +61,19 @@
     }
 
     /* =====================================================
+   VISOR DE LA IMAGEN DE LA FILA 1
+===================================================== */
+
+    #carruselPromociones .promo-fila-1-visor {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    /* =====================================================
    PISTA HORIZONTAL
-   ===================================================== */
+===================================================== */
 
     #carruselPromociones .promo-pista {
         display: flex;
@@ -69,9 +88,13 @@
         will-change: transform;
     }
 
+    #carruselPromociones .promo-fila-1-visor .promo-pista {
+        height: 100%;
+    }
+
     /* =====================================================
    DIAPOSITIVAS
-   ===================================================== */
+===================================================== */
 
     #carruselPromociones .promo-slide {
         display: block;
@@ -119,34 +142,142 @@
         animation-play-state: paused;
     }
 
+    /* =====================================================
+   BOTÓN VER TODO Y FLECHA
+===================================================== */
+
+    #carruselPromociones .promo-fila-1 .btn-ver-todo {
+        position: relative;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 26px;
+        margin-right: 31px;
+        padding: 0 13px;
+        border: 1px solid #333;
+        border-radius: 50px;
+        background: transparent;
+        color: #333;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all .25s ease;
+    }
+
+    /* CÍRCULO INDEPENDIENTE */
+    #carruselPromociones .btn-ver-todo-flecha {
+        position: absolute;
+        left: calc(100% + 5px);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        box-sizing: border-box;
+        border: 1px solid #333;
+        border-radius: 50%;
+        background: transparent;
+        transition: all .25s ease;
+    }
+
+        /* FLECHA CENTRADA CON CSS */
+        #carruselPromociones .btn-ver-todo-flecha::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-top: 1.7px solid #333;
+            border-right: 1.7px solid #333;
+            transform: translateX(-1px) rotate(45deg);
+            transition: border-color .25s ease;
+        }
+
+    /* HOVER DEL BOTÓN */
+    #carruselPromociones .promo-fila-1 .btn-ver-todo:hover {
+        background: #000;
+        border-color: #000;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* HOVER DEL CÍRCULO */
+    #carruselPromociones .btn-ver-todo:hover .btn-ver-todo-flecha {
+        background: #000;
+        border-color: #000;
+    }
+
+        /* HOVER DE LA FLECHA */
+        #carruselPromociones .btn-ver-todo:hover .btn-ver-todo-flecha::before {
+            border-color: #fff;
+        }
+
 /* =====================================================
    MÓVILES
-   ===================================================== */
+===================================================== */
 
 @media (max-width: 768px) {
 
+    /* FILA 1 */
     #carruselPromociones .promo-fila-1 {
+        width: 100%;
+        max-width: 100%;
         height: 1cm;
+        margin: 0;
+        padding: 0;
+        gap: 8px;
     }
 
+    /* FILA 2 */
     #carruselPromociones .promo-fila-2 {
         height: 5cm;
     }
 
+    /* PISTAS */
     #carruselPromociones .promo-pista {
         height: 100%;
     }
 
-    /* Mostrar la imagen completa en móviles */
+    #carruselPromociones .promo-fila-1 .promo-pista {
+        width: max-content;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    /* DIAPOSITIVAS DE FILA 1 */
+    #carruselPromociones .promo-fila-1 .promo-slide {
+        flex: 0 0 100vw;
+        width: 100vw;
+        max-width: 100vw;
+        height: 100%;
+    }
+
+        #carruselPromociones .promo-fila-1 .promo-slide a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+    /* IMÁGENES */
     #carruselPromociones .promo-slide .promo-imagen {
         object-fit: contain;
         object-position: center;
     }
+
+    #carruselPromociones .promo-fila-1 .promo-imagen {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        object-fit: fill;
+    }
 }
 
 /* =====================================================
-   EVITAR DESBORDAMIENTO HORIZONTAL DE LA PÁGINA
-   ===================================================== */
+   EVITAR DESBORDAMIENTO HORIZONTAL
+===================================================== */
 
 html,
 body {
@@ -155,56 +286,121 @@ body {
 
 
 
-/* CORREGIR FILA 1 EN PANTALLAS PEQUEÑAS */
-@media (max-width: 768px) {
+/* =====================================================
+   FLECHAS DEL CARRUSEL 2
+   ===================================================== */
 
-    #carruselPromociones .promo-fila-1 {
-        width: 100%;
-        max-width: 100%;
-        height: 1cm;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-
-        #carruselPromociones .promo-fila-1 .promo-pista {
-            height: 100%;
-            width: max-content;
-            display: flex;
-            flex-wrap: nowrap;
-        }
-
-        #carruselPromociones .promo-fila-1 .promo-slide {
-            flex: 0 0 100vw;
-            width: 100vw;
-            max-width: 100vw;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-            #carruselPromociones .promo-fila-1 .promo-slide a {
-                display: block;
-                width: 100%;
-                height: 100%;
-            }
-
-        #carruselPromociones .promo-fila-1 .promo-imagen {
-            display: block;
-            width: 100%;
-            max-width: 100%;
-            height: 100%;
-            object-fit: fill;
-            object-position: center;
-            margin: 0;
-            padding: 0;
-        }
+.promo-fila-2 {
+    position: relative;
 }
 
+    .promo-fila-2 .promo-flecha {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        background: #343E49;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .promo-fila-2 .promo-flecha-anterior {
+        left: 15px;
+    }
+
+    .promo-fila-2 .promo-flecha-siguiente {
+        right: 15px;
+    }
+
+    /* DIBUJO DE LAS FLECHAS */
+    .promo-fila-2 .promo-flecha span {
+        width: 10px;
+        height: 10px;
+        border-top: 2px solid #fff;
+        border-right: 2px solid #fff;
+    }
+
+    .promo-fila-2 .promo-flecha-anterior span {
+        transform: rotate(-135deg);
+        margin-left: 4px;
+    }
+
+    .promo-fila-2 .promo-flecha-siguiente span {
+        transform: rotate(45deg);
+        margin-right: 4px;
+    }
 
 
 
 
 
+/* =====================================================
+   CARRUSEL 2: VISOR E INDICADORES
+   ===================================================== */
+
+/* CONTENEDOR GENERAL */
+#carruselPromociones .promo-fila-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: auto;
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    overflow: visible;
+    gap: 0;
+}
+
+/* VISOR DE IMÁGENES */
+#carruselPromociones .promo-fila-2-visor {
+    position: relative;
+    width: 100%;
+    height: 5cm;
+    overflow: hidden;
+}
+
+    /* PISTA */
+    #carruselPromociones .promo-fila-2-visor .promo-pista {
+        height: 100%;
+    }
+
+/* INDICADORES */
+#indicadoresPromociones2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 35px;
+    padding: 8px 0;
+    box-sizing: border-box;
+}
+
+    /* CÍRCULOS */
+    #indicadoresPromociones2 .promo-indicador {
+        width: 8px;
+        height: 8px;
+        min-width: 8px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: #d8d8d8;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        /* INDICADOR ACTIVO */
+        #indicadoresPromociones2 .promo-indicador.activo {
+            width: 28px;
+            min-width: 28px;
+            border-radius: 10px;
+            background: #ff0094;
+        }

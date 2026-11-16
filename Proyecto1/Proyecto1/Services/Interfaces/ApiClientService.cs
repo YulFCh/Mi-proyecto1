@@ -82,6 +82,28 @@ namespace Proyecto1.Services
                 );
             }
         }
+
+        // PATCH
+        public async Task<HttpResponseMessage> PatchAsync<T>(
+            string endpoint,
+            T data,
+            CancellationToken cancellationToken = default)
+        {
+            ValidarEndpoint(endpoint);
+
+            using var request = new HttpRequestMessage(
+                HttpMethod.Patch,
+                endpoint
+            )
+            {
+                Content = JsonContent.Create(data)
+            };
+
+            return await _httpClient.SendAsync(
+                request,
+                cancellationToken
+            );
+        }
     }
 }
 

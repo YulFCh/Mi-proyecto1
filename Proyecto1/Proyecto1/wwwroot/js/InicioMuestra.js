@@ -5262,16 +5262,29 @@ function actualizarBreadcrumb() {
 
     // INICIO
     agregarEnlace("Inicio", function () {
+
         limpiarFiltrosProductos();
 
         categoriaSeleccionada = null;
         subcategoriaSeleccionada = null;
         tipoEquipoSeleccionado = null;
 
+        // Regresar la URL a la página principal.
+        history.pushState(
+            {
+                categoria: null,
+                subcategoria: null,
+                tipoEquipo: null
+            },
+            "",
+            "/"
+        );
+
         cargarProductos();
 
-        // Ocultar el breadcrumb al regresar al catálogo completo
+        // Ocultar el breadcrumb al regresar al catálogo completo.
         const breadcrumb = document.getElementById("breadcrumbCategorias");
+
         if (breadcrumb) {
             breadcrumb.innerHTML = "";
             breadcrumb.style.display = "none";
@@ -5297,7 +5310,25 @@ function actualizarBreadcrumb() {
 
     if (haySubcategoria) {
         agregarEnlace(categoria.nombre, function () {
-            seleccionarCategoria(categoria.idCategoria);
+
+            // Mantener la categoría actual.
+            categoriaSeleccionada = Number(categoria.idCategoria);
+
+            // Limpiar las selecciones inferiores.
+            subcategoriaSeleccionada = null;
+            tipoEquipoSeleccionado = null;
+
+            // Limpiar los filtros adicionales.
+            limpiarFiltrosProductos();
+
+            // Cargar todos los productos de la categoría.
+            cargarProductos();
+
+            // Actualizar la URL.
+            actualizarUrlCategorias();
+
+            // Actualizar el breadcrumb.
+            actualizarBreadcrumb();
         });
     } else {
         agregarActual(categoria.nombre);
@@ -5316,15 +5347,22 @@ function actualizarBreadcrumb() {
 
     // SUBCATEGORÍA
     if (tipoEquipoSeleccionado) {
+
         agregarEnlace(subcategoria.nombre, function () {
+
             seleccionarSubcategoria(
                 subcategoria.idSubcategoria,
                 categoria.idCategoria
             );
+
+            // Actualizar la URL sin el tipo de equipo.
+            actualizarUrlCategorias();
+
         });
 
         agregarSeparador();
         agregarActual(tipoEquipoSeleccionado);
+
     } else {
         agregarActual(subcategoria.nombre);
     }

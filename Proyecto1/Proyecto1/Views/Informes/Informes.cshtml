@@ -1,0 +1,236 @@
+﻿@{
+    ViewData["Title"] = "Informes";
+
+    var estaLogueado = User.Identity?.IsAuthenticated == true;
+
+    Layout = estaLogueado
+        ? "~/Views/Shared/_LayoutNavegador.cshtml"
+        : "~/Views/Shared/_LayoutInicio.cshtml";
+}
+
+
+
+@if (estaLogueado)
+{
+    <!-- BOTÓN AGREGAR -->
+    <div style="display:flex; justify-content:flex-start;
+                    padding:0 20px; margin:10px 0;">
+
+        <button type="button"
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#modalAgregarSeccion">
+
+            <i class="feather icon-plus"></i>
+            Agregar sección
+
+        </button>
+    </div>
+
+    <!-- BOTÓN ADMINISTRAR -->
+    <div style="padding:10px 20px;">
+
+        <button type="button"
+                class="btn btn-primary"
+                onclick="cargarListaSecciones()">
+
+            <i class="feather icon-edit"></i>
+            Administrar secciones
+
+        </button>
+
+    </div>
+
+    <!-- LISTA DE ADMINISTRACIÓN -->
+    <div id="listaAdministrarSecciones"
+         style="display:none; padding:20px;">
+
+        <h5>Secciones registradas</h5>
+
+        <div id="tablaSecciones"></div>
+
+    </div>
+}
+
+
+
+
+<!-- ==========================================
+     MODAL AGREGAR SECCIÓN
+========================================== -->
+
+<div class="modal fade"
+     id="modalAgregarSeccion"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="tituloAgregarSeccion"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="tituloAgregarSeccion">
+                    Agregar sección
+                </h5>
+
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+
+            <form id="formAgregarSeccion">
+
+                <input type="hidden" id="idSeccionEditar" value="">
+
+                <div class="modal-body">
+
+                    <!-- TÍTULO -->
+                    <div class="form-group">
+                        <label for="tituloSeccion">
+                            Título de la sección
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               id="tituloSeccion"
+                               maxlength="150"
+                               placeholder="Ej. Términos y condiciones"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Icono de la sección</label>
+
+                        <input type="text"
+                               id="iconoSeccion"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Ej. file-text">
+                    </div>
+
+
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="form-group">
+                        <label for="descripcionSeccion">
+                            Descripción
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="descripcionSeccion"
+                                  rows="2"
+                                  maxlength="250"
+                                  placeholder="Descripción opcional de la sección"></textarea>
+                    </div>
+
+                    <div class="row">
+
+                        <!-- ORDEN -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ordenSeccion">
+                                    Orden de visualización
+                                </label>
+
+                                <input type="number"
+                                       class="form-control"
+                                       id="ordenSeccion"
+                                       min="0"
+                                       value="0"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="estadoSeccion">
+                                    Estado
+                                </label>
+
+                                <select class="form-control"
+                                        id="estadoSeccion"
+                                        required>
+
+                                    <option value="true" selected>Activo</option>
+                                    <option value="false">Inactivo</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- ELEMENTOS -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h5 class="mb-0">Elementos de la sección</h5>
+
+                        <button type="button"
+                                class="btn btn-primary btn-sm"
+                                onclick="agregarElementoSeccion()">
+
+                            <i class="feather icon-plus"></i>
+                            Agregar elemento
+
+                        </button>
+
+                    </div>
+
+                    <!-- CONTENEDOR DINÁMICO -->
+                    <div id="contenedorElementosSeccion">
+
+                        <!-- Aquí agregaremos los elementos dinámicamente -->
+
+                    </div>
+
+                    <!-- MENSAJE -->
+                    <div id="mensajeSeccion"
+                         role="status"
+                         aria-live="polite"
+                         style="display:none; margin-top:12px;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarSeccion"
+                            class="btn btn-success">
+
+                        <i class="feather icon-save"></i>
+                        Guardar sección
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="~/js/Informes.js"></script>

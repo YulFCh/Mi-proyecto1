@@ -343,6 +343,17 @@
         @RenderBody()
     </div>
 
+    <!-- FOOTER DINÁMICO DE INFORMES -->
+    <footer id="footerInformes" class="footer-informes">
+        <div id="contenidoFooterInformes">
+            <!-- Las secciones se cargarán dinámicamente -->
+        </div>
+
+        <div class="footer-derechos">
+            <p>© 2026 FRACTÁLICA. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
 
     <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
 
@@ -674,7 +685,145 @@
 
 </html>
 
+<script>
 
+    document.addEventListener("DOMContentLoaded", async function () {
+
+        const contenedor = document.getElementById("contenidoFooterInformes");
+
+        if (!contenedor) return;
+
+        try {
+
+            const respuesta = await fetch("/Informes/ListarPublicos");
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudieron cargar las secciones.");
+            }
+
+            const secciones = await respuesta.json();
+
+            if (!Array.isArray(secciones) || secciones.length === 0) {
+                return;
+            }
+
+            contenedor.innerHTML = "";
+
+            secciones
+                .sort((a, b) => a.ordenSeccion - b.ordenSeccion)
+                .forEach(seccion => {
+
+                    const columna = document.createElement("div");
+                    columna.className = "footer-informes-columna";
+
+
+        const titulo = document.createElement("h4");
+
+    const nombreIcono = (
+        seccion.icono ?? seccion.Icono ?? ""
+    ).trim().toLowerCase();
+
+    if (nombreIcono) {
+        const icono = document.createElement("i");
+        icono.setAttribute("data-lucide", nombreIcono);
+        icono.className = "footer-informes-icono";
+        titulo.appendChild(icono);
+    }
+
+    const textoTitulo = document.createElement("span");
+    textoTitulo.textContent =
+        seccion.titulo ?? seccion.Titulo ?? "";
+
+    titulo.appendChild(textoTitulo);
+
+    columna.appendChild(titulo);
+
+
+    // Contenedor del contenido debajo del título.
+    const contenido = document.createElement("div");
+    contenido.className = "footer-informes-contenido";
+
+    // Descripción de la sección.
+    if (seccion.descripcion) {
+        const descripcion = document.createElement("p");
+        descripcion.textContent = seccion.descripcion;
+        contenido.appendChild(descripcion);
+    }
+
+    // Elementos de la sección.
+    const elementos = [...(seccion.elementos || [])]
+        .filter(elemento => elemento.estado)
+        .sort((a, b) => a.ordenElemento - b.ordenElemento);
+
+    elementos.forEach(elemento => {
+
+        const item = document.createElement("div");
+        item.className = "footer-informes-elemento";
+
+        if (elemento.tipoElemento === "Imagen" && elemento.urlImagen) {
+
+            const imagen = document.createElement("img");
+            imagen.src = elemento.urlImagen;
+            imagen.alt = elemento.etiqueta || seccion.titulo;
+
+            item.appendChild(imagen);
+
+        } else {
+
+            if (elemento.icono) {
+                const icono = document.createElement("i");
+                icono.setAttribute("data-lucide", elemento.icono);
+                item.appendChild(icono);
+            }
+
+            const texto = document.createElement("span");
+            texto.textContent = elemento.etiqueta || elemento.contenido || "";
+
+            item.appendChild(texto);
+        }
+
+        if (elemento.permiteClick && elemento.urlDestino) {
+
+            const enlace = document.createElement("a");
+            enlace.href = elemento.urlDestino;
+            enlace.appendChild(item);
+
+            if (/^https?:\/\//i.test(elemento.urlDestino)) {
+                enlace.target = "_blank";
+                enlace.rel = "noopener noreferrer";
+            }
+
+            contenido.appendChild(enlace);
+
+        } else {
+
+            contenido.appendChild(item);
+
+        }
+
+    });
+
+    // Agregar todo el contenido debajo del título.
+    columna.appendChild(contenido);
+
+
+                    contenedor.appendChild(columna);
+
+                });
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+
+        } catch (error) {
+
+            console.error("Error al cargar el footer:", error);
+
+        }
+
+    });
+
+</script>
 
 <script>
     (() => {
@@ -852,6 +1001,7 @@
         // Servicios no debe activar el filtro de productos.
         if (!esServicios && typeof seleccionarCategoria === "function") {
             seleccionarCategoria(categoria.idCategoria);
+            actualizarUrlCategorias();
         }
 
         // Marcar la categoría seleccionada.
@@ -871,25 +1021,20 @@
             // Mostrar la primera categoría automáticamente.
 
             // Mostrar la primera categoría automáticamente.
-            if (categorias.length > 0) {
-                const primera = categorias[0];
+                // ==========================================
+    // CARGAR CATEGORÍA SEGÚN LA URL
+    // ==========================================
 
-                // Esperar a que se carguen los productos.
-                if (typeof cargarProductos === "function") {
-                    await cargarProductos();
-                }
+    if (categorias.length > 0) {
 
-                // Mostrar las subcategorías con sus equipos.
-                mostrarDetalleCategoria(primera);
+        // Cargar los productos antes de recuperar la selección.
+        if (typeof cargarProductos === "function") {
+            await cargarProductos();
+        }
 
-                // Marcar la primera categoría como seleccionada.
-                const primerEnlace =
-                    lista.querySelector(".categoria-enlace");
+        await restaurarSeleccionDesdeUrl();
 
-                if (primerEnlace) {
-                    primerEnlace.classList.add("activa");
-                }
-            }
+    }
 
 
         } catch (error) {
@@ -2038,6 +2183,8 @@
 
                 tipoEquipoSeleccionado = null;
 
+                actualizarUrlCategorias();
+
             });
 
             columna.appendChild(tituloSubcategoria);
@@ -2095,6 +2242,8 @@
                             categoria.idCategoria
                         );
 
+                        actualizarUrlCategorias();
+
                     });
 
                     columna.appendChild(enlace);
@@ -2110,9 +2259,377 @@
     }
 
 
+        // ==========================================
+    // RECUPERAR SELECCIÓN DESDE LA URL
+    // ==========================================
+
+    async function restaurarSeleccionDesdeUrl() {
+
+         const categorias = window.categoriasProductos || [];
+
+        const segmentos = window.location.pathname
+            .split("/")
+            .filter(segmento => segmento.trim() !== "")
+            .map(segmento =>
+                decodeURIComponent(segmento).replace(/-/g, " ")
+            );
+
+        // Si estamos en la página principal, no hay selección en la URL.
+        if (segmentos.length === 0) {
+
+                const categorias = window.categoriasProductos || [];
+    const primera = categorias[0];
+
+    if (!primera) return;
+
+            await mostrarDetalleCategoria(primera);
+
+            const primerEnlace =
+                lista.querySelector(".categoria-enlace");
+
+            if (primerEnlace) {
+                primerEnlace.classList.add("activa");
+            }
+
+            return;
+        }
+
+        const nombreCategoriaUrl = normalizarTextoBusqueda(segmentos[0]);
+
+        // Buscar la categoría indicada en la dirección.
+        const categoria = categorias.find(c =>
+            normalizarTextoBusqueda(c.nombre ?? c.Nombre ?? "") ===
+            nombreCategoriaUrl
+        );
+
+        // Si la ruta no corresponde a una categoría, no modificar la página.
+        if (!categoria) {
+            return;
+        }
+
+        // Mostrar el contenido de la categoría.
+        await mostrarDetalleCategoria(categoria);
+
+        // Marcar la categoría correspondiente en el panel.
+        lista.querySelectorAll(".categoria-enlace")
+            .forEach(enlace => enlace.classList.remove("activa"));
+
+        const enlaceCategoria = lista.querySelector(
+            `.categoria-enlace[data-categoria-id="${categoria.idCategoria ?? categoria.IdCategoria}"]`
+        );
+
+        if (enlaceCategoria) {
+            enlaceCategoria.classList.add("activa");
+        }
+
+        // Seleccionar la categoría.
+        if (typeof seleccionarCategoria === "function") {
+
+           await seleccionarCategoria(
+                categoria.idCategoria ?? categoria.IdCategoria
+            );
+        }
+
+        // Si la URL solamente contiene la categoría, terminar.
+        if (segmentos.length < 2) {
+            return;
+        }
+
+        // ==========================================
+        // BUSCAR SUBCATEGORÍA
+        // ==========================================
+
+        const subcategorias =
+            categoria.subcategorias ?? categoria.Subcategorias ?? [];
+
+        const nombreSubcategoriaUrl =
+            normalizarTextoBusqueda(segmentos[1]);
+
+        const subcategoria = subcategorias.find(s =>
+            normalizarTextoBusqueda(s.nombre ?? s.Nombre ?? "") ===
+            nombreSubcategoriaUrl
+        );
+
+        if (!subcategoria) {
+            return;
+        }
+
+        // Seleccionar subcategoría.
+       await seleccionarSubcategoria(
+            subcategoria.idSubcategoria ?? subcategoria.IdSubcategoria,
+            categoria.idCategoria ?? categoria.IdCategoria
+        );
+
+        tipoEquipoSeleccionado = null;
+
+        // Si la URL solamente contiene categoría y subcategoría, terminar.
+        if (segmentos.length < 3) {
+            return;
+        }
+
+        // ==========================================
+        // BUSCAR TIPO DE EQUIPO
+        // ==========================================
+
+        const nombreTipoUrl = normalizarTextoBusqueda(segmentos[2]);
+
+        const equipos = window.productosAgrupados || [];
+
+        const equipoEncontrado = equipos.find(equipo => {
+
+            const idSubcategoria =
+                equipo.idSubcategoria ?? equipo.IdSubcategoria;
+
+            const nombreEquipo =
+                equipo.tipo_Equipo ??
+                equipo.tipoEquipo ??
+                equipo.Tipo_Equipo ??
+                equipo.tipo_equipo;
+
+            return Number(idSubcategoria) ===
+                Number(subcategoria.idSubcategoria ?? subcategoria.IdSubcategoria)
+                &&
+                normalizarTextoBusqueda(nombreEquipo ?? "") === nombreTipoUrl
+                &&
+                String(equipo.estado ?? "").trim().toLowerCase() !== "inactivo";
+        });
+
+        if (!equipoEncontrado) {
+            return;
+        }
+
+        const nombreEquipo =
+            equipoEncontrado.tipo_Equipo ??
+            equipoEncontrado.tipoEquipo ??
+            equipoEncontrado.Tipo_Equipo ??
+            equipoEncontrado.tipo_equipo;
+
+        // Seleccionar el tipo de equipo.
+        await seleccionarTipoEquipo(
+            nombreEquipo,
+            subcategoria.idSubcategoria ?? subcategoria.IdSubcategoria,
+            categoria.idCategoria ?? categoria.IdCategoria
+        );
+    }
+
+        // ==========================================
+    // NAVEGACIÓN ATRÁS / ADELANTE
+    // ==========================================
+
+    window.addEventListener("popstate", async function () {
+
+        await restaurarSeleccionDesdeUrl();
+
+    });
+
 
 
     });
+
+
+
+        // ==========================================
+    // ACTUALIZAR URL DE CATEGORÍAS
+    // ==========================================
+
+    function actualizarUrlCategorias() {
+
+        const categorias = window.categoriasProductos || [];
+
+        // Buscar categoría seleccionada.
+        const categoria = categorias.find(c =>
+            Number(c.idCategoria ?? c.IdCategoria) ===
+            Number(categoriaSeleccionada)
+        );
+
+        if (!categoria) return;
+
+        const nombreCategoria =
+            categoria.nombre ?? categoria.Nombre ?? "";
+
+        const segmentos = [nombreCategoria];
+
+        // Buscar subcategoría seleccionada.
+        if (subcategoriaSeleccionada) {
+
+            const subcategorias =
+                categoria.subcategorias ?? categoria.Subcategorias ?? [];
+
+            const subcategoria = subcategorias.find(s =>
+                Number(s.idSubcategoria ?? s.IdSubcategoria) ===
+                Number(subcategoriaSeleccionada)
+            );
+
+            if (subcategoria) {
+
+                segmentos.push(
+                    subcategoria.nombre ?? subcategoria.Nombre ?? ""
+                );
+            }
+        }
+
+        // Agregar tipo de equipo.
+        if (tipoEquipoSeleccionado) {
+            segmentos.push(tipoEquipoSeleccionado);
+        }
+
+        // Convertir nombres en segmentos de URL.
+        const ruta = "/" + segmentos
+            .filter(nombre => nombre)
+            .map(nombre =>
+                encodeURIComponent(
+                    String(nombre).trim().replace(/\s+/g, "-")
+                )
+            )
+            .join("/");
+
+        // Actualizar dirección sin recargar.
+        history.pushState(
+            {
+                categoria: categoriaSeleccionada,
+                subcategoria: subcategoriaSeleccionada,
+                tipoEquipo: tipoEquipoSeleccionado
+            },
+            "",
+            ruta
+        );
+    }
 </script>
 
+
+
+
+<style>
+    /* FOOTER DINÁMICO */
+    .footer-informes {
+        width: 100%;
+        margin-top: 45px;
+        padding: 45px 6%;
+        background: #f2f2f2;
+        color: #333;
+    }
+
+    #contenidoFooterInformes {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 35px;
+    }
+
+    .footer-informes-columna h4 {
+        color: #333;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #ff0094;
+    }
+
+    .footer-informes-columna > p {
+        color: #666;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .footer-informes-elemento {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+        color: #555;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+        .footer-informes-elemento i {
+            width: 17px;
+            height: 17px;
+            min-width: 17px;
+            color: #ff0094;
+            margin-top: 2px;
+        }
+
+
+
+        .footer-informes-columna a:hover {
+            color: #ff0094;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+    .footer-informes-elemento img {
+        max-width: 100%;
+        max-height: 100px;
+        object-fit: contain;
+        border-radius: 5px;
+    }
+
+    @@media (max-width: 768px) {
+        #contenidoFooterInformes {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 25px 18px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .footer-informes {
+            padding: 35px 22px;
+        }
+
+        #contenidoFooterInformes {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+    }
+
+
+    /* DERECHOS RESERVADOS */
+    .footer-derechos {
+        max-width: 1400px;
+        margin: 35px auto 0;
+        padding-top: 20px;
+        border-top: 1px solid #d0d0d0;
+        text-align: center;
+    }
+
+        .footer-derechos p {
+            margin: 0;
+            color: #666;
+            font-size: 12px;
+        }
+
+
+    .footer-informes-columna h4 {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .footer-informes-icono {
+        width: 19px;
+        height: 19px;
+        min-width: 19px;
+        color: #ff0094;
+        stroke-width: 2;
+    }
+
+    .footer-informes-columna h4 {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        border-bottom: none;
+    }
+
+        .footer-informes-columna h4 span {
+            border-bottom: 1px solid #ff0094;
+            padding-bottom: 8px;
+        }
+
+    .footer-informes-contenido {
+        margin-left: 28px;
+    }
+</style>
 

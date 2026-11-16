@@ -25,5 +25,12 @@ namespace Proyecto1.Services.Interfaces
             string endpoint,
             CancellationToken cancellationToken = default
         );
+
+        Task<HttpResponseMessage> PatchAsync<T>(
+            string endpoint,
+            T data,
+            CancellationToken cancellationToken = default
+        );
+
     }
 }
