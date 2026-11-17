@@ -1,5 +1,5 @@
 ﻿
-using ApiProyecto1.Models.Catalogos;
+
 
 namespace ApiProyecto1.Models.Catalogos
 {
@@ -33,6 +33,8 @@ namespace ApiProyecto1.Models.Catalogos
 
         public int? IdSubcategoria { get; set; }
 
+        public bool MostrarPrecio { get; set; } = true;
+
         public List<VarianteModel> Variantes { get; set; } = new();
     }
 
@@ -45,6 +47,8 @@ namespace ApiProyecto1.Models.Catalogos
         public decimal Precio { get; set; }
         public decimal? Precio_Antes { get; set; }
         public decimal? Descuento { get; set; }
+
+        public bool MostrarPrecio { get; set; } = true;
 
         public string? Estado { get; set; }
 

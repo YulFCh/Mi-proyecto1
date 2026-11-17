@@ -160,5 +160,64 @@ namespace ApiProyecto1.Controllers.Catalogos
         }
 
 
+        // ============================================================
+        // OBTENER CONFIGURACIÓN GENERAL DE PRECIOS
+        // ============================================================
+
+        [HttpGet("configuracion-precios")]
+        public IActionResult ObtenerConfiguracionPrecios()
+        {
+            bool mostrarPrecios = _service.ObtenerMostrarPrecios();
+
+            return Ok(new
+            {
+                mostrarPrecios
+            });
+        }
+
+        // ============================================================
+        // ACTUALIZAR CONFIGURACIÓN GENERAL DE PRECIOS
+        // ============================================================
+
+        [HttpPut("configuracion-precios")]
+        public IActionResult ActualizarConfiguracionPrecios(
+            [FromBody] ActualizarConfiguracionPreciosRequest request)
+        {
+            if (request.MostrarPrecios == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Debes indicar si se mostrarán los precios."
+                });
+            }
+
+            try
+            {
+                _service.ActualizarMostrarPrecios(request.MostrarPrecios.Value);
+
+                return Ok(new
+                {
+                    success = true,
+                    mostrarPrecios = request.MostrarPrecios.Value,
+                    message = "Configuración de precios actualizada correctamente."
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+
+    }
+
+    public class ActualizarConfiguracionPreciosRequest
+    {
+        public bool? MostrarPrecios { get; set; }
     }
 }

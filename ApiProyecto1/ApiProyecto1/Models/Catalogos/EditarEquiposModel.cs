@@ -23,7 +23,7 @@ namespace ApiProyecto1.Models.Catalogos
         public string? Usuario_Modifica { get; set; }
         public string? Descripcion1 { get; set; }
         public string? Garantia { get; set; }
-
+        public bool? MostrarPrecio { get; set; }
         public int? IdSubcategoria { get; set; }
 
         // NUEVO SISTEMA DE IMÁGENES

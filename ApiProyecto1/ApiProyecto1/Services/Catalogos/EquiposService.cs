@@ -47,7 +47,8 @@ namespace ApiProyecto1.Services.Catalogos
                         estado,
                         usuario_registra,
                         descripcion1,
-                        garantia
+                        garantia,
+                        MostrarPrecio
                     FROM equipos
                     ORDER BY marca, modelo, id;";
 
@@ -119,7 +120,8 @@ namespace ApiProyecto1.Services.Catalogos
 
                                 Garantia = dr["garantia"] == DBNull.Value
                                     ? null
-                                    : dr["garantia"].ToString()
+                                    : dr["garantia"].ToString(),
+                                MostrarPrecio = Convert.ToBoolean(dr["MostrarPrecio"])
                             });
                         }
                     }
@@ -208,7 +210,7 @@ namespace ApiProyecto1.Services.Catalogos
                         Precio = x.Precio,
                         Precio_Antes = x.Precio_Antes,
                         Descuento = x.Descuento,
-
+                        MostrarPrecio = x.MostrarPrecio,
                         Estado = x.Estado,
                         Codigo_Producto = x.Codigo_Producto,
 
@@ -235,7 +237,7 @@ namespace ApiProyecto1.Services.Catalogos
                         primero.Precio = varianteInicial.Precio;
                         primero.Precio_Antes = varianteInicial.Precio_Antes;
                         primero.Descuento = varianteInicial.Descuento;
-
+                        primero.MostrarPrecio = varianteInicial.MostrarPrecio;
                         primero.Estado = varianteInicial.Estado;
                         primero.Codigo_Producto =
                             varianteInicial.Codigo_Producto;
@@ -431,7 +433,8 @@ namespace ApiProyecto1.Services.Catalogos
             e.codigo_producto,
             e.precio_antes,
             e.descuento,
-            e.estado
+            e.estado,
+            e.MostrarPrecio
         FROM equipos e
         INNER JOIN equipos base
             ON e.tipo_equipo = base.tipo_equipo
@@ -481,6 +484,8 @@ namespace ApiProyecto1.Services.Catalogos
                         : Convert.ToDecimal(reader["descuento"]),
 
                     Estado = reader["estado"]?.ToString(),
+
+                    MostrarPrecio = Convert.ToBoolean(reader["MostrarPrecio"]),
 
                     Imagenes = new List<EquipoImagenModel>()
                 });
@@ -617,6 +622,37 @@ namespace ApiProyecto1.Services.Catalogos
                 // ==========================================
                 // ACTUALIZAR DATOS DEL EQUIPO
                 // ==========================================
+
+                // ==========================================
+                // ACTUALIZAR VISIBILIDAD DE TODA LA CARPETA
+                // ==========================================
+
+                if (model.MostrarPrecio.HasValue)
+                {
+                    using SqlCommand cmdVisibilidad = new SqlCommand(@"
+        UPDATE e
+        SET
+            e.MostrarPrecio = @mostrarPrecio,
+            e.fecha_modifica = GETDATE()
+        FROM dbo.equipos e
+        INNER JOIN dbo.equipos base
+            ON LOWER(LTRIM(RTRIM(ISNULL(e.tipo_equipo, ''))))
+                = LOWER(LTRIM(RTRIM(ISNULL(base.tipo_equipo, ''))))
+            AND LOWER(LTRIM(RTRIM(ISNULL(e.marca, ''))))
+                = LOWER(LTRIM(RTRIM(ISNULL(base.marca, ''))))
+            AND LOWER(LTRIM(RTRIM(ISNULL(e.modelo, ''))))
+                = LOWER(LTRIM(RTRIM(ISNULL(base.modelo, ''))))
+        WHERE base.id = @id;",
+                        con, transaction);
+
+                    cmdVisibilidad.Parameters.Add("@mostrarPrecio", SqlDbType.Bit)
+                        .Value = model.MostrarPrecio.Value;
+
+                    cmdVisibilidad.Parameters.Add("@id", SqlDbType.Int)
+                        .Value = id;
+
+                    cmdVisibilidad.ExecuteNonQuery();
+                }
 
                 List<string> campos = new List<string>();
 
@@ -1108,6 +1144,68 @@ namespace ApiProyecto1.Services.Catalogos
         }
 
 
+
+        // ============================================================
+        // OBTENER CONFIGURACIÓN GENERAL DE PRECIOS
+        // ============================================================
+
+        public bool ObtenerMostrarPrecios()
+        {
+            using SqlConnection con = new SqlConnection(_connectionString);
+
+            string query = @"
+        SELECT TOP 1 MostrarPrecios
+        FROM ConfiguracionCatalogo
+        ORDER BY IdConfiguracion;";
+
+            using SqlCommand cmd = new SqlCommand(query, con);
+
+            con.Open();
+
+            object? resultado = cmd.ExecuteScalar();
+
+            if (resultado == null || resultado == DBNull.Value)
+            {
+                throw new InvalidOperationException(
+                    "No existe la configuración general del catálogo."
+                );
+            }
+
+            return Convert.ToBoolean(resultado);
+        }
+
+
+        // ============================================================
+        // ACTUALIZAR CONFIGURACIÓN GENERAL DE PRECIOS
+        // ============================================================
+
+        public void ActualizarMostrarPrecios(bool mostrar)
+        {
+            using SqlConnection con = new SqlConnection(_connectionString);
+
+            string query = @"
+        UPDATE ConfiguracionCatalogo
+        SET MostrarPrecios = @mostrar
+        WHERE IdConfiguracion = (
+            SELECT MIN(IdConfiguracion)
+            FROM ConfiguracionCatalogo
+        );";
+
+            using SqlCommand cmd = new SqlCommand(query, con);
+
+            cmd.Parameters.Add("@mostrar", SqlDbType.Bit).Value = mostrar;
+
+            con.Open();
+
+            int filasAfectadas = cmd.ExecuteNonQuery();
+
+            if (filasAfectadas == 0)
+            {
+                throw new InvalidOperationException(
+                    "No se encontró la configuración general del catálogo."
+                );
+            }
+        }
 
 
 
