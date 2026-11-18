@@ -1,39 +1,57 @@
-﻿using ApiProyecto1.Services;
+﻿
+using ApiProyecto1.Middleware;
+using ApiProyecto1.Services;
 using ApiProyecto1.Services.Catalogos;
 using ApiProyecto1.Services.Informes;
 using ApiProyecto1.Services.Nosotros;
 using ApiProyecto1.Services.Pedidos;
 using ApiProyecto1.Services.Servicios;
+using Microsoft.OpenApi;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 👉 Controllers
+// CONTROLLERS
 builder.Services.AddControllers();
 
-// 👉 Swagger
+// SWAGGER
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
-// 🚀 CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("PermitirTodo",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
 
 
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName);
+
+    // AUTORIZACIÓN MEDIANTE TOKEN
+    options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    {
+        Description = "Introduce el token secreto de acceso a la API.",
+        Name = "X-API-KEY",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("ApiKey", document)] = []
+        }
+    );
 });
 
-// 👉 REGISTRAR SERVICES (IMPORTANTE)
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirTodo", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// REGISTRAR SERVICES
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
 builder.Services.AddScoped<EditarEquiposService>();
@@ -49,20 +67,19 @@ builder.Services.AddHttpClient<CloudinaryNosotrosService>();
 builder.Services.AddScoped<InformesService>();
 builder.Services.AddScoped<EquiposService>();
 
-
 var app = builder.Build();
 
-
-
-// 👉 Swagger
+// SWAGGER
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-
-// 🚀 ACTIVAR CORS
+// CORS
 app.UseCors("PermitirTodo");
+
+// VALIDAR TOKEN
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 
