@@ -6,6 +6,8 @@ let imagenesAgregar = [];
 let imagenesEditar = [];
 let indiceArrastrado = null;
 
+let mostrarPreciosGeneral = true;
+
 // Variable global para controlar la cantidad en el modal de zoom
 let cantidadActualZoom = 1;
 
@@ -272,6 +274,19 @@ function seleccionarColorProducto(productoId, varianteIndex) {
         return;
     }
 
+    // ==================================================
+    // VISIBILIDAD DE PRECIOS
+    // ==================================================
+
+    const mostrarPrecioProducto = estaLogueado || (
+        mostrarPreciosGeneral &&
+        (
+            variante.mostrarPrecio ??
+            variante.MostrarPrecio ??
+            true
+        )
+    );
+
     actualizarUrlProducto(producto, variante);
 
     const card = document.getElementById(
@@ -443,6 +458,19 @@ function seleccionarColorProducto(productoId, varianteIndex) {
                 variante.precio || 0
             ).toFixed(2)}`;
 
+    }
+
+    // ==================================================
+    // MOSTRAR / OCULTAR BLOQUE DE PRECIOS
+    // ==================================================
+
+    const bloquePrecios = card.querySelector(
+        ".producto-precios-bloque"
+    );
+
+    if (bloquePrecios) {
+        bloquePrecios.style.display =
+            mostrarPrecioProducto ? "block" : "none";
     }
 
 
@@ -875,6 +903,7 @@ async function cargarProductos() {
         if (!response.ok) throw new Error(`Error al listar equipos: ${response.status}`);
 
         const data = await response.json();
+        await cargarConfiguracionPrecios();
         data.forEach(producto => {
             const variantes = producto.variantes || producto.Variantes || [];
             variantes.forEach(adaptarImagenesParaVista);
@@ -977,6 +1006,19 @@ async function cargarProductos() {
             // Primera variante disponible
             const indiceInicial = variantesVisibles[0].index;
             const varianteInicial = variantesVisibles[0].variante;
+
+            // =====================================================
+            // VISIBILIDAD DE PRECIOS
+            // =====================================================
+
+            const mostrarPrecioProducto = estaLogueado || (
+                mostrarPreciosGeneral &&
+                (
+                    varianteInicial.mostrarPrecio ??
+                    varianteInicial.MostrarPrecio ??
+                    true
+                )
+            );
 
             const estadoEquipo = String(
                 varianteInicial.estado ?? varianteInicial.Estado ?? ""
@@ -1293,7 +1335,10 @@ async function cargarProductos() {
     </small>
 
  <!-- PRECIOS DEL PRODUCTO -->
-<div class="producto-precios-bloque">
+<div
+    class="producto-precios-bloque"
+    style="display:${mostrarPrecioProducto ? "flex" : "none"} !important;"
+>
 
     <!-- PRECIO ANTERIOR: SIEMPRE ARRIBA -->
     <span
@@ -1366,6 +1411,30 @@ async function cargarProductos() {
                                 >
                                     Editar
                                 </button>
+
+                                <div class="control-precios"
+     style="justify-content:center; margin:5px 0;">
+
+    <span>Mostrar precios</span>
+
+    <label class="switch-precios">
+        <input
+            type="checkbox"
+            class="switch-precio-producto"
+            ${(
+                    varianteInicial.mostrarPrecio ??
+                    varianteInicial.MostrarPrecio ??
+                    true
+                ) ? "checked" : ""}
+            onchange="alternarVisibilidadPrecioProducto(
+                ${item.id},
+                this
+            )">
+
+        <span class="slider-precios"></span>
+    </label>
+
+</div>
 
                                 <button
     type="button"
@@ -5830,5 +5899,142 @@ async function eliminarVariante(id) {
 
 
 ////////////FIN
+
+
+async function cargarConfiguracionPrecios() {
+    try {
+        const response = await fetch("/Catalogo/ObtenerConfiguracionPrecios");
+
+        if (!response.ok) {
+            throw new Error("No se pudo obtener la configuración de precios.");
+        }
+
+        const data = await response.json();
+
+        mostrarPreciosGeneral =
+            data.mostrarPrecios ?? data.MostrarPrecios ?? true;
+
+        const switchGeneral = document.getElementById("switchPreciosGeneral");
+
+        if (switchGeneral) {
+            switchGeneral.checked = mostrarPreciosGeneral;
+        }
+
+    } catch (error) {
+        console.error("Error obteniendo configuración de precios:", error);
+    }
+}
+
+
+
+// ============================================================
+// CAMBIAR VISIBILIDAD GENERAL DE PRECIOS
+// ============================================================
+
+async function alternarVisibilidadPreciosGeneral(switchControl) {
+
+    const estadoAnterior = !switchControl.checked;
+    const mostrar = switchControl.checked;
+
+    switchControl.disabled = true;
+
+    try {
+
+        const response = await fetch(
+            "/Catalogo/ActualizarConfiguracionPrecios",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    mostrarPrecios: mostrar
+                })
+            }
+        );
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || "No se pudo actualizar la configuración general.");
+        }
+
+        // Actualizar la variable global
+        mostrarPreciosGeneral = mostrar;
+
+        console.log(
+            "Visibilidad general de precios actualizada:",
+            mostrar
+        );
+
+    } catch (error) {
+
+        console.error("Error actualizando precios generales:", error);
+
+        // Regresar el switch a su estado anterior
+        switchControl.checked = estadoAnterior;
+
+        alert("No se pudo guardar la configuración general de precios.");
+
+    } finally {
+
+        switchControl.disabled = false;
+
+    }
+}
+
+
+// ============================================================
+// CAMBIAR VISIBILIDAD DE PRECIOS DE UN PRODUCTO
+// ============================================================
+
+async function alternarVisibilidadPrecioProducto(id, switchControl) {
+
+    const estadoAnterior = !switchControl.checked;
+    const mostrar = switchControl.checked;
+
+    switchControl.disabled = true;
+
+    try {
+
+        const response = await fetch(
+            `/Catalogo/Editar?id=${encodeURIComponent(id)}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    mostrarPrecio: mostrar
+                })
+            }
+        );
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || "No se pudo actualizar la visibilidad del producto.");
+        }
+
+        console.log(
+            "Visibilidad de precios del producto actualizada:",
+            id,
+            mostrar
+        );
+
+    } catch (error) {
+
+        console.error("Error actualizando visibilidad del producto:", error);
+
+        // Regresar el switch a su estado anterior
+        switchControl.checked = estadoAnterior;
+
+        alert("No se pudo guardar la visibilidad de precios del producto.");
+
+    } finally {
+
+        switchControl.disabled = false;
+
+    }
+}
+
 
 

@@ -51,7 +51,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// REGISTRAR SERVICES
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<RegistrosService>();
 builder.Services.AddScoped<EditarEquiposService>();

@@ -7,9 +7,23 @@ namespace Proyecto1.Services
     {
         private readonly HttpClient _httpClient;
 
-        public ApiClientService(HttpClient httpClient)
+        public ApiClientService(
+    HttpClient httpClient,
+    IConfiguration configuration)
         {
             _httpClient = httpClient;
+
+            string? apiKey = configuration["ApiSettings:ApiKey"];
+
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                throw new InvalidOperationException(
+                    "No se ha configurado el token de acceso a la API."
+                );
+            }
+
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                "X-API-KEY", apiKey);
         }
 
         // GET

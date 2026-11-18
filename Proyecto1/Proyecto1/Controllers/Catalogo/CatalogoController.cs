@@ -190,5 +190,59 @@ namespace Proyecto1.Controllers.Catalogo
         }
 
 
+        // ==========================================
+        // OBTENER CONFIGURACIÓN GENERAL DE PRECIOS
+        // ==========================================
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerConfiguracionPrecios(
+            CancellationToken cancellationToken)
+        {
+            using var respuesta = await _apiClient.GetAsync(
+                "api/catalogos/equipos/configuracion-precios",
+                cancellationToken
+            );
+
+            var contenido = await respuesta.Content.ReadAsStringAsync(
+                cancellationToken
+            );
+
+            return new ContentResult
+            {
+                Content = contenido,
+                ContentType = "application/json; charset=utf-8",
+                StatusCode = (int)respuesta.StatusCode
+            };
+        }
+
+        // ==========================================
+        // ACTUALIZAR CONFIGURACIÓN GENERAL DE PRECIOS
+        // ==========================================
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> ActualizarConfiguracionPrecios(
+            [FromBody] JsonElement model,
+            CancellationToken cancellationToken)
+        {
+            using var respuesta = await _apiClient.PutAsync(
+                "api/catalogos/equipos/configuracion-precios",
+                model,
+                cancellationToken
+            );
+
+            var contenido = await respuesta.Content.ReadAsStringAsync(
+                cancellationToken
+            );
+
+            return new ContentResult
+            {
+                Content = contenido,
+                ContentType = "application/json; charset=utf-8",
+                StatusCode = (int)respuesta.StatusCode
+            };
+        }
+
+
     }
 }
