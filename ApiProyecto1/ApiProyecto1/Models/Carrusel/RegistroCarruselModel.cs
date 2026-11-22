@@ -1,7 +1,6 @@
-﻿
-namespace ApiProyecto1.Models
+﻿namespace ApiProyecto1.Models.Carrusel
 {
-    public class RegistroPromocionesModel
+    public class RegistroCarruselModel
     {
         public int Id_Prom { get; set; }
 

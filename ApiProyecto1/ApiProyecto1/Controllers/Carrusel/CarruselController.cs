@@ -1,20 +1,19 @@
-﻿
-using ApiProyecto1.Models;
-using ApiProyecto1.Services;
+﻿using ApiProyecto1.Models.Carrusel;
+using ApiProyecto1.Services.Carrusel;
 using ApiProyecto1.Services.Servicios;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiProyecto1.Controllers
+namespace ApiProyecto1.Controllers.Carrusel
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RegistroPromocionesController : ControllerBase
+    public class CarruselController : ControllerBase
     {
-        private readonly RegistroPromocionesService _service;
+        private readonly CarruselService _service;
 
         private readonly CloudinaryService _cloudinaryService;
-        public RegistroPromocionesController(
-            RegistroPromocionesService service, CloudinaryService cloudinaryService)
+        public CarruselController(
+            CarruselService service, CloudinaryService cloudinaryService)
         {
             _service = service;
             _cloudinaryService = cloudinaryService;
@@ -26,7 +25,7 @@ namespace ApiProyecto1.Controllers
         // ============================================
         [HttpPost]
         public IActionResult Insertar(
-            [FromBody] RegistroPromocionesModel model)
+            [FromBody] RegistroCarruselModel model)
         {
             if (string.IsNullOrWhiteSpace(model.Url_Imagen_Prom))
             {
@@ -136,7 +135,7 @@ namespace ApiProyecto1.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Actualizar(
             int id,
-            [FromBody] RegistroPromocionesModel model,
+            [FromBody] RegistroCarruselModel model,
             CancellationToken cancellationToken)
         {
             if (id != model.Id_Prom)

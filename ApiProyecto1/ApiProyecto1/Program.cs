@@ -1,6 +1,8 @@
 ﻿
 using ApiProyecto1.Middleware;
 using ApiProyecto1.Services;
+using ApiProyecto1.Services.Caracteristicas;
+using ApiProyecto1.Services.Carrusel;
 using ApiProyecto1.Services.Catalogos;
 using ApiProyecto1.Services.Informes;
 using ApiProyecto1.Services.Nosotros;
@@ -57,7 +59,7 @@ builder.Services.AddScoped<EditarEquiposService>();
 builder.Services.AddScoped<PedidosService>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<VerPedidosService>();
-builder.Services.AddScoped<RegistroPromocionesService>();
+builder.Services.AddScoped<CarruselService>();
 builder.Services.AddScoped<CaracteristicasEquiposService>();
 builder.Services.AddScoped<ServiciosService>();
 builder.Services.AddHttpClient<CloudinaryService>();

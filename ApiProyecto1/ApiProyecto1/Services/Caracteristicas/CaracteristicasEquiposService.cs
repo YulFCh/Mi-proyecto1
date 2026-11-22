@@ -1,8 +1,7 @@
-﻿
-using ApiProyecto1.Models;
+﻿using ApiProyecto1.Models.Caracteristicas;
 using Microsoft.Data.SqlClient;
 
-namespace ApiProyecto1.Services
+namespace ApiProyecto1.Services.Caracteristicas
 {
     public class CaracteristicasEquiposService
     {

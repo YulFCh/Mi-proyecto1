@@ -1,5 +1,4 @@
-﻿
-namespace ApiProyecto1.Models
+﻿namespace ApiProyecto1.Models.Caracteristicas
 {
     public class TipoEquipoModel
     {

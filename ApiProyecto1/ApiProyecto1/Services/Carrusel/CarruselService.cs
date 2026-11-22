@@ -1,15 +1,14 @@
-﻿
-using ApiProyecto1.Models;
+﻿using ApiProyecto1.Models.Carrusel;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace ApiProyecto1.Services
+namespace ApiProyecto1.Services.Carrusel
 {
-    public class RegistroPromocionesService
+    public class CarruselService
     {
         private readonly string _connectionString;
 
-        public RegistroPromocionesService(IConfiguration config)
+        public CarruselService(IConfiguration config)
         {
             _connectionString =
                 config.GetConnectionString("DefaultConnection")
@@ -21,7 +20,7 @@ namespace ApiProyecto1.Services
         // ============================================
         // INSERTAR IMAGEN PROMOCIONAL
         // ============================================
-        public void Insertar(RegistroPromocionesModel model)
+        public void Insertar(RegistroCarruselModel model)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -81,9 +80,9 @@ namespace ApiProyecto1.Services
         // ============================================
         // LISTAR IMÁGENES PROMOCIONALES
         // ============================================
-        public List<RegistroPromocionesModel> Listar()
+        public List<RegistroCarruselModel> Listar()
         {
-            var imagenes = new List<RegistroPromocionesModel>();
+            var imagenes = new List<RegistroCarruselModel>();
 
             using (SqlConnection con =
                    new SqlConnection(_connectionString))
@@ -112,7 +111,7 @@ namespace ApiProyecto1.Services
                     {
                         while (dr.Read())
                         {
-                            imagenes.Add(new RegistroPromocionesModel
+                            imagenes.Add(new RegistroCarruselModel
                             {
                                 Id_Prom = Convert.ToInt32(
                                     dr["id_prom"]),
@@ -171,7 +170,7 @@ namespace ApiProyecto1.Services
         // ============================================
         // OBTENER UNA IMAGEN POR ID
         // ============================================
-        public RegistroPromocionesModel? ObtenerPorId(int id)
+        public RegistroCarruselModel? ObtenerPorId(int id)
         {
             using (SqlConnection con =
                    new SqlConnection(_connectionString))
@@ -203,7 +202,7 @@ namespace ApiProyecto1.Services
                         if (!dr.Read())
                             return null;
 
-                        return new RegistroPromocionesModel
+                        return new RegistroCarruselModel
                         {
                             Id_Prom = Convert.ToInt32(
                                 dr["id_prom"]),
@@ -257,7 +256,7 @@ namespace ApiProyecto1.Services
         // ============================================
         // EDITAR IMAGEN PROMOCIONAL
         // ============================================
-        public bool Actualizar(RegistroPromocionesModel model)
+        public bool Actualizar(RegistroCarruselModel model)
         {
             using (SqlConnection con =
                    new SqlConnection(_connectionString))

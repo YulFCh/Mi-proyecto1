@@ -1,8 +1,7 @@
-﻿
-using ApiProyecto1.Services;
+﻿using ApiProyecto1.Services.Caracteristicas;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiProyecto1.Controllers
+namespace ApiProyecto1.Controllers.Caractaretisticas
 {
     [ApiController]
     [Route("api/[controller]")]
