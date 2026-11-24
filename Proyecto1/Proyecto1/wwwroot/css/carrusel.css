@@ -404,3 +404,342 @@ body {
             border-radius: 10px;
             background: #ff0094;
         }
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   FILA 3: SUBCATEGORÍAS CIRCULARES
+========================================== */
+
+.subcategorias-circulares {
+    position: relative;
+    width: 100%;
+    padding: 20px 64px;
+    box-sizing: border-box;
+}
+
+/* Visor desplazable */
+
+
+
+.subcategorias-circulares-visor {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto; /* Permite centrar el visor cuando se ajuste a N círculos */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    touch-action: pan-x;
+    box-sizing: border-box;
+}
+
+    .subcategorias-circulares-visor.centrado {
+        justify-content: center; /* Centrado exacto cuando caben todos */
+    }
+
+.subcategoria-circular-item {
+    /* ...lo que ya tienes... */
+    scroll-snap-align: start;
+}
+
+
+
+    .subcategorias-circulares-visor::-webkit-scrollbar {
+        display: none;
+    }
+
+/* Pista de subcategorías */
+
+/* Elemento individual */
+
+
+/* Círculo de imagen */
+
+.subcategoria-circular-imagen {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #eeeeee;
+    border: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+    /* Imagen dentro del círculo */
+
+    .subcategoria-circular-imagen img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        display: block;
+        padding: 9px;
+        box-sizing: border-box;
+    }
+
+/* Imagen de respaldo */
+
+.subcategoria-circular-respaldo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #999;
+}
+
+    .subcategoria-circular-respaldo i {
+        width: 32px;
+        height: 32px;
+    }
+
+/* Nombre */
+
+.subcategoria-circular-nombre {
+    margin-top: 9px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+/* Flechas de desplazamiento más pegadas a los círculos */
+
+/* ==========================================
+   FLECHAS SUBCATEGORÍAS
+========================================== */
+
+.subcategorias-flecha {
+    position: absolute;
+    top: 100px;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+    font-size: 26px;
+}
+
+    .subcategorias-flecha:hover {
+        background: transparent;
+        color: #333;
+    }
+
+.subcategorias-flecha-anterior {
+    left: 50px;
+}
+
+.subcategorias-flecha-siguiente {
+    right: 50px;
+}
+
+.subcategorias-circulares.sin-desplazamiento .subcategorias-flecha {
+    display: none;
+}
+
+@media (max-width:768px) {
+    .subcategorias-flecha {
+        top: 56px;
+        width: 26px;
+        height: 26px;
+        font-size: 22px;
+    }
+
+    .subcategorias-flecha-anterior {
+        left: 5px;
+    }
+
+    .subcategorias-flecha-siguiente {
+        right: 5px;
+    }
+}
+
+/* Ocultar flechas cuando no hay desplazamiento */
+
+.subcategorias-circulares.sin-desplazamiento
+.subcategorias-flecha {
+    display: none;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+
+    .subcategorias-circulares {
+        padding: 15px 46px;
+    }
+
+    .subcategorias-circulares-pista {
+        gap: 15px;
+        padding: 5px 30px 10px;
+    }
+
+    /* Elemento individual */
+
+    .subcategoria-circular-item {
+        flex: 0 0 85px;
+        width: 85px;
+    }
+
+    /* Círculos */
+
+    .subcategoria-circular-imagen {
+        width: 72px;
+        height: 72px;
+    }
+
+    /* Nombres */
+
+    .subcategoria-circular-nombre {
+        font-size: 11px;
+        line-height: 14px;
+    }
+
+    /* Flechas */
+
+    .subcategorias-flecha {
+        top: 56px; /* Centrada respecto al círculo de 72px */
+        width: 26px;
+        height: 26px;
+    }
+
+    .subcategorias-flecha-anterior {
+        left: 28px;
+    }
+
+    .subcategorias-flecha-siguiente {
+        right: 28px;
+    }
+}
+
+
+
+/* Margen de seguridad de la pista */
+.subcategorias-circulares-pista {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 24px;
+    flex-shrink: 0;
+    padding: 5px 0 10px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .subcategorias-circulares-pista {
+        padding: 5px 8px 10px;
+    }
+}
+
+
+
+/* ==========================================
+   CENTRAR NOMBRE BAJO CADA CÍRCULO
+========================================== */
+
+.subcategoria-circular-item {
+    flex: 0 0 150px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.subcategoria-circular-nombre {
+    width: 100%;
+    margin-top: 9px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* MÓVIL */
+@media (max-width: 768px) {
+
+    .subcategoria-circular-item {
+        flex: 0 0 85px;
+        width: 85px;
+    }
+
+    .subcategoria-circular-nombre {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+
+.subcategorias-flecha:focus,
+.subcategorias-flecha:active,
+.subcategorias-flecha:focus-visible {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+
+
+/* Ocultar flechas mientras carga */
+.subcategorias-circulares .subcategorias-flecha {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+/* Mostrar cuando las subcategorías estén listas */
+.subcategorias-circulares.cargado .subcategorias-flecha {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+
+
+/* ==========================================
+   CONTROLES DE PROMOCIONES - INICIALMENTE OCULTOS
+   ========================================== */
+
+.promo-fila-1 .btn-ver-todo,
+.promo-fila-2 .promo-flecha {
+    display: none !important;
+}
+
+/* Mostrar Ver todo cuando la fila 1 esté lista */
+.promo-fila-1.carrusel-listo .btn-ver-todo {
+    display: flex !important;
+}
+
+/* Mostrar flechas cuando la fila 2 esté lista */
+.promo-fila-2.carrusel-listo .promo-flecha {
+    display: flex !important;
+}

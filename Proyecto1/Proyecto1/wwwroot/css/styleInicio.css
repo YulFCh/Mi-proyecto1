@@ -915,7 +915,6 @@ body {
 }
 
     #modalCarrito .carrito-total-fila strong {
-        color: #ff0094;
         font-size: 21px;
         font-weight: 750;
         white-space: nowrap;
@@ -1212,19 +1211,9 @@ body {
     }
 
 
-/* Panel de precios */
-#modalZoom #zoom-precio-actual {
-    color: #222222 !important;
-    font-size: 26px !important;
-    letter-spacing: -.5px;
-}
 
-#modalZoom #zoom-descuento-badge {
-    background: d7007c !important;
-    border-radius: 4px !important;
-    padding: 4px 7px !important;
-    font-size: 11px !important;
-}
+
+
 
 /* Selector de cantidad */
 #modalZoom #zoom-acciones-compra button:not(#zoom-btn-agregar) {
@@ -1282,7 +1271,7 @@ body {
 
     #modalZoom #zoom-garantia-container:hover,
     #modalZoom #zoom-garantia-container ~ div:hover {
-        border-color: #f0a3cb !important;
+        border-color: #ff0094 !important;
         transform: translateY(-2px);
     }
 
@@ -1311,9 +1300,6 @@ body {
         font-size: 21px;
     }
 
-    #modalZoom #zoom-precio-actual {
-        font-size: 23px !important;
-    }
 }
 
 
@@ -1975,6 +1961,7 @@ body:has(#contenedorProductos) .container-xxl {
 
 .catalogo-layout #contenedorProductos > .product-gallery .product-actions {
     display: flex !important;
+
     justify-content: center !important;
     align-items: center !important;
     width: 100%;
@@ -2331,3 +2318,21 @@ body:has(#contenedorProductos) .container-xxl {
     font-size: 13px;
     font-weight: 600;
 }
+
+
+
+
+/* Catálogo cuando el panel de filtros no existe (sesión iniciada) */
+.catalogo-layout:not(:has(#panelFiltros)) {
+    grid-template-columns: 1fr !important;
+}
+
+    /* Productos ocupan todo el ancho disponible */
+    .catalogo-layout:not(:has(#panelFiltros)) #contenedorProductos {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+
+

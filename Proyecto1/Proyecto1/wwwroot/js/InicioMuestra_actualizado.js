@@ -11,6 +11,9 @@ let mostrarPreciosGeneral = true;
 // Variable global para controlar la cantidad en el modal de zoom
 let cantidadActualZoom = 1;
 
+const mostrarBotonesGestion =
+    document.getElementById("configVista")?.dataset.vista === "catalogos";
+
 // Obtiene las imágenes de una variante, ordenadas y compatibles con la API nueva.
 function obtenerImagenesVariante(variante) {
     const imagenes = variante?.imagenes || variante?.Imagenes || [];
@@ -448,18 +451,27 @@ function seleccionarColorProducto(productoId, varianteIndex) {
     // PRECIO ACTUAL
     // ==================================================
 
-    const precio =
-        card.querySelector(".producto-precio");
+   // ==================================================
+// PRECIO ACTUAL
+// ==================================================
 
-    if (precio) {
+const precio = card.querySelector(".producto-precio");
+
+if (precio) {
+
+    if (mostrarPrecioProducto) {
 
         precio.innerText =
             `S/. ${parseFloat(
                 variante.precio || 0
             ).toFixed(2)}`;
 
-    }
+    } else {
 
+        precio.innerText = "";
+
+    }
+}
     // ==================================================
     // MOSTRAR / OCULTAR BLOQUE DE PRECIOS
     // ==================================================
@@ -915,6 +927,8 @@ async function cargarProductos() {
             }
         });
         window.productosAgrupados = data;
+
+        sincronizarCarritoConCatalogo(data);
 
         contenedor.innerHTML = "";
 
@@ -1394,16 +1408,46 @@ async function cargarProductos() {
 
 </div>
 
-
-
-
                     </div>
+
+
+
+
+
+${estaLogueado && mostrarBotonesGestion ? `
+    <div class="control-precios"
+         style="justify-content:center; margin:5px 0;">
+
+        <span>Mostrar precios</span>
+
+        <label class="switch-precios">
+            <input
+                type="checkbox"
+                class="switch-precio-producto"
+                ${(
+                        varianteInicial.mostrarPrecio ??
+                        varianteInicial.MostrarPrecio ??
+                        true
+                    ) ? "checked" : ""}
+                onchange="alternarVisibilidadPrecioProducto(
+                    ${item.id},
+                    this
+                )">
+
+            <span class="slider-precios"></span>
+        </label>
+
+    </div>
+` : ''}
+
+
+
 
 
                     <!-- ACCIONES -->
                     <div class="product-actions">
 
-                        ${estaLogueado
+                        ${estaLogueado && mostrarBotonesGestion
                     ? `
                                 <button
                                     class="btn btn-warning btn-sm w-100"
@@ -1412,29 +1456,7 @@ async function cargarProductos() {
                                     Editar
                                 </button>
 
-                                <div class="control-precios"
-     style="justify-content:center; margin:5px 0;">
-
-    <span>Mostrar precios</span>
-
-    <label class="switch-precios">
-        <input
-            type="checkbox"
-            class="switch-precio-producto"
-            ${(
-                    varianteInicial.mostrarPrecio ??
-                    varianteInicial.MostrarPrecio ??
-                    true
-                ) ? "checked" : ""}
-            onchange="alternarVisibilidadPrecioProducto(
-                ${item.id},
-                this
-            )">
-
-        <span class="slider-precios"></span>
-    </label>
-
-</div>
+ 
 
                                 <button
     type="button"
@@ -1444,11 +1466,13 @@ async function cargarProductos() {
     Eliminar producto
 </button>
 
+
+
                             `
                     : `
                                 
 
-
+${!estaLogueado ? `
 
 <button
     type="button"
@@ -1496,6 +1520,12 @@ async function cargarProductos() {
         />
     </svg>
 </button>
+
+
+` : ''
+        }
+
+
                             `
                 }
 
@@ -2096,6 +2126,45 @@ function abrirZoom(item) {
 
     if (!item) return;
 
+    // =====================================================
+    // REINICIAR PRECIOS DEL ZOOM AL ABRIR CADA PRODUCTO
+    // =====================================================
+
+    const contenedorPreciosZoom =
+        document.getElementById("zoom-precios-container");
+
+    const badgeDescuentoZoom =
+        document.getElementById("zoom-descuento-badge");
+
+    const precioActualZoom =
+        document.getElementById("zoom-precio-actual");
+
+    const precioAntesZoom =
+        document.getElementById("zoom-precio-antes-container");
+
+    const textoPrecioAntesZoom =
+        document.getElementById("zoom-precio-antes");
+
+    if (contenedorPreciosZoom) {
+        contenedorPreciosZoom.style.display = "none";
+    }
+
+    if (badgeDescuentoZoom) {
+        badgeDescuentoZoom.style.display = "none";
+        badgeDescuentoZoom.innerText = "";
+    }
+
+    if (precioActualZoom) {
+        precioActualZoom.innerText = "";
+    }
+
+    if (precioAntesZoom) {
+        precioAntesZoom.style.display = "none";
+    }
+
+    if (textoPrecioAntesZoom) {
+        textoPrecioAntesZoom.innerText = "";
+    }
 
     contraerMasCaracteristicas();
     // =====================================================
@@ -2248,97 +2317,123 @@ if (tituloCaracteristicas) {
     // =====================================================
     // PRECIOS
     // =====================================================
+    // =====================================================
+    // PRECIOS DEL ZOOM
+    // =====================================================
 
-    const precioActual =
-        document.getElementById(
-            "zoom-precio-actual"
-        );
+    function actualizarPreciosZoom(productoZoom) {
 
-    if (precioActual) {
+        const contenedorPrecios =
+            document.getElementById("zoom-precios-container");
 
-        precioActual.innerText =
-            `S/. ${parseFloat(
-                item.precio || 0
-            ).toFixed(2)}`;
-    }
+        const precioActual =
+            document.getElementById("zoom-precio-actual");
 
+        const descuentoBadge =
+            document.getElementById("zoom-descuento-badge");
 
-    const descuentoBadge =
-        document.getElementById(
-            "zoom-descuento-badge"
-        );
+        const precioAntesCont =
+            document.getElementById("zoom-precio-antes-container");
 
-    const precioAntesCont =
-        document.getElementById(
-            "zoom-precio-antes-container"
-        );
+        const precioAntesText =
+            document.getElementById("zoom-precio-antes");
 
-    const precioAntesText =
-        document.getElementById(
-            "zoom-precio-antes"
-        );
-
-
-    const descuento =
-        parseFloat(item.descuento || 0);
-
-    if (descuento > 0) {
+        // Determinar si existe un precio válido
+        // =====================================================
+        // REINICIAR ELEMENTOS DE PRECIO Y DESCUENTO
+        // =====================================================
 
         if (descuentoBadge) {
-
-            descuentoBadge.innerText =
-                `-${descuento}%`;
-
-            descuentoBadge.style.display =
-                "inline-flex";
-        }
-
-        if (
-            precioAntesText &&
-            precioAntesCont &&
-            item.precio_Antes
-        ) {
-
-            precioAntesText.innerText =
-                `S/. ${parseFloat(
-                    item.precio_Antes
-                ).toFixed(2)}`;
-
-            precioAntesCont.style.display =
-                "block";
-
-        } else if (precioAntesCont) {
-
-            precioAntesCont.style.display =
-                "none";
-        }
-
-    } else {
-
-        if (descuentoBadge) {
-            descuentoBadge.style.display =
-                "none";
+            descuentoBadge.style.display = "none";
         }
 
         if (precioAntesCont) {
-            precioAntesCont.style.display =
-                "none";
+            precioAntesCont.style.display = "none";
+        }
+
+        // Determinar si existe un precio válido
+        const precioValido =
+            productoZoom.precio !== null &&
+            productoZoom.precio !== undefined &&
+            productoZoom.precio !== "" &&
+            Number.isFinite(Number(productoZoom.precio)) &&
+            Number(productoZoom.precio) > 0;
+
+        // Si el precio está oculto, ocultar todo el bloque
+        if (!precioValido) {
+
+            if (contenedorPrecios) {
+                contenedorPrecios.style.setProperty("display", "none", "important");
+            }
+
+            if (descuentoBadge) {
+                descuentoBadge.style.display = "none";
+                descuentoBadge.innerText = "";
+            }
+
+            if (precioActual) {
+                precioActual.innerText = "";
+            }
+
+            if (precioAntesCont) {
+                precioAntesCont.style.display = "none";
+            }
+
+            if (precioAntesText) {
+                precioAntesText.innerText = "";
+            }
+
+            return;
+        }
+
+        // Mostrar el contenedor de precios
+        if (contenedorPrecios) {
+            contenedorPrecios.style.setProperty("display", "flex", "important");
+        }
+
+        // Precio actual
+        if (precioActual) {
+            precioActual.innerText =
+                `S/. ${Number(productoZoom.precio).toFixed(2)}`;
+        }
+
+        // Descuento
+        const descuento = Number(productoZoom.descuento || 0);
+
+        if (precioValido && descuento > 0) {
+            if (descuentoBadge) {
+                descuentoBadge.innerText = `-${descuento}%`;
+                descuentoBadge.style.display = "inline-flex";
+            }
+
+            if (
+                precioAntesText &&
+                precioAntesCont &&
+                productoZoom.precio_Antes != null &&
+                productoZoom.precio_Antes !== "" &&
+                Number.isFinite(Number(productoZoom.precio_Antes))
+            ) {
+                precioAntesText.innerText =
+                    `S/. ${Number(productoZoom.precio_Antes).toFixed(2)}`;
+
+                precioAntesCont.style.display = "block";
+            } else if (precioAntesCont) {
+                precioAntesCont.style.display = "none";
+            }
+        } else {
+            if (descuentoBadge) descuentoBadge.style.display = "none";
+            if (precioAntesCont) precioAntesCont.style.display = "none";
         }
     }
+
+    // Actualizar precios del producto inicial
+    actualizarPreciosZoom(item);
 
 
     // =====================================================
     // OBTENER IMÁGENES
     // =====================================================
-    console.log(
-        "Vista actual:",
-        window.location.pathname
-    );
-
-    console.log(
-        "Tipo de variable:",
-        typeof imagenesActualesZoom
-    );
+ 
 
     imagenesActualesZoom = [
         item.url_Equipo,
@@ -2890,18 +2985,8 @@ if (tituloCaracteristicas) {
                             }
 
 
-                            const zoomPrecio =
-                                document.getElementById(
-                                    "zoom-precio-actual"
-                                );
-
-                            if (zoomPrecio) {
-
-                                zoomPrecio.innerText =
-                                    `S/. ${parseFloat(
-                                        nuevaVariante.precio || 0
-                                    ).toFixed(2)}`;
-                            }
+                            // Actualizar precios según la variante seleccionada
+                            actualizarPreciosZoom(nuevaVariante);
 
 
                             // Actualizar colores activos
@@ -3113,6 +3198,100 @@ function renderPreview(containerId, imagenes) {
 
 let carrito = JSON.parse(localStorage.getItem("carrito_fractalica")) || [];
 
+
+function sincronizarCarritoConCatalogo(productos) {
+
+    if (
+        !Array.isArray(carrito) ||
+        carrito.length === 0 ||
+        !Array.isArray(productos)
+    ) {
+        return;
+    }
+
+    // Crear un índice de variantes por ID
+    const variantesPorId = new Map();
+
+    productos.forEach(producto => {
+
+        const variantes =
+            producto.variantes ||
+            producto.Variantes ||
+            [];
+
+        variantes.forEach(variante => {
+
+            const idVariante = Number(
+                variante.id ?? variante.Id
+            );
+
+            if (Number.isFinite(idVariante)) {
+                variantesPorId.set(idVariante, variante);
+            }
+        });
+    });
+
+    // Sincronizar los productos guardados en el carrito
+    carrito.forEach(item => {
+
+        const variante = variantesPorId.get(
+            Number(item.id)
+        );
+
+        if (!variante) {
+            console.warn(
+                "No se encontró la variante del carrito:",
+                item.id
+            );
+            return;
+        }
+
+        // Actualizar precio solo si el catálogo proporciona
+        // un importe válido. Nunca reemplazarlo por null.
+        const precioActual =
+            variante.precio ?? variante.Precio;
+
+        if (
+            precioActual !== null &&
+            precioActual !== undefined &&
+            precioActual !== "" &&
+            Number.isFinite(Number(precioActual))
+        ) {
+            item.precio = Number(precioActual);
+        }
+
+        // Actualizar visibilidad individual
+        const mostrarPrecio =
+            variante.mostrarPrecio ??
+            variante.MostrarPrecio;
+
+        if (
+            mostrarPrecio !== null &&
+            mostrarPrecio !== undefined
+        ) {
+            item.mostrarPrecio =
+                typeof mostrarPrecio === "boolean"
+                    ? mostrarPrecio
+                    : ["true", "1"].includes(
+                        String(mostrarPrecio).toLowerCase()
+                    );
+        } else if (typeof item.mostrarPrecio !== "boolean") {
+            item.mostrarPrecio = true;
+        }
+
+    });
+
+    // Guardar los datos sincronizados sin alterar cantidades
+    localStorage.setItem(
+        "carrito_fractalica",
+        JSON.stringify(carrito)
+    );
+
+    // Actualizar la presentación del carrito
+    actualizarBadgeYDropdown();
+}
+
+
 function cambiarCantidadHTML(id, delta) {
     const display = document.getElementById(`cant-display-${id}`);
     if (display) {
@@ -3122,6 +3301,7 @@ function cambiarCantidadHTML(id, delta) {
         display.innerText = current;
     }
 }
+
 
 function agregarAlCarritoDirecto(
     id,
@@ -3156,10 +3336,8 @@ function agregarAlCarritoDirecto(
             );
 
             if (variante) {
-
                 varianteEncontrada = variante;
                 productoEncontrado = producto;
-
                 break;
             }
         }
@@ -3180,13 +3358,17 @@ function agregarAlCarritoDirecto(
                 varianteEncontrada?.precio ?? precio
             ) || 0,
 
+        // VISIBILIDAD INDIVIDUAL DEL PRECIO
+        mostrarPrecio:
+            varianteEncontrada?.mostrarPrecio ??
+            varianteEncontrada?.MostrarPrecio ??
+            true,
+
         cantidad: cantidadAAgregar,
 
         imagenes: imagenesValidas,
 
-        // ================================================
         // DATOS NECESARIOS PARA detalle_pedidos
-        // ================================================
 
         codigoProducto:
             varianteEncontrada?.codigo_Producto ||
@@ -3222,60 +3404,42 @@ function agregarAlCarritoDirecto(
             ) || 0
     };
 
-
     // =====================================================
     // VERIFICAR SI YA EXISTE
     // =====================================================
 
-    const existe =
-        carrito.find(prod => prod.id === id);
-
+    const existe = carrito.find(
+        prod => Number(prod.id) === Number(id)
+    );
 
     if (existe) {
 
         existe.cantidad += cantidadAAgregar;
 
-        // Actualizar información por seguridad
+        existe.precio = datosProducto.precio;
 
-        existe.precio =
-            datosProducto.precio;
+        existe.mostrarPrecio = datosProducto.mostrarPrecio;
 
-        existe.codigoProducto =
-            datosProducto.codigoProducto;
-
-        existe.tipoEquipo =
-            datosProducto.tipoEquipo;
-
-        existe.marca =
-            datosProducto.marca;
-
-        existe.modelo =
-            datosProducto.modelo;
-
-        existe.color =
-            datosProducto.color;
-
-        existe.descripcion =
-            datosProducto.descripcion;
-
-        existe.descuento =
-            datosProducto.descuento;
-
+        existe.codigoProducto = datosProducto.codigoProducto;
+        existe.tipoEquipo = datosProducto.tipoEquipo;
+        existe.marca = datosProducto.marca;
+        existe.modelo = datosProducto.modelo;
+        existe.color = datosProducto.color;
+        existe.descripcion = datosProducto.descripcion;
+        existe.descuento = datosProducto.descuento;
 
         if (
             (!existe.imagenes ||
                 existe.imagenes.length === 0) &&
             imagenesValidas.length > 0
         ) {
-            existe.imagenes =
-                imagenesValidas;
+            existe.imagenes = imagenesValidas;
         }
 
     } else {
 
         carrito.push(datosProducto);
     }
-
 
     // =====================================================
     // GUARDAR
@@ -3288,6 +3452,7 @@ function agregarAlCarritoDirecto(
         "#007bff"
     );
 }
+
 
 
 function agregarAlCarrito(id, nombre, precio) {
@@ -3310,6 +3475,62 @@ function actualizarBadgeYDropdown() {
     const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     const totalPrecio = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
+    // ==========================================
+    // DETERMINAR MODO COMPRA O COTIZACIÓN
+    // ==========================================
+
+    const modoCotizacion =
+        !mostrarPreciosGeneral ||
+        carrito.some(item => !(item.mostrarPrecio ?? true));
+
+    const mostrarTotalGeneral = !modoCotizacion;
+
+    // ==========================================
+    // ACTUALIZAR TEXTOS DEL MODAL DEL CARRITO
+    // ==========================================
+
+    const tituloModal = document.getElementById("carrito-titulo-modal");
+    const subtituloModal = document.getElementById("carrito-subtitulo-modal");
+    const tipoResumen = document.getElementById("carrito-tipo-resumen");
+    const notaModal = document.getElementById("carrito-nota-modal");
+    const textoBoton = document.getElementById("carrito-btn-text");
+
+    if (tituloModal) {
+        tituloModal.innerText = modoCotizacion
+            ? "Productos a cotizar"
+            : "Mi carrito";
+    }
+
+    if (subtituloModal) {
+        subtituloModal.innerText = modoCotizacion
+            ? "Revisa tus productos antes de cotizar"
+            : "Revisa tus productos antes de comprar";
+    }
+
+    if (tipoResumen) {
+        tipoResumen.innerText = modoCotizacion
+            ? "Productos a cotizar"
+            : "Productos a comprar";
+    }
+
+    if (notaModal) {
+        notaModal.innerText = modoCotizacion
+            ? "Revisa las cantidades antes de cotizar."
+            : "Revisa las cantidades antes de continuar.";
+    }
+
+    if (textoBoton) {
+        textoBoton.innerText = modoCotizacion
+            ? "Proceder con la cotización"
+            : "Proceder con la compra";
+    }
+
+    // ==========================================
+    // ACTUALIZAR TEXTOS DEL CARRITO
+    // ==========================================
+
+
+
     if (badge) {
         if (totalCantidad > 0) {
             badge.innerText = totalCantidad;
@@ -3319,17 +3540,11 @@ function actualizarBadgeYDropdown() {
         }
     }
 
-    if (totalSpan) {
-        totalSpan.innerText = `S/. ${totalPrecio.toFixed(2)}`;
-    }
     const cantSpan = document.getElementById("carrito-cantidad-total");
     if (cantSpan) {
         cantSpan.innerText = `${totalCantidad} ${totalCantidad === 1 ? 'producto' : 'productos'}`;
     }
 
-    if (totalSpanModal) {
-        totalSpanModal.innerText = `S/. ${totalPrecio.toFixed(2)}`;
-    }
     const cantSpanModal = document.getElementById("carrito-cantidad-total-modal");
     if (cantSpanModal) {
         cantSpanModal.innerText = `${totalCantidad} ${totalCantidad === 1 ? 'producto' : 'productos'}`;
@@ -3347,6 +3562,10 @@ function actualizarBadgeYDropdown() {
 
         const subtotalItem = item.precio * item.cantidad;
 
+        const mostrarPrecioItem =
+            mostrarPreciosGeneral && (item.mostrarPrecio ?? true);
+
+
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
                 
@@ -3357,8 +3576,14 @@ function actualizarBadgeYDropdown() {
                     <div style="overflow: hidden; line-height: 1.3;">
                         <strong style="display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #0056b3;">${item.nombre}</strong>
                         
-                        <span style="font-size: 11px; color: #666; display: block;">P/U: S/. ${item.precio.toFixed(2)}</span>
-                        <strong style="font-size: 12px; color: #28a745; display: block;">Total: S/. ${subtotalItem.toFixed(2)}</strong>
+                        ${mostrarPrecioItem ? `
+    <span style="font-size: 11px; color: #666; display: block;">
+        P/U: S/. ${item.precio.toFixed(2)}
+    </span>
+    <strong style="font-size: 12px; color: #28a745; display: block;">
+        Total: S/. ${subtotalItem.toFixed(2)}
+    </strong>
+` : ''}
                     </div>
                 </div>
                 
@@ -3445,12 +3670,25 @@ function actualizarBadgeYDropdown() {
         }
     }
 
+
     if (totalSpan) {
-        totalSpan.innerText = `S/. ${totalPrecio.toFixed(2)}`;
+        totalSpan.parentElement.style.display =
+            mostrarTotalGeneral ? "flex" : "none";
+
+        totalSpan.innerText = mostrarTotalGeneral
+            ? `S/. ${totalPrecio.toFixed(2)}`
+            : "";
     }
+
     if (totalSpanModal) {
-        totalSpanModal.innerText = `S/. ${totalPrecio.toFixed(2)}`;
+        totalSpanModal.parentElement.style.display =
+            mostrarTotalGeneral ? "flex" : "none";
+
+        totalSpanModal.innerText = mostrarTotalGeneral
+            ? `S/. ${totalPrecio.toFixed(2)}`
+            : "";
     }
+
 }
 
 function abrirZoomDesdeCarrito(id) {
@@ -3670,6 +3908,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función para abrir el modal del carrito (Bootstrap 4 / jQuery)
 function abrirModalCarrito() {
+
+    actualizarBadgeYDropdown();
+
     $('#modalCarrito').modal('show');
 }
 
@@ -3984,11 +4225,6 @@ async function procesarCompra(event) {
         };
 
 
-        console.log(
-            "Pedido que se enviará a la API:",
-            pedido
-        );
-
 
         // =================================================
         // 8. ENVIAR A LA API DE RENDER
@@ -4024,12 +4260,6 @@ async function procesarCompra(event) {
         }
 
 
-        console.log(
-            "Respuesta API pedidos:",
-            response.status,
-            resultado
-        );
-
 
         // =================================================
         // 10. NUNCA CONSIDERAR 404/400/500 COMO ÉXITO
@@ -4061,11 +4291,6 @@ async function procesarCompra(event) {
         // =================================================
         // 12. AQUÍ SÍ EL PEDIDO FUE REGISTRADO
         // =================================================
-
-        console.log(
-            "Pedido registrado correctamente:",
-            resultado
-        );
 
 
         mostrarToast(
@@ -4877,8 +5102,7 @@ document.getElementById("limpiarFiltros")
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const API_CARACTERISTICAS =
-        "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos";
+
 
     const categoriaSelect = document.getElementById("categoria");
     const subcategoriaSelect = document.getElementById("subcategoria");
@@ -4976,8 +5200,9 @@ document.addEventListener("DOMContentLoaded", function () {
             '<option value="">Cargando...</option>';
 
         try {
+
             const respuesta = await fetch(
-                `${API_CARACTERISTICAS}/${endpoint}`
+                `/Catalogo/ObtenerListaCaracteristicas?endpoint=${encodeURIComponent(endpoint)}`
             );
 
             if (!respuesta.ok) {
@@ -5004,30 +5229,35 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ejecutar todas las cargas
     cargarCategorias();
 
-    cargarLista(
-        "tiposequipo",
-        "tipoEquipo",
-        "Seleccione"
-    );
 
-    cargarLista(
-        "colores",
-        "color",
-        "Seleccione"
-    );
 
-    cargarLista(
-        "marcas",
-        "marca",
-        "Seleccione"
-    );
+    if (estaLogueado) {
+        cargarLista(
+            "tiposequipo",
+            "tipoEquipo",
+            "Seleccione"
+        );
+
+        cargarLista(
+            "colores",
+            "color",
+            "Seleccione"
+        );
+
+        cargarLista(
+            "marcas",
+            "marca",
+            "Seleccione"
+        );
+    }
+
 });
 
 
 
 
-const API_CARACTERISTICAS_EDITAR =
-    "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos";
+
+const API_CARACTERISTICAS = "/Catalogo/ObtenerCaracteristicas";
 
 let categoriasEditar = [];
 
@@ -5049,7 +5279,7 @@ async function cargarCategoriasEditar() {
     if (!select) return;
 
     try {
-        const respuesta = await fetch(API_CARACTERISTICAS_EDITAR);
+        const respuesta = await fetch(API_CARACTERISTICAS);
 
         if (!respuesta.ok) {
             throw new Error("Error al cargar categorías");
@@ -5123,7 +5353,7 @@ async function cargarListaEditar(endpoint, selectId, textoInicial) {
 
     try {
         const respuesta = await fetch(
-            `${API_CARACTERISTICAS_EDITAR}/${endpoint}`
+            `/Catalogo/ObtenerListaCaracteristicas?endpoint=${encodeURIComponent(endpoint)}`
         );
 
         if (!respuesta.ok) {
@@ -5157,7 +5387,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    cargarCaracteristicasEditar();
+    if (estaLogueado) {
+        cargarCaracteristicasEditar();
+    }
 });
 
 
@@ -5961,10 +6193,7 @@ async function alternarVisibilidadPreciosGeneral(switchControl) {
         // Actualizar la variable global
         mostrarPreciosGeneral = mostrar;
 
-        console.log(
-            "Visibilidad general de precios actualizada:",
-            mostrar
-        );
+ 
 
     } catch (error) {
 
@@ -6014,11 +6243,6 @@ async function alternarVisibilidadPrecioProducto(id, switchControl) {
             throw new Error(error || "No se pudo actualizar la visibilidad del producto.");
         }
 
-        console.log(
-            "Visibilidad de precios del producto actualizada:",
-            id,
-            mostrar
-        );
 
     } catch (error) {
 

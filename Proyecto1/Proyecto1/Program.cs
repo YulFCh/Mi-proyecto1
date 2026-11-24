@@ -63,6 +63,17 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+app.MapControllerRoute(
+    name: "inicio",
+    pattern: "",
+    defaults: new
+    {
+        controller = "Inicio",
+        action = "Index"
+    }
+);
+
 // ========================================
 // RUTAS DEL CATÁLOGO DE PRODUCTOS
 // ========================================
@@ -82,6 +93,45 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "catalogoElectrohogar",
     pattern: "Electrohogar/{subcategoria?}/{tipoEquipo?}",
+    defaults: new
+    {
+        controller = "Inicio",
+        action = "Index"
+    }
+);
+
+// ========================================
+// RUTAS DEL CONTROLADOR DE SERVICIOS
+// ========================================
+
+app.MapControllerRoute(
+    name: "serviciosAcciones",
+    pattern: "Servicios/{action}",
+    defaults: new
+    {
+        controller = "Servicios"
+    }
+);
+
+// ========================================
+// RUTAS DE SERVICIOS Y NOSOTROS
+// ========================================
+
+// Listado de servicios y detalle de cada servicio
+app.MapControllerRoute(
+    name: "servicios",
+    pattern: "Servicios/{servicio?}",
+    defaults: new
+    {
+        controller = "Inicio",
+        action = "Index"
+    }
+);
+
+// Sección Nosotros
+app.MapControllerRoute(
+    name: "nosotros",
+    pattern: "Nosotros",
     defaults: new
     {
         controller = "Inicio",

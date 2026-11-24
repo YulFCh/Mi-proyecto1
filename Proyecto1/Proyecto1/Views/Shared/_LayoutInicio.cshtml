@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/assets/css/style.css" />
     <link rel="stylesheet" href="~/css/styleModal.css" />
     <link rel="stylesheet" href="~/css/stylecategorias.css" />
+    <link rel="stylesheet" href="~/css/styleInicio.css" />
 
 </head>
 
@@ -210,7 +211,7 @@
                          color:#333;
                      ">
 
-                        <h5 style="
+                        <h5 id="carrito-titulo-mini" style="
                         margin-top:0;
                         border-bottom:1px solid #eee;
                         padding-bottom:8px;
@@ -231,15 +232,15 @@
                         ">El carrito está vacío.</p>
                         </div>
 
-                        <div style="
-                        border-top:1px solid #eee;
-                        padding-top:8px;
-                        margin-top:8px;
-                        display:flex;
-                        justify-content:space-between;
-                        font-weight:bold;
-                    ">
-                            <span>Total:</span>
+                        <div id="carrito-total-container" style="
+    border-top:1px solid #eee;
+    padding-top:8px;
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+">
+                            <span id="carrito-total-label">Total:</span>
                             <span id="carrito-total">S/. 0.00</span>
                         </div>
                     </div>
@@ -559,10 +560,9 @@
                     </div>
 
                     <div class="carrito-header-text">
-                        <h5>Mi carrito</h5>
-                        <p>Revisa tus productos antes de comprar</p>
+                        <h5 id="carrito-titulo-modal">Mi carrito</h5>
+                        <p id="carrito-subtitulo-modal">Revisa tus productos antes de comprar</p>
                     </div>
-
                     <button type="button"
                             class="carrito-close"
                             data-dismiss="modal"
@@ -594,7 +594,7 @@
                     <div class="carrito-resumen">
 
                         <div class="carrito-resumen-fila">
-                            <span>Productos a comprar</span>
+                            <span id="carrito-tipo-resumen">Productos a comprar</span>
                             <strong id="carrito-cantidad-total-modal">
                                 0 productos
                             </strong>
@@ -607,7 +607,7 @@
                             </strong>
                         </div>
 
-                        <p class="carrito-nota">
+                        <p class="carrito-nota" id="carrito-nota-modal">
                             Revisa las cantidades antes de continuar.
                         </p>
 
@@ -621,14 +621,14 @@
                     <button type="button"
                             class="carrito-btn-secundario"
                             data-dismiss="modal">
-                        Seguir comprando
+                        Ver más productos
                     </button>
 
                     <button type="button"
                             class="carrito-btn-principal"
                             onclick="abrirCheckout()">
 
-                        Proceder con la compra
+                        <span id="carrito-btn-text">Proceder con la compra</span>
 
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="17" height="17"
@@ -870,14 +870,21 @@
         modal.inert = false;
 
         // Restaurar la visibilidad del panel y del modal.
-        panel.style.display = "";
-        modal.style.display = "";
-        overlay.style.display = "";
+            // Restaurar la visibilidad del panel y del overlay.
+    panel.style.display = "";
+    overlay.style.display = "";
 
-        // Abrir el panel, el overlay y el modal.
-        panel.classList.add("activo");
-        overlay.classList.add("activo");
-        modal.classList.add("activo");
+    // En celulares, ocultar inicialmente el modal de detalles.
+    if (window.matchMedia("(max-width: 600px)").matches) {
+        modal.style.display = "none";
+    } else {
+        modal.style.display = "";
+    }
+
+    // Abrir el panel y el overlay.
+    panel.classList.add("activo");
+    overlay.classList.add("activo");
+    modal.classList.add("activo");
 
         // Restablecer el estado de desplazamiento.
         document.body.classList.add("categorias-abiertas");
@@ -891,7 +898,7 @@
     }
 
 
-
+    window.abrirPanelCategorias = abrirPanel;
 
 
         function cerrarPanel() {
@@ -910,6 +917,10 @@
             modal.inert = true;
 
             abrir.focus();
+                // Limpiar la ruta y regresar a la URL principal.
+    if (window.location.pathname !== "/") {
+        history.replaceState(null, "", "/");
+    }
         }
 
         abrir.addEventListener("click", abrirPanel);
@@ -935,27 +946,90 @@
         const lista = document.getElementById("listaCategoriasDinamicas");
         const modal = document.getElementById("modalCategoriasDetalle");
 
+        let cargandoServiciosCategoria = false;
+
+        let cargandoNosotrosCategoria = false;
+
+            let intervaloCarrusel = null;
+    let actualizarImagenesCarrusel = null;
+    let seccionCarrusel = null;
+
         if (!lista || !modal) return;
 
         const contenido = modal.querySelector(".categorias-modal-contenido");
 
+            // ============================================================
+    // MOVER EL FOOTER AL MODAL Y RESTAURARLO
+    // ============================================================
+
+    const footerInformes = document.getElementById("footerInformes");
+
+    const footerAncla = footerInformes
+        ? document.createComment("footerInformes-original")
+        : null;
+
+    if (footerInformes && footerInformes.parentNode) {
+        footerInformes.parentNode.insertBefore(footerAncla, footerInformes);
+    }
+
+            function mostrarFooterEnModal() {
+        if (footerInformes) {
+            contenido.appendChild(footerInformes);
+        }
+    }
+
+    function restaurarFooter() {
+        if (footerInformes && footerAncla?.parentNode) {
+            footerAncla.parentNode.insertBefore(footerInformes, footerAncla);
+        }
+    }
+
         if (!contenido) return;
 
         try {
-            const respuesta = await fetch(
-                "https://mi-proyecto1-2.onrender.com/api/caracteristicasequipos"
-            );
+            const respuesta = await fetch("/Catalogo/ObtenerCaracteristicas");
 
             if (!respuesta.ok) {
                 throw new Error("No se pudieron cargar las categorías.");
             }
 
-            const categorias = await respuesta.json();
-            window.categoriasProductos = categorias;
+                const categorias = await respuesta.json();
+    window.categoriasProductos = categorias;
 
-            lista.innerHTML = "";
+    lista.innerHTML = "";
 
-            categorias.forEach(function (categoria) {
+    // ==========================================
+    // OPCIÓN INICIO
+    // ==========================================
+
+    const liInicio = document.createElement("li");
+    liInicio.className = "categoria-item";
+
+    const enlaceInicio = document.createElement("a");
+    enlaceInicio.href = "/";
+    enlaceInicio.className = "categoria-enlace categoria-enlace-inicio";
+
+    const iconoInicio = document.createElement("span");
+    iconoInicio.className = "categoria-icono";
+
+    const elementoIconoInicio = document.createElement("i");
+    elementoIconoInicio.setAttribute("data-lucide", "house");
+
+    iconoInicio.appendChild(elementoIconoInicio);
+
+    const nombreInicio = document.createElement("span");
+    nombreInicio.className = "categoria-nombre";
+    nombreInicio.textContent = "Inicio";
+
+    enlaceInicio.append(iconoInicio, nombreInicio);
+    liInicio.appendChild(enlaceInicio);
+    lista.appendChild(liInicio);
+
+    // ==========================================
+    // CATEGORÍAS DINÁMICAS
+    // ==========================================
+
+    categorias.forEach(function (categoria) {
                 const li = document.createElement("li");
                 li.className = "categoria-item";
 
@@ -988,20 +1062,69 @@
 
 
 
-                    enlace.addEventListener("click", async function (event) {
+                       enlace.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        const esServicios =
-            normalizarTextoBusqueda(categoria.nombre) === "servicios";
+        const nombreCategoria = normalizarTextoBusqueda(categoria.nombre);
 
         // Mostrar el contenido correspondiente a la categoría.
         await mostrarDetalleCategoria(categoria);
 
-        // Las categorías de productos mantienen su comportamiento actual.
-        // Servicios no debe activar el filtro de productos.
-        if (!esServicios && typeof seleccionarCategoria === "function") {
-            seleccionarCategoria(categoria.idCategoria);
-            actualizarUrlCategorias();
+            // ==========================================
+    // VISTA DE CATEGORÍAS EN CELULARES
+    // ==========================================
+    if (window.matchMedia("(max-width: 600px)").matches) {
+
+        const panelCategorias = document.getElementById("panelCategoriasLateral");
+        const overlayCategorias = document.getElementById("categoriasOverlay");
+
+        // Ocultar el panel lateral.
+        if (panelCategorias) {
+            panelCategorias.style.display = "none";
+        }
+
+        // Ocultar el fondo del panel.
+        if (overlayCategorias) {
+            overlayCategorias.style.display = "none";
+        }
+
+        // Mostrar el detalle a pantalla completa.
+        modal.classList.add("categoria-pantalla-completa");
+    }
+
+        // ==========================================
+        // SERVICIOS Y NOSOTROS: RUTAS PROPIAS
+        // ==========================================
+
+        if (
+            nombreCategoria === "servicios" ||
+            nombreCategoria === "nosotros"
+        ) {
+            const ruta = "/" + encodeURIComponent(
+                String(categoria.nombre).trim().replace(/\s+/g, "-")
+            );
+
+            history.pushState(
+                { seccion: nombreCategoria },
+                "",
+                ruta
+            );
+
+        } else {
+
+            // ==========================================
+            // CATEGORÍAS DE PRODUCTOS: VOLVER A INICIO
+            // ==========================================
+
+            if (typeof seleccionarCategoria === "function") {
+                await seleccionarCategoria(categoria.idCategoria);
+            }
+
+            history.pushState(
+                { seccion: nombreCategoria },
+                "",
+                "/"
+            );
         }
 
         // Marcar la categoría seleccionada.
@@ -1025,11 +1148,18 @@
     // CARGAR CATEGORÍA SEGÚN LA URL
     // ==========================================
 
-    if (categorias.length > 0) {
+       if (categorias.length > 0) {
 
         // Cargar los productos antes de recuperar la selección.
         if (typeof cargarProductos === "function") {
             await cargarProductos();
+        }
+
+        // Generar la fila de subcategorías circulares.
+        if (
+            typeof window.renderizarSubcategoriasCirculares === "function"
+        ) {
+            window.renderizarSubcategoriasCirculares();
         }
 
         await restaurarSeleccionDesdeUrl();
@@ -1043,11 +1173,6 @@
                 "<li>No se pudieron cargar las categorías.</li>";
         }
 
-
-
-        let cargandoServiciosCategoria = false;
-
-        let cargandoNosotrosCategoria = false;
 
 
     async function mostrarDetalleCategoria(categoria) {
@@ -1185,6 +1310,135 @@
 
                 contenido.appendChild(columnas);
 
+
+
+    // ==========================================
+    // CARRUSEL ALEATORIO DE IMÁGENES DE SERVICIOS
+    // ==========================================
+
+        // Recopilar una sola fotografía aleatoria por cada servicio.
+    const imagenesCarrusel = [];
+
+    serviciosNormales.forEach(servicio => {
+
+        const imagenesServicio =
+            servicio.imagenes ?? servicio.Imagenes ?? [];
+
+        if (!Array.isArray(imagenesServicio)) return;
+
+        // Obtener las fotografías válidas de este servicio.
+        const fotografiasValidas = imagenesServicio.filter(imagen => {
+
+            const url = imagen.urlImagen ?? imagen.UrlImagen ?? "";
+
+            return url.trim() !== "";
+        });
+
+        // Si el servicio tiene fotografías, elegir una al azar.
+        if (fotografiasValidas.length > 0) {
+
+            const indiceAleatorio = Math.floor(
+                Math.random() * fotografiasValidas.length
+            );
+
+            const imagenElegida = fotografiasValidas[indiceAleatorio];
+
+            imagenesCarrusel.push({
+                url: imagenElegida.urlImagen ?? imagenElegida.UrlImagen,
+                titulo: servicio.titulo ?? servicio.Titulo ?? "Servicio"
+            });
+        }
+    });
+
+    // Mezclar aleatoriamente el orden de los servicios en el carrusel.
+    for (let i = imagenesCarrusel.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [imagenesCarrusel[i], imagenesCarrusel[j]] =
+            [imagenesCarrusel[j], imagenesCarrusel[i]];
+    }
+
+    // Mostrar una fotografía por cada servicio.
+        // Mantener todas las fotografías disponibles para la rotación.
+    const imagenesSeleccionadas = imagenesCarrusel;
+
+    // Crear el carrusel solamente si hay fotografías.
+    if (imagenesSeleccionadas.length > 0) {
+
+        seccionCarrusel = document.createElement("section");
+
+
+        seccionCarrusel.className = "servicios-carrusel";
+
+        const pistaCarrusel = document.createElement("div");
+        pistaCarrusel.className = "servicios-carrusel-pista";
+
+        // Crear las fotografías.
+            // Crear tres espacios para las fotografías.
+    const elementosImagenes = [];
+
+    for (let i = 0; i < Math.min(3, imagenesSeleccionadas.length); i++) {
+
+        const elemento = document.createElement("div");
+        elemento.className = "servicios-carrusel-item";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+
+        elemento.appendChild(img);
+        pistaCarrusel.appendChild(elemento);
+
+        elementosImagenes.push(img);
+    }
+
+    // Elegir tres fotografías aleatorias sin repetir servicios.
+    actualizarImagenesCarrusel = function () {
+
+        const disponibles = [...imagenesSeleccionadas];
+
+        // Mezclar aleatoriamente.
+        for (let i = disponibles.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [disponibles[i], disponibles[j]] =
+                [disponibles[j], disponibles[i]];
+        }
+
+        // Actualizar las tres imágenes.
+        elementosImagenes.forEach((img, indice) => {
+
+            const imagen = disponibles[indice];
+
+            if (imagen) {
+                img.src = imagen.url;
+                img.alt = imagen.titulo;
+            }
+        });
+    }
+
+    // Mostrar las primeras fotografías.
+    actualizarImagenesCarrusel();
+
+        // Iniciar la rotación cada 30 segundos.
+       // Iniciar la rotación cada 30 segundos.
+    if (intervaloCarrusel) {
+        clearInterval(intervaloCarrusel);
+        intervaloCarrusel = null;
+    }
+
+    // Cambiar las fotografías cada 30 segundos.
+    intervaloCarrusel = setInterval(
+        actualizarImagenesCarrusel,
+        15000
+    );
+
+       seccionCarrusel.appendChild(pistaCarrusel);
+        // Colocar el carrusel debajo de las opciones de servicios.
+        contenido.appendChild(seccionCarrusel);
+    }
+
+
                     // ==========================================
     // SECCIÓN DE BENEFICIOS
     // ==========================================
@@ -1260,7 +1514,44 @@
                 // DETALLE DEL SERVICIO Y GALERÍA
                 // ==========================================
 
-                function mostrarDetalleServicio(servicio) {
+                function mostrarDetalleServicio(servicio, actualizarDireccion = true) {
+
+
+                        if (actualizarDireccion) {
+
+        const nombreServicio = servicio.titulo || servicio.Titulo || "";
+
+        const rutaServicio = "/Servicios/" + encodeURIComponent(
+            String(nombreServicio).trim().replace(/\s+/g, "-")
+        );
+
+        history.pushState(
+            {
+                seccion: "servicios",
+                servicio: nombreServicio
+            },
+            "",
+            rutaServicio
+        );
+    }
+
+
+                        // Actualizar la URL del servicio seleccionado.
+    const nombreServicio = servicio.titulo || servicio.Titulo || "";
+
+    const rutaServicio = "/Servicios/" + encodeURIComponent(
+        String(nombreServicio).trim().replace(/\s+/g, "-")
+    );
+
+    history.pushState(
+        {
+            seccion: "servicios",
+            servicio: nombreServicio
+        },
+        "",
+        rutaServicio
+    );
+
 
                     // Ocultar el panel lateral de categorías.
     const panelCategorias = document.getElementById("panelCategoriasLateral");
@@ -1277,8 +1568,19 @@
     // Convertir el modal en pantalla completa.
     modal.classList.add("servicio-pantalla-completa");
 
+
                     // Ocultar listado de servicios.
                     columnas.remove();
+
+                        // Detener la rotación del carrusel.
+    if (intervaloCarrusel) {
+        clearInterval(intervaloCarrusel);
+        intervaloCarrusel = null;
+    }
+
+                        if (seccionCarrusel) {
+        seccionCarrusel.remove();
+    }
 
                     const detalle = document.createElement("div");
                     detalle.className = "servicio-detalle-layout";
@@ -1301,7 +1603,15 @@
 
                         function volverAlListadoServicios() {
 
+                                history.pushState(
+        { seccion: "servicios" },
+        "",
+        "/Servicios"
+    );
+
+
         modal.classList.remove("servicio-pantalla-completa");
+        restaurarFooter();
 
         if (panelCategorias) panelCategorias.style.display = "";
         if (overlayCategorias) overlayCategorias.style.display = "";
@@ -1310,9 +1620,29 @@
     volver.remove();
 
     // Restaurar el listado de servicios.
+        // Restaurar el listado de servicios.
     contenido.appendChild(columnas);
 
-    // Restaurar los beneficios debajo del listado.
+        // Restaurar el carrusel.
+    if (seccionCarrusel) {
+        contenido.appendChild(seccionCarrusel);
+    }
+
+    // Reactivar la rotación automática.
+    if (actualizarImagenesCarrusel) {
+
+        if (intervaloCarrusel) {
+            clearInterval(intervaloCarrusel);
+        }
+
+        intervaloCarrusel = setInterval(
+            actualizarImagenesCarrusel,
+            15000
+        );
+    }
+
+
+    // Restaurar los beneficios debajo del carrusel.
     if (beneficiosDestacados.length > 0) {
         contenido.appendChild(seccionBeneficios);
     }
@@ -1323,6 +1653,10 @@
 
         // Limpiar la función de restauración.
         modal._volverAListadoServicios = null;
+            // Volver a abrir el panel lateral de categorías.
+    if (typeof window.abrirPanelCategorias === "function") {
+        window.abrirPanelCategorias();
+    }
     }
 
     modal._volverAListadoServicios = volverAlListadoServicios;
@@ -1547,6 +1881,7 @@
 
 
                         // Mostrar el detalle del servicio con sus fotografías.
+       // Mostrar el detalle del servicio con sus fotografías.
     contenido.appendChild(detalle);
 
     // Mover los beneficios debajo del detalle.
@@ -1554,11 +1889,19 @@
         contenido.appendChild(seccionBeneficios);
     }
 
+    // Mostrar el footer al final de todo el contenido.
+    mostrarFooterEnModal();
+
     if (window.lucide) {
         window.lucide.createIcons();
     }
 
                 }
+
+                    // Guardar los servicios y la función para recuperarlos desde la URL.
+    modal._serviciosCargados = servicios;
+    modal._mostrarDetalleServicio = mostrarDetalleServicio;
+
 
             } catch (error) {
 
@@ -1602,6 +1945,7 @@
 
         modal.classList.add("servicio-pantalla-completa");
 
+
         // ==========================================
         // ENLACE VOLVER A NOSOTROS
         // ==========================================
@@ -1615,20 +1959,26 @@
         volverNosotros.className = "nosotros-volver-categorias";
         volverNosotros.textContent = "← Volver a Nosotros";
 
-        volverNosotros.addEventListener("click", function (event) {
-            event.preventDefault();
+            volverNosotros.addEventListener("click", function (event) {
+        event.preventDefault();
 
-            modal.classList.remove("servicio-pantalla-completa");
-            volverNosotros.style.display = "none";
+        modal.classList.remove("servicio-pantalla-completa");
+        restaurarFooter();
+        volverNosotros.style.display = "none";
 
-            if (panelLateral) {
-                panelLateral.style.display = "";
-            }
+        if (panelLateral) {
+            panelLateral.style.display = "";
+        }
 
-            if (overlayLateral) {
-                overlayLateral.style.display = "";
-            }
-        });
+        if (overlayLateral) {
+            overlayLateral.style.display = "";
+        }
+
+        // Volver a abrir el panel lateral de categorías.
+        if (typeof window.abrirPanelCategorias === "function") {
+            window.abrirPanelCategorias();
+        }
+    });
 
         if (encabezadoCategoria) {
 
@@ -2050,6 +2400,8 @@
         window.lucide.createIcons();
     }
 
+        // Mostrar el footer debajo de todas las secciones de Nosotros.
+    mostrarFooterEnModal();
 
 
         } catch (error) {
@@ -2165,6 +2517,8 @@
         const columnas = document.createElement("div");
         columnas.className = "categorias-subcategorias-grid";
 
+        columnas.classList.add("servicios-listado-opciones");
+
         subcategorias.forEach(function (subcategoria) {
 
             const columna = document.createElement("div");
@@ -2275,24 +2629,13 @@
             );
 
         // Si estamos en la página principal, no hay selección en la URL.
-        if (segmentos.length === 0) {
+            // ==========================================
+    // PÁGINA PRINCIPAL: NO ABRIR EL MODAL
+    // ==========================================
 
-                const categorias = window.categoriasProductos || [];
-    const primera = categorias[0];
-
-    if (!primera) return;
-
-            await mostrarDetalleCategoria(primera);
-
-            const primerEnlace =
-                lista.querySelector(".categoria-enlace");
-
-            if (primerEnlace) {
-                primerEnlace.classList.add("activa");
-            }
-
-            return;
-        }
+    if (segmentos.length === 0) {
+        return;
+    }
 
         const nombreCategoriaUrl = normalizarTextoBusqueda(segmentos[0]);
 
@@ -2307,8 +2650,31 @@
             return;
         }
 
-        // Mostrar el contenido de la categoría.
-        await mostrarDetalleCategoria(categoria);
+         // Mostrar el contenido de la categoría.
+    await mostrarDetalleCategoria(categoria);
+
+    const nombreCategoria = normalizarTextoBusqueda(
+        categoria.nombre ?? categoria.Nombre ?? ""
+    );
+
+    // ==========================================
+    // RUTAS ESPECIALES: SERVICIOS Y NOSOTROS
+    // ==========================================
+
+    if (nombreCategoria === "servicios" || nombreCategoria === "nosotros") {
+
+        // Mostrar el modal al acceder directamente mediante una URL.
+        modal.style.display = "";
+        modal.classList.add("activo");
+        modal.setAttribute("aria-hidden", "false");
+        modal.inert = false;
+
+              if (nombreCategoria === "servicios" && segmentos.length === 1) {
+
+        if (typeof window.abrirPanelCategorias === "function") {
+            window.abrirPanelCategorias();
+        }
+    }
 
         // Marcar la categoría correspondiente en el panel.
         lista.querySelectorAll(".categoria-enlace")
@@ -2322,18 +2688,51 @@
             enlaceCategoria.classList.add("activa");
         }
 
-        // Seleccionar la categoría.
-        if (typeof seleccionarCategoria === "function") {
-
-           await seleccionarCategoria(
-                categoria.idCategoria ?? categoria.IdCategoria
-            );
-        }
-
-        // Si la URL solamente contiene la categoría, terminar.
-        if (segmentos.length < 2) {
+        // Nosotros no tiene subcategorías ni selección de productos.
+        if (nombreCategoria === "nosotros") {
             return;
         }
+
+        // ==========================================
+        // RECUPERAR SERVICIO INDIVIDUAL
+        // ==========================================
+
+        if (segmentos.length >= 2) {
+
+            const nombreServicioUrl = normalizarTextoBusqueda(
+                segmentos.slice(1).join(" ")
+            );
+
+            const servicios = modal._serviciosCargados || [];
+
+            const servicioEncontrado = servicios.find(servicio =>
+                normalizarTextoBusqueda(
+                    servicio.titulo ?? servicio.Titulo ?? ""
+                ) === nombreServicioUrl
+            );
+
+            if (
+                servicioEncontrado &&
+                typeof modal._mostrarDetalleServicio === "function"
+            ) {
+                modal._mostrarDetalleServicio(servicioEncontrado, false);
+            }
+        }
+
+        return;
+    }
+
+    // ==========================================
+    // CATEGORÍAS NORMALES DE PRODUCTOS
+    // ==========================================
+
+    // Seleccionar la categoría.
+    if (typeof seleccionarCategoria === "function") {
+
+        await seleccionarCategoria(
+            categoria.idCategoria ?? categoria.IdCategoria
+        );
+    }
 
         // ==========================================
         // BUSCAR SUBCATEGORÍA
@@ -2499,6 +2898,8 @@
 
 
 
+
+
 <style>
     /* FOOTER DINÁMICO */
     .footer-informes {
@@ -2631,5 +3032,9 @@
     .footer-informes-contenido {
         margin-left: 28px;
     }
+
+
+
+
 </style>
 

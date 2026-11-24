@@ -9,13 +9,13 @@
         : "~/Views/Shared/_LayoutInicio.cshtml";
 }
 
-
+<div id="configVistaIndex" data-vista="Index" hidden></div>
 
 <head>
 
-    <link rel="stylesheet" href="~/css/styleInicio.css" />
 
-    <link rel="stylesheet" href="~/css/carrusel.css" />    
+    <link rel="stylesheet" href="~/css/carrusel.css" />
+
 
 </head>
 
@@ -213,199 +213,6 @@
 </div>
 
 
-<div class="modal fade"
-     id="modalEditar"
-     tabindex="-1"
-     aria-hidden="true">
-
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Equipo</h5>
-
-                <button type="button"
-                        class="close"
-                        data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-
-            <form id="formEditarEquipo" enctype="multipart/form-data">
-                <input type="hidden" id="editar_id" />
-
-                <div class="modal-body">
-
-                    <!-- Categoría y Subcategoría -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_categoria">Categoría</label>
-                            <select id="editar_categoria"
-                                    class="form-control"
-                                    required>
-                                <option value="">Cargando categorías...</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_subcategoria">Subcategoría</label>
-                            <select id="editar_subcategoria"
-                                    class="form-control"
-                                    required
-                                    disabled>
-                                <option value="">Seleccione una categoría primero</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Tipo y Color -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_tipoEquipo">Tipo de equipo</label>
-                            <select id="editar_tipoEquipo"
-                                    class="form-control"
-                                    required>
-                                <option value="">Cargando tipos...</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_color">Color</label>
-                            <select id="editar_color" class="form-control">
-                                <option value="">Cargando colores...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Marca y Modelo -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_marca">Marca</label>
-                            <select id="editar_marca"
-                                    class="form-control"
-                                    required>
-                                <option value="">Cargando marcas...</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_modelo">Modelo</label>
-                            <input type="text"
-                                   id="editar_modelo"
-                                   class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Código y Descripción -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="editar_codigoProducto">Código Producto</label>
-                            <input type="text"
-                                   id="editar_codigoProducto"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-8 mb-3">
-                            <label for="editar_descripcion">Descripción</label>
-                            <textarea id="editar_descripcion"
-                                      class="form-control"
-                                      rows="1"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Descripción detallada -->
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label for="editar_descripcion1">Descripción detallada</label>
-                            <textarea id="editar_descripcion1"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Ingrese especificaciones o párrafos largos..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Garantía y Estado -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_garantia">Garantía</label>
-                            <select id="editar_garantia" class="form-control">
-                                <option value="">Seleccione garantía...</option>
-                                <option value="3 Meses">3 Meses</option>
-                                <option value="6 Meses">6 Meses</option>
-                                <option value="12 Meses">12 Meses</option>
-                                <option value="24 Meses">24 Meses</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="editar_estado">Estado</label>
-                            <select id="editar_estado" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="ACTIVO">ACTIVO</option>
-                                <option value="INACTIVO">INACTIVO</option>
-                                <option value="AGOTADO">AGOTADO</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Precios -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="editar_precio">Precio actual</label>
-                            <input type="number"
-                                   id="editar_precio"
-                                   step="0.01"
-                                   class="form-control"
-                                   readonly />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label for="editar_precioAntes">Precio anterior</label>
-                            <input type="number"
-                                   id="editar_precioAntes"
-                                   step="0.01"
-                                   class="form-control" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label for="editar_descuento">Descuento</label>
-                            <input type="number"
-                                   id="editar_descuento"
-                                   step="0.01"
-                                   class="form-control"
-                                   placeholder="20" />
-                        </div>
-                    </div>
-
-                    <!-- Imágenes -->
-                    <div class="mb-3">
-                        <label for="editar_fileImage">Imágenes del equipo (máx. 4)</label>
-                        <input type="file"
-                               id="editar_fileImage"
-                               accept="image/*"
-                               multiple
-                               class="form-control" />
-                    </div>
-
-                    <div id="editar_previewContainer"
-                         style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button"
-                            id="btnActualizar"
-                            class="btn btn-primary w-100">
-                        Guardar cambios
-                    </button>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-</div>
 
 
 <!-- MODAL EDITAR PROMOCIÓN -->
@@ -600,6 +407,30 @@
 
     </div>
 
+
+    <!-- FILA 3: SUBCATEGORÍAS CIRCULARES -->
+    <div id="subcategoriasCirculares" class="subcategorias-circulares">
+
+        <button type="button"
+                class="subcategorias-flecha subcategorias-flecha-anterior"
+                aria-label="Subcategorías anteriores">
+            &#10094;
+        </button>
+
+        <div class="subcategorias-circulares-visor">
+            <div id="pistaSubcategoriasCirculares"
+                 class="subcategorias-circulares-pista">
+            </div>
+        </div>
+
+        <button type="button"
+                class="subcategorias-flecha subcategorias-flecha-siguiente"
+                aria-label="Más subcategorías">
+            &#10095;
+        </button>
+
+    </div>
+
 </div>
 
 
@@ -608,8 +439,10 @@
 <!-- CONTENEDOR GENERAL: FILTROS + PRODUCTOS -->
 <div class="catalogo-layout">
 
-    <!-- PANEL LATERAL DE FILTROS -->
-    <aside class="panel-filtros" id="panelFiltros"
+    @if (!estaLogueado)
+    {
+        <!-- PANEL LATERAL DE FILTROS -->
+        <aside class="panel-filtros" id="panelFiltros"
         style="
         box-sizing:border-box;
         width:100%;
@@ -619,7 +452,7 @@
         border-radius:14px;
         background:#f3f4f6;
         overflow:hidden;
-        "
+        ">
 
         <!-- ENCABEZADO -->
         <div class="filtros-header"
@@ -989,195 +822,144 @@ color: #ff0094;
            aria-live="polite"></p>
 
     </aside>
-    
+    }
 
-    <!-- PRODUCTOS: SE CONSERVA EL ID QUE USA TU JAVASCRIPT -->
-    <div class="products-container" id="contenedorProductos">
 
-        <div id="loaderProductos" class="loader-productos">
-            <div class="spinner-productos"></div>
-            <span>Cargando productos...</span>
+    @if (!estaLogueado || ViewContext.RouteData.Values["action"]?.ToString() == "Catalogos")
+    {
+        <!-- PRODUCTOS -->
+        <div class="products-container" id="contenedorProductos">
+
+            <div id="loaderProductos" class="loader-productos">
+                <div class="spinner-productos"></div>
+                <span>Cargando productos...</span>
+            </div>
+
         </div>
-
-    </div>
+    }
 
 </div>
 
 <div class="modal fade" id="modalZoom" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+        <div class="modal-content">
 
-            <div class="modal-header border-0 pb-0" style="padding: 15px 20px;">
-                <h5 class="modal-title" id="zoom-titulo-producto" style=" font-family: 'Montserrat', sans-serif;font-weight: 500; color: #464646; font-size: 1.15rem; max-width: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zoom-titulo-producto">
                     Detalle del Producto
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 1.8rem; line-height: 1; padding: 10px 15px; margin: -10px -15px -10px auto;">
-                    <span>&times;</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body" style="padding: 20px;">
+            <div class="modal-body">
                 <div class="row">
 
-                    <!-- CONTENEDOR DE IMAGEN PRINCIPAL CON FLECHAS -->
-                    <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="border-right: 1px solid #f0f0f0;">
-                        <div style="width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #eaeaea; position: relative;">
-
-                            <!-- Flecha Izquierda -->
-                            <button type="button" id="zoom-prev-btn" onclick="navegarImagenZoom(-1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #333; cursor: pointer; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); outline: none;">
-                                &#10094;
+                    <!-- COLUMNA IZQUIERDA: IMAGEN Y MINIATURAS -->
+                    <div class="col-md-6 d-flex flex-column align-items-center justify-content-center zoom-stage-col">
+                        <div class="zoom-main-frame">
+                            <button type="button" id="zoom-prev-btn" class="zoom-nav-btn zoom-nav-prev" onclick="navegarImagenZoom(-1)" aria-label="Imagen anterior">
+                                <span class="zoom-chevron" aria-hidden="true"></span>
                             </button>
 
-                            <img id="zoom-imagen-principal" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                            <img id="zoom-imagen-principal" src="" alt="Vista previa del producto" />
 
-                            <!-- Flecha Derecha -->
-                            <button type="button" id="zoom-next-btn" onclick="navegarImagenZoom(1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #333; cursor: pointer; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); outline: none;">
-                                &#10095;
+                            <button type="button" id="zoom-next-btn" class="zoom-nav-btn zoom-nav-next" onclick="navegarImagenZoom(1)" aria-label="Siguiente imagen">
+                                <span class="zoom-chevron" aria-hidden="true"></span>
                             </button>
-
                         </div>
 
-                        <div id="zoom-galeria-miniaturas" style="display: flex; gap: 8px; margin-top: 12px; width: 100%; justify-content: center; overflow-x: auto; padding-bottom: 5px;">
+                        <div id="zoom-galeria-miniaturas"></div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: DETALLES Y COMPRA -->
+                    <div class="col-md-6 d-flex flex-column justify-content-between zoom-details-col">
+                        <div>
+                            <span id="zoom-tipo-badge" class="zoom-type-badge">TIPO</span>
+
+                            <h4 id="zoom-marca">MARCA</h4>
+                            <p id="zoom-modelo-desc">Modelo y descripción detallada del equipo.</p>
+
+                            <div class="zoom-code-row">
+                                <span>Código de producto: </span>
+                                <strong id="zoom-codigo">N/A</strong>
+                            </div>
+
+                            <a href="javascript:void(0)"
+                               id="zoom-btn-caracteristicas"
+                               class="zoom-specs-link">
+                                <span>&#9783; Más características</span>
+                                <span aria-hidden="true">&#9662;</span>
+                            </a>
+
+                            <div id="zoom-color-container" class="zoom-color-section">
+                                <span class="zoom-section-label">Color disponible</span>
+                                <div id="zoom-lista-colores">
+                                    <button type="button" class="color-circle active" style="background-color: #7A1F87;" aria-label="Color principal"></button>
+                                    <button type="button" class="color-circle" style="background-color: #DC2626;" aria-label="Rojo"></button>
+                                    <button type="button" class="color-circle" style="background-color: #FFFFFF;" aria-label="Blanco"></button>
+                                </div>
+                            </div>
+
+                            <div id="zoom-precios-container" class="zoom-price-box">
+                                <div class="zoom-price-main">
+                                    <span id="zoom-precio-actual"></span>
+                                    <span id="zoom-descuento-badge" style="display: none;">-0%</span>
+                                </div>
+
+                                <div id="zoom-precio-antes-container" style="display: none;">
+                                    <span>Antes: </span>
+                                    <span id="zoom-precio-antes"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div id="zoom-acciones-compra" class="zoom-purchase-bar">
+                                <div class="zoom-qty-control">
+                                    <button type="button" class="zoom-qty-btn" onclick="cambiarCantidadZoom(-1)" aria-label="Disminuir cantidad">-</button>
+                                    <span id="cant-display-zoom">1</span>
+                                    <button type="button" class="zoom-qty-btn" onclick="cambiarCantidadZoom(1)" aria-label="Aumentar cantidad">+</button>
+                                </div>
+
+                                <button type="button" class="btn btn-agregar-carrito" id="zoom-btn-agregar">
+                                    Agregar al carrito
+                                </button>
+                            </div>
+
+                            <div class="zoom-perks-grid">
+                                <div id="zoom-garantia-container" class="zoom-perk-card">
+                                    <span class="zoom-perk-icon" aria-hidden="true">🛡️</span>
+                                    <strong class="zoom-perk-title">Garantía</strong>
+                                    <span id="zoom-garantia" class="zoom-perk-sub">12 Meses</span>
+                                </div>
+                                <div class="zoom-perk-card">
+                                    <span class="zoom-perk-icon" aria-hidden="true">💳</span>
+                                    <strong class="zoom-perk-title">Pagos</strong>
+                                    <span class="zoom-perk-sub">Efectivo / Tarjeta</span>
+                                </div>
+                                <div class="zoom-perk-card">
+                                    <span class="zoom-perk-icon" aria-hidden="true">🚚</span>
+                                    <strong class="zoom-perk-title">Envíos</strong>
+                                    <span class="zoom-perk-sub">Todo el Perú</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- COLUMNA DE DETALLES (DERECHA) -->
-                    <div class="col-md-6 d-flex flex-column justify-content-between" style="padding-left: 25px; min-height: 320px;">
+                </div>
 
-                        <div style="line-height: 1.6;">
-                            <span id="zoom-tipo-badge" style="background: #eef2f7; color: #0056b3; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">TIPO</span>
-
-                            <h4 id="zoom-marca" style="font-weight: 800; margin-top: 8px; margin-bottom: 2px; color: #222;">MARCA</h4>
-                            <p id="zoom-modelo-desc" style="color: #555; font-size: 14px; margin-bottom: 12px;">Modelo y descripción detallada del equipo.</p>
-
-                            <!-- SECCIÓN CÓDIGO Y BOTÓN VERDE DEBAJO -->
-
-                            <div style="margin-bottom: 15px;">
-                                <div style="font-size: 13px; color: #777;">
-                                    <span>Código de producto: </span><strong id="zoom-codigo" style="color: #333;">N/A</strong>
-                                </div>
-
-                                <!-- Enlace sutil estilo botón en color verde -->
-                                
-                                <a href="javascript:void(0)"
-                                   id="zoom-btn-caracteristicas"
-                                   style="font-size:12px; font-weight:bold; color:#ff0094; text-decoration:none;">
-                                    ☷ Más características ▾
-                                </a>
-                                
-
-                                <!-- SECCIÓN SELECCIÓN DE COLOR -->
-                                <div id="zoom-color-container" style="margin-top: 12px;">
-                                    <span style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 6px;">Color disponible:</span>
-                                    <div id="zoom-lista-colores" style="display: flex; gap: 10px; align-items: center;">
-
-                                        <!-- Ejemplo de Círculo de Color Activo/Seleccionado -->
-                                        <button type="button" class="color-circle active"></button>
-                                        <!-- Ejemplo de Círculo de Color Inactivo -->
-                                        <button type="button" class="color-circle" style="width: 24px; height: 24px; border-radius: 50%; background-color: #ff0000; border: 1px solid #ccc; cursor: pointer; padding: 0; outline: none; transition: all 0.2s;"></button>
-
-                                        <button type="button" class="color-circle" style="width: 24px; height: 24px; border-radius: 50%; background-color: #ffffff; border: 1px solid #ccc; cursor: pointer; padding: 0; outline: none; transition: all 0.2s;"></button>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- CONTENEDOR DE PRECIOS -->
-                            <div style="background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px dashed #e5e5e5; margin-bottom: 20px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-
-                                <!-- Lado Izquierdo: Precio Actual y Badge de Descuento -->
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span id="zoom-precio-actual" style="font-size: 24px; font-weight: 800; color: #222; line-height: 1;">S/. 0.00</span>
-                                    <span id="zoom-descuento-badge"
-                                          style="
-          background-color: #d7007c;
-          color: white;
-          font-size: 12px;
-          font-weight: bold;
-          padding: 4px 8px 4px 12px;
-          clip-path: polygon(0 50%, 25% 0, 100% 0, 100% 100%, 25% 100%);
-          display: none;
-          line-height: 1.2;
-          white-space: nowrap;
-      ">
-                                        -0%
-                                    </span>
-                                </div>
-
-                                <!-- Lado Derecho: Precio Anterior -->
-                                <div id="zoom-precio-antes-container" style="display: none; text-align: right;">
-                                    <span style="color: #999; font-size: 13px; text-decoration: line-through;">Antes: </span>
-                                    <span id="zoom-precio-antes" style="color: #999; font-size: 13px; text-decoration: line-through;">S/. 0.00</span>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- SECCIÓN ACCIONES DE COMPRA -->
-                        <div id="zoom-acciones-compra" style="border-top: 1px solid #f0f0f0; padding-top: 15px;">
-                            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-
-                                <!-- Selector de Cantidad -->
-                                <div style="display: inline-flex; align-items: center; border: 1px solid #ced4da; border-radius: 6px; overflow: hidden; background: #fff; height: 38px;">
-                                    <button type="button" onclick="cambiarCantidadZoom(-1)" style="border: none; background: #f8f9fa; width: 32px; height: 100%; cursor: pointer; font-weight: bold; color: #333; padding: 0;">-</button>
-                                    <span id="cant-display-zoom" style="min-width: 35px; text-align: center; font-weight: bold; font-size: 14px; color: #333; line-height: 38px;">1</span>
-                                    <button type="button" onclick="cambiarCantidadZoom(1)" style="border: none; background: #f8f9fa; width: 32px; height: 100%; cursor: pointer; font-weight: bold; color: #333; padding: 0;">+</button>
-                                </div>
-
-                                <!-- Botón Agregar al Carrito -->
-                                <button class="btn btn-primary btn-agregar-carrito" id="zoom-btn-agregar" style="flex: 1; height: 38px; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; margin: 0;">
-                                    Agregar al carrito
-                                </button>
-
-                            </div>
-                        </div>
-
-                        <!-- BLOQUES INFORMATIVOS -->
-                        <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 22px; width: 100%; flex-wrap: nowrap;">
-                            <!-- Recuadro 1: Garantía -->
-                            <div id="zoom-garantia-container"  style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
-                                <span style="font-size: 16px; margin-bottom: 2px;">🛡️</span>
-                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Garantía</strong>
-                                <span id="zoom-garantia"  style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">12 Meses</span>
-                            </div>
-                            <!-- Recuadro 2: Formas de Pago -->
-                            <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
-                                <span style="font-size: 16px; margin-bottom: 2px;">💳</span>
-                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Pagos</strong>
-                                <span style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">Efectivo/Tarj.</span>
-                            </div>
-                            <!-- Recuadro 3: Envíos -->
-                            <div style="flex: 1; background: #fff; padding: 10px 4px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1.2 / 1;">
-                                <span style="font-size: 16px; margin-bottom: 2px;">🚚</span>
-                                <strong style="font-size: 10px; color: #333; display: block; line-height: 1;">Envíos</strong>
-                                <span style="font-size: 9px; color: #777; line-height: 1; margin-top: 1px;">Todo el Perú</span>
-                            </div>
-                        </div>
-
-                    </div> <!-- FIN DE COLUMNA DE DETALLES -->
-                </div> <!-- FIN DEL ROW ORIGINAL -->
-                <!-- RECUADRO DESPLEGABLE ABAJO DEL TODO (Ideal para mucha información) -->
-                <div class="collapse" id="zoom-caracteristicas-collapse" style="width: 100%; margin-top: 25px; border-top: 1px dashed #e5e5e5; padding-top: 20px;">
-                    <div style="background: #fdfdfd; border: 1px solid #eaeaea; border-radius: 10px; padding: 16px; font-size: 13px; color: #444; line-height: 1.6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
-                        <strong style="font-family: 'Montserrat', sans-serif; color: #777777; font-weight: 450 !important; display: block; margin-bottom: 8px; font-size: 14px;">INFORMACIÓN DE ESTE PRODUCTO</strong>
-                        <div id="zoom-caracteristicas-titulo"
-                             style="
-font-family: 'Montserrat', sans-serif;
-        font-size: 15px;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #464646;
-        margin-bottom: 12px;
-        line-height: 1.5;">
-                        </div>
-
-                        <div id="zoom-caracteristicas-texto" style="white-space: pre-line; color: #555;">
-                            Cargando especificaciones adicionales...
-                        </div>
+                <!-- ESPECIFICACIONES DESPLEGABLES -->
+                <div class="collapse zoom-specs-panel" id="zoom-caracteristicas-collapse">
+                    <div class="zoom-specs-box">
+                        <strong class="zoom-specs-eyebrow">Información de este producto</strong>
+                        <div id="zoom-caracteristicas-titulo"></div>
+                        <div id="zoom-caracteristicas-texto">Cargando especificaciones adicionales...</div>
                     </div>
                 </div>
 
-            </div> <!-- FIN MODAL BODY -->
+            </div>
         </div>
     </div>
 </div>

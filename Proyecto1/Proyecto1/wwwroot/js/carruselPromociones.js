@@ -1,6 +1,9 @@
 ﻿
-const API_PROMOCIONES =
-    "https://mi-proyecto1-2.onrender.com/api/RegistroPromociones";
+const API_PROMOCIONES = "/Inicio/ListarPromociones";
+const API_OBTENER_PROMOCION = "/Inicio/ObtenerPromocion";
+const API_ACTUALIZAR_PROMOCION = "/Inicio/ActualizarPromocion";
+const API_ELIMINAR_PROMOCION = "/Inicio/EliminarPromocion";
+const API_REGISTRAR_PROMOCION = "/Inicio/RegistrarPromocion";
 
 const CLOUDINARY_URL =
     "https://api.cloudinary.com/v1_1/dkxto4ymq/image/upload";
@@ -136,6 +139,9 @@ formPromociones.addEventListener("submit", async function (evento) {
     const activo =
         document.getElementById("activoPromocion").value === "true";
 
+    // Cerrar modal después de registrar correctamente
+    $("#modalAgregarPromociones").modal("hide");
+
     // Validaciones
     if (archivos.length === 0) {
         mostrarMensaje("Selecciona al menos una imagen.", "error");
@@ -193,7 +199,7 @@ formPromociones.addEventListener("submit", async function (evento) {
             const imagenCloudinary = await subirPromocionCloudinary(archivo);
 
             // 2. Enviar los datos a la API
-            const respuesta = await fetch(API_PROMOCIONES, {
+            const respuesta = await fetch(API_REGISTRAR_PROMOCION, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -257,8 +263,8 @@ formPromociones.addEventListener("submit", async function (evento) {
 
 //////////////INICIO MOSTRAR
 
-const API_LISTAR_PROMOCIONES =
-    "https://mi-proyecto1-2.onrender.com/api/RegistroPromociones";
+
+const API_LISTAR_PROMOCIONES = "/Inicio/ListarPromociones";
 
 // Guardar los temporizadores de cada fila
 let temporizadorPromociones1 = null;
@@ -323,6 +329,29 @@ function crearSlidePromocional(imagen) {
 
     return slide;
 }
+// ==========================================
+// ESPERAR A QUE TERMINEN DE CARGAR LAS IMÁGENES
+// ==========================================
+
+function esperarCargaImagenesPromocionales(pista) {
+
+    const imagenes = Array.from(pista.querySelectorAll("img"));
+
+    return Promise.all(
+        imagenes.map(img => {
+
+            if (img.complete) {
+                return Promise.resolve();
+            }
+
+            return new Promise(resolve => {
+                img.addEventListener("load", resolve, { once: true });
+                img.addEventListener("error", resolve, { once: true });
+            });
+
+        })
+    );
+}
 
 // =====================================================
 // INICIAR UNA FILA DEL CARRUSEL
@@ -335,9 +364,38 @@ function iniciarFilaPromocional(
     intervalo,
     tipoFila
 ) {
+
     const pista = document.getElementById(idPista);
 
     if (!pista) return;
+
+    // Contenedor de la fila promocional
+    const filaContenedor = pista.closest(
+        tipoFila === 1 ? ".promo-fila-1" : ".promo-fila-2"
+    );
+
+    // Reiniciar estado de carga
+    if (filaContenedor) {
+        filaContenedor.classList.remove("carrusel-listo");
+    }
+
+    // Ocultar controles al iniciar o recargar
+    if (tipoFila === 1) {
+        const btnVerTodo = filaContenedor?.querySelector(".btn-ver-todo");
+
+        if (btnVerTodo) {
+            btnVerTodo.style.display = "none";
+        }
+    }
+
+    if (tipoFila === 2) {
+        const flechas = filaContenedor?.querySelectorAll(".promo-flecha");
+
+        flechas?.forEach(flecha => {
+            flecha.hidden = true;
+            flecha.style.display = "none";
+        });
+    }
 
     if (tipoFila === 1 && temporizadorPromociones1) {
         clearInterval(temporizadorPromociones1);
@@ -396,11 +454,22 @@ function iniciarFilaPromocional(
     if (imagenes.length < 2) {
         if (btnAnterior) btnAnterior.hidden = true;
         if (btnSiguiente) btnSiguiente.hidden = true;
+
+        // Esperar a que cargue la imagen antes de mostrar Ver todo
+        esperarCargaImagenesPromocionales(pista).then(() => {
+
+            if (filaContenedor) {
+                filaContenedor.classList.add("carrusel-listo");
+            }
+
+        });
+
         return;
     }
 
-    if (btnAnterior) btnAnterior.hidden = false;
-    if (btnSiguiente) btnSiguiente.hidden = false;
+    // Las flechas permanecen ocultas hasta que las imágenes carguen
+    if (btnAnterior) btnAnterior.hidden = true;
+    if (btnSiguiente) btnSiguiente.hidden = true;
 
     // Crear indicadores
     const botonesIndicadores = [];
@@ -494,17 +563,43 @@ function iniciarFilaPromocional(
         };
     }
 
-    // Mostrar el primer indicador activo
-    actualizarIndicadores();
+    // ==========================================
+    // ESPERAR CARGA COMPLETA ANTES DE MOSTRAR CONTROLES
+    // ==========================================
 
-    // Iniciar desplazamiento automático
-    reiniciarTemporizador();
+    esperarCargaImagenesPromocionales(pista).then(() => {
 
-    if (tipoFila === 1) {
-        temporizadorPromociones1 = temporizador;
-    } else {
-        temporizadorPromociones2 = temporizador;
-    }
+        // Mostrar el carrusel ya cargado
+        mostrarImagen();
+
+        actualizarIndicadores();
+
+        // Marcar fila como lista
+        if (filaContenedor) {
+            filaContenedor.classList.add("carrusel-listo");
+        }
+
+        // Mostrar flechas solo cuando hay varias imágenes
+        if (btnAnterior) {
+            btnAnterior.hidden = false;
+            btnAnterior.style.display = "flex";
+        }
+
+        if (btnSiguiente) {
+            btnSiguiente.hidden = false;
+            btnSiguiente.style.display = "flex";
+        }
+
+        // Iniciar desplazamiento automático
+        reiniciarTemporizador();
+
+        if (tipoFila === 1) {
+            temporizadorPromociones1 = temporizador;
+        } else {
+            temporizadorPromociones2 = temporizador;
+        }
+
+    });
 }
 
 
@@ -577,10 +672,6 @@ async function cargarCarruselPromociones() {
             2
         );
 
-        console.log("Promociones cargadas:", {
-            fila1: fila1.length,
-            fila2: fila2.length
-        });
 
     } catch (error) {
         console.error("Error al cargar las promociones:", error);
@@ -627,7 +718,7 @@ async function cargarListaPromociones() {
     tabla.textContent = "Cargando promociones...";
 
     try {
-        const respuesta = await fetch(API_PROMOCIONES);
+        const respuesta = await fetch("/Inicio/ListarPromociones");
 
         if (!respuesta.ok) {
             throw new Error(`Error HTTP ${respuesta.status}`);
@@ -760,12 +851,11 @@ async function eliminarPromocion(id, boton) {
         boton.disabled = true;
         boton.textContent = "Eliminando...";
 
-        const respuesta = await fetch(
-            `${API_PROMOCIONES}/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
+        const respuesta = await fetch(`${API_ELIMINAR_PROMOCION}?id=${id}`, {
+            method: "DELETE"
+        });
+
+
 
         const resultado = await respuesta.json();
 
@@ -796,7 +886,7 @@ async function eliminarPromocion(id, boton) {
 // =====================================================
 async function abrirEditarPromocion(id) {
     try {
-        const respuesta = await fetch(`${API_PROMOCIONES}/${id}`);
+        const respuesta = await fetch(`${API_OBTENER_PROMOCION}?id=${id}`);
 
         if (!respuesta.ok) {
             throw new Error(`Error HTTP ${respuesta.status}`);
@@ -940,7 +1030,7 @@ formEditarPromocion.addEventListener("submit", async function (evento) {
         }
 
         const respuesta = await fetch(
-            `${API_PROMOCIONES}/${id}`,
+            `${API_ACTUALIZAR_PROMOCION}?id=${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -994,3 +1084,676 @@ formEditarPromocion.addEventListener("submit", async function (evento) {
 
 
 //////////////FIN EDITAR
+
+
+
+///////////////////////////CARUSEL//////////////////////////////////////////////////////////
+
+
+
+window.renderizarSubcategoriasCirculares = function () {
+
+    const contenedor = document.getElementById(
+        "subcategoriasCirculares"
+    );
+
+    const pista = document.getElementById(
+        "pistaSubcategoriasCirculares"
+    );
+    if (!contenedor || !pista) return;
+
+    // Ocultar flechas mientras se cargan las imágenes
+    contenedor.classList.remove("cargado");
+
+    const categorias = window.categoriasProductos || [];
+
+    const productos = window.productosAgrupados || [];
+
+    pista.innerHTML = "";
+
+    if (!categorias.length || !productos.length) {
+        contenedor.style.display = "none";
+        return;
+    }
+
+    contenedor.style.display = "";
+
+    const esAdministrador =
+        typeof estaLogueado !== "undefined" && estaLogueado;
+
+    // ==========================================
+    // RECORRER CATEGORÍAS Y SUBCATEGORÍAS
+    // ==========================================
+
+    categorias.forEach(categoria => {
+
+        const nombreCategoria = String(
+            categoria.nombre ?? categoria.Nombre ?? ""
+        ).trim().toLowerCase();
+
+        // Excluir categorías especiales.
+        if (
+            nombreCategoria === "servicios" ||
+            nombreCategoria === "nosotros"
+        ) {
+            return;
+        }
+
+        const idCategoria =
+            categoria.idCategoria ?? categoria.IdCategoria;
+
+        const subcategorias =
+            categoria.subcategorias ??
+            categoria.Subcategorias ??
+            [];
+
+        subcategorias.forEach(subcategoria => {
+
+            const idSubcategoria =
+                subcategoria.idSubcategoria ??
+                subcategoria.IdSubcategoria;
+
+            // ==========================================
+            // BUSCAR PRODUCTOS DE LA SUBCATEGORÍA
+            // ==========================================
+
+            const productosSubcategoria = productos.filter(producto => {
+
+                const idProductoSubcategoria =
+                    producto.idSubcategoria ??
+                    producto.IdSubcategoria;
+
+                if (
+                    Number(idProductoSubcategoria) !==
+                    Number(idSubcategoria)
+                ) {
+                    return false;
+                }
+
+                const estadoProducto = String(
+                    producto.estado ?? producto.Estado ?? ""
+                ).trim().toLowerCase();
+
+                if (!esAdministrador && estadoProducto === "inactivo") {
+                    return false;
+                }
+
+                const nombreEquipo =
+                    producto.tipo_Equipo ??
+                    producto.tipoEquipo ??
+                    producto.Tipo_Equipo ??
+                    producto.tipo_equipo;
+
+                if (
+                    typeof nombreEquipo !== "string" ||
+                    !nombreEquipo.trim()
+                ) {
+                    return false;
+                }
+
+                const variantes =
+                    producto.variantes ??
+                    producto.Variantes ??
+                    [];
+
+                if (!Array.isArray(variantes) || variantes.length === 0) {
+                    return false;
+                }
+
+                const variantesDisponibles = variantes.filter(variante => {
+
+                    const estadoVariante = String(
+                        variante.estado ?? variante.Estado ?? ""
+                    ).trim().toLowerCase();
+
+                    return esAdministrador ||
+                        estadoVariante !== "inactivo";
+                });
+
+                // Debe tener al menos una variante disponible.
+                return variantesDisponibles.length > 0;
+
+            });
+
+            // Si no tiene productos disponibles, no mostrar el círculo.
+            if (productosSubcategoria.length === 0) {
+                return;
+            }
+
+            // ==========================================
+            // ELEGIR UN PRODUCTO ALEATORIO
+            // ==========================================
+
+            const indiceAleatorio = Math.floor(
+                Math.random() * productosSubcategoria.length
+            );
+
+            const productoElegido =
+                productosSubcategoria[indiceAleatorio];
+
+            const variantes =
+                productoElegido.variantes ??
+                productoElegido.Variantes ??
+                [];
+
+            const variantesDisponibles = variantes.filter(variante => {
+
+                const estado = String(
+                    variante.estado ?? variante.Estado ?? ""
+                ).trim().toLowerCase();
+
+                return esAdministrador || estado !== "inactivo";
+            });
+
+            // ==========================================
+            // OBTENER IMÁGENES DEL PRODUCTO
+            // ==========================================
+
+            let imagenesDisponibles = [];
+
+            variantesDisponibles.forEach(variante => {
+
+                let urls = [];
+
+                if (typeof obtenerUrlsVariante === "function") {
+
+                    urls = obtenerUrlsVariante(variante);
+
+                } else {
+
+                    const imagenes =
+                        variante.imagenes ??
+                        variante.Imagenes ??
+                        [];
+
+                    urls = imagenes.map(imagen =>
+                        typeof imagen === "string"
+                            ? imagen
+                            : imagen.urlImagen ?? imagen.UrlImagen
+                    );
+
+                    urls = urls.filter(Boolean);
+                }
+
+                // Compatibilidad con las propiedades adaptadas.
+                if (urls.length === 0) {
+                    urls = [
+                        variante.url_Equipo,
+                        variante.url1,
+                        variante.url2,
+                        variante.url3
+                    ].filter(Boolean);
+                }
+
+                imagenesDisponibles.push(...urls);
+            });
+
+            // Eliminar imágenes repetidas.
+            imagenesDisponibles = [
+                ...new Set(imagenesDisponibles)
+            ];
+
+            // Elegir una imagen aleatoria del producto.
+            let imagenElegida = imagenesDisponibles.length > 0
+                ? imagenesDisponibles[0]
+                : null;
+
+            // ==========================================
+            // CREAR CÍRCULO
+            // ==========================================
+
+            const item = document.createElement("div");
+            item.className = "subcategoria-circular-item";
+
+
+            const circulo = document.createElement("div");
+            circulo.className = "subcategoria-circular-imagen";
+
+            function mostrarRespaldo() {
+
+                circulo.innerHTML = "";
+
+                const respaldo = document.createElement("div");
+                respaldo.className = "subcategoria-circular-respaldo";
+
+                const icono = document.createElement("i");
+                icono.setAttribute("data-lucide", "image-off");
+
+                respaldo.appendChild(icono);
+                circulo.appendChild(respaldo);
+
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+
+            if (imagenElegida) {
+
+                const imagen = document.createElement("img");
+
+                imagen.src = imagenElegida;
+                imagen.alt = subcategoria.nombre ??
+                    subcategoria.Nombre ??
+                    "Subcategoría";
+
+                imagen.loading = "lazy";
+
+                imagen.onerror = mostrarRespaldo;
+
+                circulo.appendChild(imagen);
+
+            } else {
+
+                mostrarRespaldo();
+            }
+
+            // Nombre de la subcategoría.
+            const nombre = document.createElement("span");
+
+            nombre.className = "subcategoria-circular-nombre";
+
+            nombre.textContent =
+                subcategoria.nombre ??
+                subcategoria.Nombre ??
+                "";
+
+            item.append(circulo, nombre);
+
+
+            // ==========================================
+            // CLICK EN SUBCATEGORÍA CIRCULAR
+            // ==========================================
+
+            item.style.cursor = "pointer";
+
+            item.addEventListener("click", () => {
+
+                const nombreEquipo =
+                    productoElegido.tipo_Equipo ??
+                    productoElegido.tipoEquipo ??
+                    productoElegido.Tipo_Equipo ??
+                    productoElegido.tipo_equipo;
+
+                seleccionarCategoria(idCategoria);
+
+                seleccionarSubcategoria(
+                    idSubcategoria,
+                    idCategoria
+                );
+
+                seleccionarTipoEquipo(
+                    nombreEquipo,
+                    idSubcategoria,
+                    idCategoria
+                );
+
+                actualizarUrlCategorias();
+
+            });
+
+
+            pista.appendChild(item);
+
+        });
+
+    });
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+    if (typeof window.prepararCarruselInfinitoSubcategorias === "function") {
+        window.prepararCarruselInfinitoSubcategorias();
+    }
+
+    // ==========================================
+    // MOSTRAR FLECHAS CUANDO LAS IMÁGENES CARGUEN
+    // ==========================================
+
+    const imagenes = Array.from(
+        pista.querySelectorAll(".subcategoria-circular-imagen img")
+    );
+
+    if (imagenes.length === 0) {
+        contenedor.classList.add("cargado");
+    } else {
+
+        Promise.all(
+            imagenes.map(imagen => {
+
+                if (imagen.complete) {
+                    return Promise.resolve();
+                }
+
+                return new Promise(resolve => {
+                    imagen.addEventListener("load", resolve, { once: true });
+                    imagen.addEventListener("error", resolve, { once: true });
+                });
+            })
+        ).then(() => {
+            contenedor.classList.add("cargado");
+        });
+
+    }
+
+};
+
+
+
+(function () {
+
+    const contenedor = document.getElementById("subcategoriasCirculares");
+    if (!contenedor) return;
+
+    const visor = contenedor.querySelector(".subcategorias-circulares-visor");
+    const pista = contenedor.querySelector(".subcategorias-circulares-pista");
+    const btnAnterior = contenedor.querySelector(".subcategorias-flecha-anterior");
+    const btnSiguiente = contenedor.querySelector(".subcategorias-flecha-siguiente");
+
+    if (!visor || !pista || !btnAnterior || !btnSiguiente) return;
+
+    let animando = false;
+    let temporizador = null;
+
+    let totalOriginales = 0;
+    let pasoUnitario = 0;
+    let distanciaCopia = 0;
+    let inicioCentro = 0;
+
+    // ==========================================
+    // MEDIDAS
+    // ==========================================
+
+    function obtenerMedidas() {
+
+        const item = pista.querySelector(".subcategoria-circular-item");
+
+        const anchoItem = item
+            ? item.getBoundingClientRect().width
+            : 150;
+
+        const estilos = window.getComputedStyle(pista);
+
+        const gap = parseFloat(estilos.columnGap || estilos.gap) || 0;
+
+        return {
+            anchoItem,
+            gap,
+            paso: anchoItem + gap
+        };
+    }
+
+    // ==========================================
+    // ELIMINAR CLONES
+    // ==========================================
+
+    function eliminarCopias() {
+
+        pista.querySelectorAll("[data-carrusel-clon='true']")
+            .forEach(clon => clon.remove());
+
+    }
+
+    // ==========================================
+    // CREAR COPIAS LATERALES
+    // ==========================================
+
+    function crearCopias(itemsOriginales) {
+
+        const izquierda = document.createDocumentFragment();
+        const derecha = document.createDocumentFragment();
+
+        itemsOriginales.forEach(item => {
+
+            const clonIzquierdo = item.cloneNode(true);
+            const clonDerecho = item.cloneNode(true);
+
+            clonIzquierdo.dataset.carruselClon = "true";
+            clonDerecho.dataset.carruselClon = "true";
+
+            izquierda.appendChild(clonIzquierdo);
+            derecha.appendChild(clonDerecho);
+
+        });
+
+        pista.prepend(izquierda);
+        pista.append(derecha);
+
+    }
+
+    // ==========================================
+    // ESTADO DE FLECHAS
+    // ==========================================
+
+    function actualizarFlechas(hayDesplazamiento) {
+
+        visor.classList.toggle("centrado", !hayDesplazamiento);
+
+        contenedor.classList.toggle(
+            "sin-desplazamiento",
+            !hayDesplazamiento
+        );
+
+        btnAnterior.disabled = !hayDesplazamiento;
+        btnSiguiente.disabled = !hayDesplazamiento;
+
+        btnAnterior.style.opacity = hayDesplazamiento ? "1" : "0.35";
+        btnSiguiente.style.opacity = hayDesplazamiento ? "1" : "0.35";
+
+    }
+
+    // ==========================================
+    // PREPARAR CARRUSEL
+    // ==========================================
+
+    function prepararCarrusel() {
+
+        if (animando) return;
+
+        eliminarCopias();
+
+        const itemsOriginales = Array.from(pista.children)
+            .filter(item => item.dataset.carruselClon !== "true");
+
+        totalOriginales = itemsOriginales.length;
+
+        if (!totalOriginales) return;
+
+        const { anchoItem, gap, paso } = obtenerMedidas();
+
+        pasoUnitario = paso;
+        distanciaCopia = totalOriginales * pasoUnitario;
+
+        const estilos = window.getComputedStyle(contenedor);
+
+        const padIzq =
+            parseFloat(estilos.paddingLeft) || 0;
+
+        const padDer =
+            parseFloat(estilos.paddingRight) || 0;
+
+        const anchoDisponible =
+            contenedor.clientWidth - padIzq - padDer;
+
+        const maxItems = Math.max(
+            1,
+            Math.floor((anchoDisponible + gap) / pasoUnitario)
+        );
+
+        const hayDesplazamiento = totalOriginales > maxItems;
+
+        const itemsVisibles = Math.min(totalOriginales, maxItems);
+
+        const anchoExacto =
+            itemsVisibles * anchoItem +
+            Math.max(0, itemsVisibles - 1) * gap;
+
+        // ==========================================
+        // MODO SIN DESPLAZAMIENTO
+        // ==========================================
+
+        if (!hayDesplazamiento) {
+
+            // Sin padding lateral cuando todos caben.
+            pista.style.paddingLeft = "0px";
+            pista.style.paddingRight = "0px";
+
+            visor.style.width = `${anchoExacto}px`;
+
+            actualizarFlechas(false);
+
+            visor.style.scrollBehavior = "auto";
+            visor.style.scrollSnapType = "none";
+            visor.scrollLeft = 0;
+            visor.style.scrollBehavior = "";
+            visor.style.scrollSnapType = "";
+
+            return;
+        }
+
+        // ==========================================
+        // MODO INFINITO
+        // ==========================================
+
+        // Usar el padding definido por CSS.
+        pista.style.paddingLeft = "";
+        pista.style.paddingRight = "";
+
+        visor.style.width = `${anchoExacto}px`;
+
+        actualizarFlechas(true);
+
+        // Crear una copia a cada lado.
+        crearCopias(itemsOriginales);
+
+        const estilosPista = window.getComputedStyle(pista);
+
+        const paddingPistaIzq =
+            parseFloat(estilosPista.paddingLeft) || 0;
+
+        // Inicio del grupo original, considerando su margen.
+        inicioCentro = paddingPistaIzq + distanciaCopia;
+
+        // Posicionarse en el grupo central.
+        visor.style.scrollBehavior = "auto";
+        visor.style.scrollSnapType = "none";
+
+        visor.scrollLeft = inicioCentro;
+
+        visor.style.scrollBehavior = "";
+        visor.style.scrollSnapType = "";
+
+    }
+
+    // ==========================================
+    // RECICLAR POSICIÓN SIN SALTO VISUAL
+    // ==========================================
+
+    function recentrarSiHaceFalta() {
+
+        const posicion = visor.scrollLeft;
+
+        visor.style.scrollBehavior = "auto";
+
+        // Entró en el grupo derecho.
+        if (posicion >= inicioCentro + distanciaCopia) {
+
+            visor.scrollLeft = posicion - distanciaCopia;
+
+        }
+
+        // Entró en el grupo izquierdo.
+        else if (posicion < inicioCentro) {
+
+            visor.scrollLeft = posicion + distanciaCopia;
+
+        }
+
+        visor.style.scrollBehavior = "";
+
+    }
+
+    // ==========================================
+    // MOVIMIENTO INFINITO DE UN CÍRCULO
+    // ==========================================
+
+    function desplazar(direccion) {
+
+        if (animando || totalOriginales <= 1) return;
+
+        animando = true;
+
+        const destino =
+            visor.scrollLeft + pasoUnitario * direccion;
+
+        const snapAnterior = visor.style.scrollSnapType;
+
+        visor.style.scrollSnapType = "none";
+
+        // MISMA ANIMACIÓN EN AMBAS DIRECCIONES
+        visor.scrollTo({
+            left: destino,
+            behavior: "smooth"
+        });
+
+        temporizador = setTimeout(() => {
+
+            recentrarSiHaceFalta();
+
+            visor.style.scrollSnapType = snapAnterior || "";
+
+            animando = false;
+
+        }, 500);
+
+    }
+
+    // ==========================================
+    // FLECHAS
+    // ==========================================
+
+    btnAnterior.addEventListener("click", () => {
+        desplazar(-1);
+    });
+
+    btnSiguiente.addEventListener("click", () => {
+        desplazar(1);
+    });
+
+    // ==========================================
+    // REDIMENSIONAR
+    // ==========================================
+
+    window.addEventListener("resize", () => {
+
+        if (animando) return;
+
+        prepararCarrusel();
+
+    });
+
+    // ==========================================
+    // ACTUALIZACIÓN GLOBAL
+    // ==========================================
+
+    window.prepararCarruselInfinitoSubcategorias = prepararCarrusel;
+
+    window.actualizarSubcategoriasCirculares = function () {
+
+        requestAnimationFrame(() => {
+
+            if (!animando) {
+                prepararCarrusel();
+            }
+
+        });
+
+    };
+
+    // ==========================================
+    // INICIALIZAR
+    // ==========================================
+
+    prepararCarrusel();
+
+})();

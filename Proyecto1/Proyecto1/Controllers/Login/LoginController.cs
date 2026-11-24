@@ -95,8 +95,7 @@ namespace Proyecto1.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         principal
                     );
-
-                    return RedirectToAction("Index", "Inicio");
+                    return RedirectToRoute("inicio");
                 }
 
                 TempData["LoginError"] =
