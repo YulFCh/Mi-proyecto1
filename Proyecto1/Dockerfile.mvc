@@ -1,4 +1,4 @@
-FROM ://microsoft.com AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY . .
@@ -6,7 +6,7 @@ COPY . .
 RUN dotnet restore Proyecto1/Proyecto1/Proyecto1.csproj
 RUN dotnet publish Proyecto1/Proyecto1/Proyecto1.csproj -c Release -o /app
 
-FROM ://microsoft.com
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
 COPY --from=build /app .
