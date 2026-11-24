@@ -1,0 +1,16 @@
+FROM ://microsoft.com AS build
+WORKDIR /src
+
+COPY . .
+
+RUN dotnet restore Proyecto1/Proyecto1/Proyecto1.csproj
+RUN dotnet publish Proyecto1/Proyecto1/Proyecto1.csproj -c Release -o /app
+
+FROM ://microsoft.com
+WORKDIR /app
+
+COPY --from=build /app .
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "Proyecto1.dll"]
