@@ -1,0 +1,20 @@
+
+name: Mantener API FRACTALICA activa
+
+on:
+  schedule:
+    - cron: '7,17,27,37,47,57 * * * *'
+  workflow_dispatch:
+
+jobs:
+  mantener-api-despierta:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enviar solicitud a la API
+        run: |
+          echo "Contactando con la API de FRACTALICA..."
+          curl --silent --show-error --max-time 60 \
+            --output /dev/null \
+            "https://mi-proyecto1-2.onrender.com/"
+          echo "Solicitud enviada correctamente."
