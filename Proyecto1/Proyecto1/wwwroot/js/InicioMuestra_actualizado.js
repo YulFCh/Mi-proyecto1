@@ -356,6 +356,35 @@ function seleccionarColorProducto(productoId, varianteIndex) {
 
 
     // ==================================================
+    // ACTUALIZAR INDICADORES AL CAMBIAR DE COLOR
+    // ==================================================
+
+    card.dataset.imagenIndex = 0;
+
+    const indicadores = card.querySelector(".indicadores-imagenes");
+
+    if (indicadores) {
+
+        const imagenes = [
+            variante.url_Equipo,
+            variante.url1,
+            variante.url2,
+            variante.url3
+        ].filter(Boolean);
+
+        indicadores.innerHTML = imagenes
+            .map((url, index) => `
+            <button
+                type="button"
+                class="indicador-imagen ${index === 0 ? "activo" : ""}"
+                aria-label="Mostrar imagen ${index + 1}"
+                onclick="seleccionarImagenIndicador(${productoId}, ${index})"
+            ></button>
+        `)
+            .join("");
+    }
+
+    // ==================================================
     // COLOR SELECCIONADO
     // ==================================================
 
@@ -702,6 +731,115 @@ function seleccionarMiniaturaProducto(
 
     elemento.classList.add("active-thumb");
 }
+
+
+// =====================================================
+// ACTUALIZAR IMAGEN E INDICADORES EN MÓVILES
+// =====================================================
+
+function actualizarImagenMovil(productoId, indice) {
+
+    const card = document.getElementById(`producto-${productoId}`);
+    if (!card) return;
+
+    const producto = window.productosAgrupados?.find(
+        p => Number(p.id) === Number(productoId)
+    );
+
+    if (!producto) return;
+
+    const variantes = producto.variantes || producto.Variantes || [];
+
+    const variante = variantes[Number(card.dataset.varianteIndex)];
+
+    if (!variante) return;
+
+    const imagenes = [
+        variante.url_Equipo,
+        variante.url1,
+        variante.url2,
+        variante.url3
+    ].filter(Boolean);
+
+    if (indice < 0 || indice >= imagenes.length) return;
+
+    card.dataset.imagenIndex = indice;
+
+    const imagen = card.querySelector(".main-product-image");
+
+    if (imagen) {
+        imagen.src = imagenes[indice];
+    }
+
+    card.querySelectorAll(".indicador-imagen").forEach((boton, i) => {
+        boton.classList.toggle("activo", i === indice);
+    });
+}
+
+
+// =====================================================
+// SELECCIONAR IMAGEN TOCANDO UNA RAYITA
+// =====================================================
+
+function seleccionarImagenIndicador(productoId, indice) {
+
+    actualizarImagenMovil(productoId, indice);
+}
+
+// =====================================================
+// DESLIZAMIENTO TÁCTIL EXCLUSIVO PARA MÓVILES
+// =====================================================
+
+function inicializarDeslizamientoMovil(contenedor) {
+
+    if (!window.matchMedia("(max-width: 576px)").matches) return;
+
+    contenedor.querySelectorAll(".main-image-container").forEach(area => {
+
+        if (area.dataset.swipeInicializado === "true") return;
+
+        area.dataset.swipeInicializado = "true";
+
+        let inicioX = 0;
+        let inicioY = 0;
+
+        area.addEventListener("touchstart", e => {
+
+            inicioX = e.changedTouches[0].clientX;
+            inicioY = e.changedTouches[0].clientY;
+
+        }, { passive: true });
+
+        area.addEventListener("touchend", e => {
+
+            const diferenciaX = e.changedTouches[0].clientX - inicioX;
+            const diferenciaY = e.changedTouches[0].clientY - inicioY;
+
+            if (
+                Math.abs(diferenciaX) < 40 ||
+                Math.abs(diferenciaX) < Math.abs(diferenciaY)
+            ) return;
+
+            const card = area.closest(".product-gallery");
+            if (!card) return;
+
+            const productoId = Number(
+                card.id.replace("producto-", "")
+            );
+
+            const indiceActual = Number(card.dataset.imagenIndex || 0);
+
+            const siguienteIndice = diferenciaX < 0
+                ? indiceActual + 1
+                : indiceActual - 1;
+
+            actualizarImagenMovil(productoId, siguienteIndice);
+
+        }, { passive: true });
+
+    });
+}
+
 
 function abrirZoomProductoSeleccionado(productoId) {
 
@@ -1134,6 +1272,21 @@ async function cargarProductos() {
                 `)
                 .join("");
 
+            // =====================================================
+            // INDICADORES DE IMÁGENES PARA MÓVILES
+            // =====================================================
+
+            const indicadoresHTML = imagenesIniciales
+                .map((url, index) => `
+        <button
+            type="button"
+            class="indicador-imagen ${index === 0 ? "activo" : ""}"
+            aria-label="Mostrar imagen ${index + 1}"
+            onclick="seleccionarImagenIndicador(${item.id}, ${index})"
+        ></button>
+    `)
+                .join("");
+
 
             contenedor.innerHTML += `
 
@@ -1170,6 +1323,11 @@ async function cargarProductos() {
                         ${miniaturasHTML}
 
                     </div>
+
+                    <!-- INDICADORES PARA MÓVILES -->
+<div class="indicadores-imagenes">
+    ${indicadoresHTML}
+</div>
 
                     <!-- COLORES -->
 <div
@@ -1543,6 +1701,8 @@ ${estaLogueado && mostrarBotonesGestion ? `
                 </div>
             `;
         });
+
+        inicializarDeslizamientoMovil(contenedor);
 
     } catch (error) {
 

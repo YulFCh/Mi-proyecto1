@@ -2359,6 +2359,7 @@ body:has(#contenedorProductos) .container-xxl {
                 "badge badge"
                 "imagen datos"
                 "miniaturas datos"
+                "colores datos"
                 "acciones acciones";
             align-items: start;
             column-gap: 5px;
@@ -2389,7 +2390,7 @@ body:has(#contenedorProductos) .container-xxl {
         }
 
         #contenedorProductos .producto-colores-container {
-            grid-area: datos;
+            grid-area: colores;
             width: 100% !important;
             margin: 0 !important;
         }
@@ -2403,6 +2404,7 @@ body:has(#contenedorProductos) .container-xxl {
         #contenedorProductos .tipo-equipo-badge {
             grid-area: badge;
         }
+
 
         #contenedorProductos .product-actions {
             grid-area: acciones;
@@ -2469,6 +2471,51 @@ body:has(#contenedorProductos) .container-xxl {
             height: 14px !important;
             margin: 0 !important;
         }
+}
+
+
+
+
+.indicadores-imagenes {
+    display: none;
+}
+
+@media (max-width: 576px) {
+
+    #contenedorProductos .thumbnail-container {
+        display: none !important;
+    }
+
+    #contenedorProductos .indicadores-imagenes {
+        grid-area: miniaturas;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 5px 0;
+    }
+
+    #contenedorProductos .indicador-imagen {
+        width: 12px;
+        height: 4px;
+        min-width: 12px;
+        padding: 0;
+        border: none;
+        border-radius: 10px;
+        background: #d5d5d5;
+        cursor: pointer;
+        transition: width .2s, background .2s;
+    }
+
+        #contenedorProductos .indicador-imagen.activo {
+            width: 22px;
+            background: #ff0094;
+        }
+
+    #contenedorProductos .main-image-container {
+        touch-action: pan-y;
+    }
 }
 
 
