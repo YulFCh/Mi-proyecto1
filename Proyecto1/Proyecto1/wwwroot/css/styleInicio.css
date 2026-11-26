@@ -2336,3 +2336,56 @@ body:has(#contenedorProductos) .container-xxl {
 
 
 
+
+
+/* ==========================================================
+   HEADER RESPONSIVE - CELULARES
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    /* Contenedor principal del encabezado */
+    .header-mobile-layout {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+    }
+
+        /* Primera fila: menú y logo */
+        .header-mobile-layout > div:first-child {
+            order: 1;
+            flex-shrink: 0;
+        }
+
+        /* Ocultar teléfono en la cabecera móvil */
+        .header-mobile-layout .header-telefono {
+            display: none !important;
+        }
+
+        /* Primera fila: carrito e inicio de sesión */
+        .header-mobile-layout > div:last-child {
+            order: 1;
+            flex-shrink: 0;
+        }
+
+        /* Segunda fila: buscador */
+        .header-mobile-layout .fract-search {
+            order: 2;
+            flex: 0 0 100% !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+        }
+
+        /* El input debe ocupar todo el espacio disponible */
+        .header-mobile-layout .fract-search-input {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+}
