@@ -2344,15 +2344,17 @@ body:has(#contenedorProductos) .container-xxl {
 /* ==========================================
    TARJETAS HORIZONTALES EN CELULARES
    ========================================== */
-@media (max-width: 576px) and (min-width: 401px) {
+@media (max-width: 576px) {
 
+    /* Una tarjeta por fila */
     #contenedorProductos {
         grid-template-columns: minmax(0, 1fr) !important;
     }
 
+        /* Distribución horizontal */
         #contenedorProductos > .product-gallery {
             display: grid !important;
-            grid-template-columns: minmax(105px, 0.85fr) minmax(0, 1.15fr);
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr) !important;
             grid-template-areas:
                 "badge badge"
                 "imagen datos"
@@ -2361,51 +2363,51 @@ body:has(#contenedorProductos) .container-xxl {
             align-items: start;
             column-gap: 10px;
             row-gap: 8px;
-            height: auto;
+            height: auto !important;
         }
 
-    #contenedorProductos .main-image-container {
-        grid-area: imagen;
-        width: 100% !important;
-        padding: 4px;
-    }
+        #contenedorProductos .main-image-container {
+            grid-area: imagen;
+            width: 100% !important;
+            padding: 4px;
+        }
 
-    #contenedorProductos .main-product-image {
-        height: 130px;
-    }
+        #contenedorProductos .main-product-image {
+            height: 130px !important;
+        }
 
-    #contenedorProductos .thumbnail-container {
-        grid-area: miniaturas;
-        width: 100% !important;
-        margin: 0;
-        justify-content: center;
-    }
+        #contenedorProductos .thumbnail-container {
+            grid-area: miniaturas;
+            width: 100% !important;
+            margin: 0;
+            justify-content: center;
+        }
 
-    #contenedorProductos .thumbnail-image {
-        width: 27px;
-        height: 27px;
-    }
+        #contenedorProductos .thumbnail-image {
+            width: 27px;
+            height: 27px;
+        }
 
-    #contenedorProductos .producto-colores-container {
-        grid-area: datos;
-        width: 100% !important;
-        margin: 0 !important;
-    }
+        #contenedorProductos .producto-colores-container {
+            grid-area: datos;
+            width: 100% !important;
+            margin: 0 !important;
+        }
 
-    #contenedorProductos .product-info-block {
-        grid-area: datos;
-        width: 100% !important;
-        min-width: 0;
-    }
+        #contenedorProductos .product-info-block {
+            grid-area: datos;
+            width: 100% !important;
+            min-width: 0;
+        }
 
-    #contenedorProductos .tipo-equipo-badge {
-        grid-area: badge;
-    }
+        #contenedorProductos .tipo-equipo-badge {
+            grid-area: badge;
+        }
 
-    #contenedorProductos .product-actions {
-        grid-area: acciones;
-        width: 100%;
-    }
+        #contenedorProductos .product-actions {
+            grid-area: acciones;
+            width: 100%;
+        }
 }
 
 
@@ -2417,4 +2419,8 @@ body:has(#contenedorProductos) .container-xxl {
     visibility: visible !important;
     display: inline-flex !important;
     pointer-events: auto !important;
+}
+
+#contenedorProductos .btn-agregar-carrito {
+    transform: translateY(-8px);
 }
