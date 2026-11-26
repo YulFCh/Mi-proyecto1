@@ -2435,7 +2435,40 @@ body:has(#contenedorProductos) .container-xxl {
             box-sizing: border-box;
         }
 
+        #contenedorProductos .product-info-block {
+            margin-top: -0.2px !important;
+        }
 
+
+}
+
+
+@media (max-width: 576px) {
+    #contenedorProductos .producto-precio-actual .btn-agregar-carrito {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        min-height: 28px !important;
+        max-width: 28px !important;
+        max-height: 28px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 28px !important;
+        border-radius: 5px !important;
+        overflow: hidden;
+        white-space: nowrap;
+        transform: translateY(-4px);
+    }
+
+        #contenedorProductos .producto-precio-actual .btn-agregar-carrito i,
+        #contenedorProductos .producto-precio-actual .btn-agregar-carrito svg {
+            width: 14px !important;
+            height: 14px !important;
+            margin: 0 !important;
+        }
 }
 
 

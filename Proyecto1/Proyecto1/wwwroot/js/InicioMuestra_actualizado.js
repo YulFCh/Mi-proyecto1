@@ -1228,7 +1228,7 @@ async function cargarProductos() {
         style="
             background:#fbfbfb;
             padding:8px;
-            border-radius:8px;
+            border-radius:0px;
             border:1px dashed #e5e5e5;
             margin-bottom:8px;
             display:flex;
