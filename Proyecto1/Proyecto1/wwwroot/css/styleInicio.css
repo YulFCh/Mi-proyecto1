@@ -1310,114 +1310,7 @@ body {
    TARJETAS HORIZONTALES EN PANTALLAS PEQUEÑAS
    ========================================== */
 
-@media (max-width: 576px) {
 
-    /* Contenedor general de productos */
-    .products-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 10px;
-    }
-
-    /* Tarjeta horizontal */
-    .product-gallery {
-        width: 100%;
-        box-sizing: border-box;
-        display: grid;
-        grid-template-columns: 115px minmax(0, 1fr);
-        grid-template-rows: auto auto auto;
-        column-gap: 12px;
-        row-gap: 8px;
-        align-items: start;
-        padding: 10px;
-    }
-
-    /* Tipo de equipo: ocupa todo el ancho */
-    .tipo-equipo-badge {
-        grid-column: 1 / -1;
-    }
-
-    /* Imagen principal a la izquierda */
-    .main-image-container {
-        grid-column: 1;
-        grid-row: 2;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 4px;
-    }
-
-    .main-product-image {
-        width: 100%;
-        height: 125px;
-        object-fit: contain;
-    }
-
-    /* Miniaturas debajo de la imagen */
-    .thumbnail-container {
-        grid-column: 1;
-        grid-row: 3;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
-        margin-top: 0;
-    }
-
-    .thumbnail-image {
-        width: 30px;
-        height: 30px;
-    }
-
-    /* Información a la derecha */
-    .product-info-block {
-        grid-column: 2;
-        grid-row: 2 / span 2;
-        min-width: 0;
-        margin-top: 0 !important;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .producto-info-contenido {
-        min-width: 0;
-        padding: 8px !important;
-        overflow-wrap: anywhere;
-    }
-
-    .producto-marca {
-        font-size: 13px;
-    }
-
-    .producto-modelo,
-    .producto-descripcion {
-        font-size: 12px;
-    }
-
-    .producto-codigo {
-        font-size: 10px;
-    }
-
-    /* Colores debajo de la información */
-    .producto-colores-container {
-        grid-column: 1 / -1;
-        grid-row: 4;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-
-    /* Acciones a todo lo ancho */
-    .product-actions {
-        grid-column: 1 / -1;
-        grid-row: 5;
-        width: 100%;
-    }
-
-    /* Evitar que el efecto hover eleve la tarjeta */
-    .product-gallery:hover {
-        transform: none;
-    }
-}
 
 
 
@@ -2443,123 +2336,85 @@ body:has(#contenedorProductos) .container-xxl {
 
 
 
+
+
 /* ==========================================
-   TARJETAS DE PRODUCTOS - VERSIÓN CELULAR
+   TARJETAS HORIZONTALES EN CELULARES
    ========================================== */
+/* ==========================================
+   TARJETAS HORIZONTALES EN CELULARES
+   ========================================== */
+@media (max-width: 576px) and (min-width: 401px) {
 
-@media (max-width: 600px) {
-
-    /* Una tarjeta por fila */
-    .products-container {
-        grid-template-columns: 1fr;
-        padding: 10px;
-        gap: 14px;
+    #contenedorProductos {
+        grid-template-columns: minmax(0, 1fr) !important;
     }
 
-    /* Tarjeta horizontal */
-    .product-gallery {
-        display: grid !important;
-        grid-template-columns: 40% minmax(0, 1fr);
-        grid-template-rows: auto auto auto auto auto;
-        column-gap: 12px;
-        row-gap: 8px;
-        align-items: start;
-        padding: 10px;
-        width: 100%;
-        min-width: 0;
+        #contenedorProductos > .product-gallery {
+            display: grid !important;
+            grid-template-columns: minmax(105px, 0.85fr) minmax(0, 1.15fr);
+            grid-template-areas:
+                "badge badge"
+                "imagen datos"
+                "miniaturas datos"
+                "acciones acciones";
+            align-items: start;
+            column-gap: 10px;
+            row-gap: 8px;
+            height: auto;
+        }
+
+    #contenedorProductos .main-image-container {
+        grid-area: imagen;
+        width: 100% !important;
+        padding: 4px;
     }
 
-    /* Nombre del tipo de equipo */
-    .tipo-equipo-badge {
-        grid-column: 1 / -1;
-        grid-row: 1;
-        margin: 0 0 4px;
+    #contenedorProductos .main-product-image {
+        height: 130px;
     }
 
-    /* IMAGEN: columna izquierda */
-    .main-image-container {
-        grid-column: 1;
-        grid-row: 2;
-        padding: 5px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .main-product-image {
-        height: 135px;
-        width: 100%;
-        object-fit: contain;
-    }
-
-    /* MINIATURAS: debajo de la imagen, solo en la izquierda */
-    .thumbnail-container {
-        grid-column: 1;
-        grid-row: 3;
-        display: flex;
-        flex-wrap: wrap;
+    #contenedorProductos .thumbnail-container {
+        grid-area: miniaturas;
+        width: 100% !important;
+        margin: 0;
         justify-content: center;
-        gap: 5px;
-        margin-top: 0;
-        width: 100%;
     }
 
-    .thumbnail-image {
+    #contenedorProductos .thumbnail-image {
         width: 27px;
         height: 27px;
     }
 
-    /* COLORES: columna derecha */
-    .producto-colores-container {
-        grid-column: 2;
-        grid-row: 2;
-        min-width: 0;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
+    #contenedorProductos .producto-colores-container {
+        grid-area: datos;
+        width: 100% !important;
+        margin: 0 !important;
     }
 
-    .producto-colores {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
+    #contenedorProductos .product-info-block {
+        grid-area: datos;
+        width: 100% !important;
         min-width: 0;
     }
 
-    /* INFORMACIÓN: debajo de los colores, a la derecha */
-    .product-info-block {
-        grid-column: 2;
-        grid-row: 3 / 5;
-        min-width: 0;
-        width: 100%;
-        margin-top: 0 !important;
-        flex: initial;
+    #contenedorProductos .tipo-equipo-badge {
+        grid-area: badge;
     }
 
-    .producto-info-contenido {
-        padding: 8px !important;
-        min-width: 0;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Precios */
-    .producto-precios-bloque {
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
-    /* Switch de mostrar precios (administrador) */
-    .control-precios {
-        grid-column: 2;
-        grid-row: 5;
-        min-width: 0;
-    }
-
-    /* BOTONES: columna derecha */
-    .product-actions {
-        grid-column: 2;
-        grid-row: 6;
-        margin-top: 0 !important;
-        min-width: 0;
+    #contenedorProductos .product-actions {
+        grid-area: acciones;
         width: 100%;
     }
+}
+
+
+
+
+/* Carrito siempre visible */
+#contenedorProductos .btn-agregar-carrito {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
+    pointer-events: auto !important;
 }

@@ -1404,6 +1404,68 @@ async function cargarProductos() {
                     ? "-" + varianteInicial.descuento + "%"
                     : ""}
 </span>
+
+
+
+
+
+${!estaLogueado ? `
+
+<button
+    type="button"
+    class="btn btn-primary btn-sm btn-agregar-carrito"
+    data-id="${varianteInicial.id}"
+    data-nombre="${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${varianteInicial.color || ""}"
+    data-precio="${varianteInicial.precio}"
+    data-imagenes='${JSON.stringify(imagenesIniciales)}'
+    aria-label="Agregar al carrito"
+    title="Agregar al carrito"
+    style="
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width:36px;
+        height:36px;
+        padding:0;
+        background:#000;
+        color:#fff;
+        border:1px solid #000;
+        border-radius:5px;
+        cursor:pointer;
+    "
+>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 18 14"
+        fill="none"
+        aria-hidden="true"
+        style="display:block;width:18px;height:18px;color:#fff;flex-shrink:0;"
+    >
+        <path
+            d="M2.41356 0H0.633226C0.283505 0 0 0.274055 0 0.612119C0 0.950182 0.283505 1.22424 0.633226 1.22424H1.96461L4.93162 9.41969C5.02053 9.66518 5.26053 9.82976 5.5296 9.82977H14.8765C15.1593 9.82976 15.408 9.64794 15.4856 9.38502L17.3896 2.93147C17.4855 2.6064 17.2905 2.26744 16.9543 2.1747C16.6179 2.08198 16.2673 2.27042 16.1714 2.59553L14.3985 8.60553H5.97855L3.01154 0.410072C2.92264 0.164559 2.68264 0 2.41356 0Z"
+            fill="currentColor"
+        />
+        <circle cx="7.024" cy="11.994" r="1.45" fill="currentColor"/>
+        <circle cx="13.08" cy="11.994" r="1.45" fill="currentColor"/>
+        <path
+            d="M10.29 0.65V6.62M7.21 3.64H13.37"
+            stroke="currentColor"
+            stroke-width="1.3"
+            stroke-linecap="round"
+        />
+    </svg>
+</button>
+
+
+` : ''
+        }
+
+
+
+
+
     </div>
 
 </div>
@@ -1471,59 +1533,6 @@ ${estaLogueado && mostrarBotonesGestion ? `
                             `
                     : `
                                 
-
-${!estaLogueado ? `
-
-<button
-    type="button"
-    class="btn btn-primary btn-sm btn-agregar-carrito"
-    data-id="${varianteInicial.id}"
-    data-nombre="${item.marca || "SIN MARCA"} ${item.modelo || ""} - ${varianteInicial.color || ""}"
-    data-precio="${varianteInicial.precio}"
-    data-imagenes='${JSON.stringify(imagenesIniciales)}'
-    aria-label="Agregar al carrito"
-    title="Agregar al carrito"
-    style="
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        width:36px;
-        height:36px;
-        padding:0;
-        background:#000;
-        color:#fff;
-        border:1px solid #000;
-        border-radius:5px;
-        cursor:pointer;
-    "
->
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 18 14"
-        fill="none"
-        aria-hidden="true"
-        style="display:block;width:18px;height:18px;color:#fff;flex-shrink:0;"
-    >
-        <path
-            d="M2.41356 0H0.633226C0.283505 0 0 0.274055 0 0.612119C0 0.950182 0.283505 1.22424 0.633226 1.22424H1.96461L4.93162 9.41969C5.02053 9.66518 5.26053 9.82976 5.5296 9.82977H14.8765C15.1593 9.82976 15.408 9.64794 15.4856 9.38502L17.3896 2.93147C17.4855 2.6064 17.2905 2.26744 16.9543 2.1747C16.6179 2.08198 16.2673 2.27042 16.1714 2.59553L14.3985 8.60553H5.97855L3.01154 0.410072C2.92264 0.164559 2.68264 0 2.41356 0Z"
-            fill="currentColor"
-        />
-        <circle cx="7.024" cy="11.994" r="1.45" fill="currentColor"/>
-        <circle cx="13.08" cy="11.994" r="1.45" fill="currentColor"/>
-        <path
-            d="M10.29 0.65V6.62M7.21 3.64H13.37"
-            stroke="currentColor"
-            stroke-width="1.3"
-            stroke-linecap="round"
-        />
-    </svg>
-</button>
-
-
-` : ''
-        }
 
 
                             `
