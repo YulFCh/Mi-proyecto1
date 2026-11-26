@@ -2361,15 +2361,15 @@ body:has(#contenedorProductos) .container-xxl {
                 "miniaturas datos"
                 "acciones acciones";
             align-items: start;
-            column-gap: 10px;
-            row-gap: 8px;
+            column-gap: 5px;
+            row-gap: 5px;
             height: auto !important;
         }
 
         #contenedorProductos .main-image-container {
             grid-area: imagen;
             width: 100% !important;
-            padding: 4px;
+            padding: 1px;
         }
 
         #contenedorProductos .main-product-image {
@@ -2408,6 +2408,34 @@ body:has(#contenedorProductos) .container-xxl {
             grid-area: acciones;
             width: 100%;
         }
+
+
+        /* Aprovechar mejor el ancho de la tarjeta */
+        #contenedorProductos > .product-gallery {
+            padding: 5px !important;
+            box-sizing: border-box;
+        }
+
+        #contenedorProductos .producto-info-contenido {
+            padding: 5px !important;
+            margin-bottom: 4px !important;
+            border-radius: 5px;
+        }
+
+        #contenedorProductos .producto-colores-container {
+            gap: 4px !important;
+        }
+
+        #contenedorProductos .producto-colores {
+            gap: 4px !important;
+        }
+
+        #contenedorProductos .product-actions {
+            padding: 0 2px;
+            box-sizing: border-box;
+        }
+
+
 }
 
 
