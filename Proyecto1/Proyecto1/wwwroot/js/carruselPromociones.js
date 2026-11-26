@@ -537,6 +537,57 @@ function iniciarFilaPromocional(
         mostrarImagen();
     };
 
+
+    // ==========================================
+    // DESLIZAMIENTO CON EL DEDO EN CELULARES
+    // EXCLUSIVO PARA LA FILA 2
+    // ==========================================
+
+    if (tipoFila === 2 && visor) {
+
+        let inicioX = 0;
+        let inicioY = 0;
+
+        visor.addEventListener("touchstart", evento => {
+            inicioX = evento.changedTouches[0].clientX;
+            inicioY = evento.changedTouches[0].clientY;
+        }, { passive: true });
+
+        visor.addEventListener("touchend", evento => {
+
+            if (!window.matchMedia("(max-width: 576px)").matches) {
+                return;
+            }
+
+            const finalX = evento.changedTouches[0].clientX;
+            const finalY = evento.changedTouches[0].clientY;
+
+            const diferenciaX = finalX - inicioX;
+            const diferenciaY = finalY - inicioY;
+
+            // Ignorar movimientos pequeños o desplazamientos verticales
+            if (
+                Math.abs(diferenciaX) < 50 ||
+                Math.abs(diferenciaX) < Math.abs(diferenciaY)
+            ) {
+                return;
+            }
+
+            // Deslizar hacia la izquierda: siguiente imagen
+            if (diferenciaX < 0) {
+                avanzar();
+            }
+            // Deslizar hacia la derecha: imagen anterior
+            else {
+                retroceder();
+            }
+
+            // Reiniciar los 20 segundos del carrusel automático
+            reiniciarTemporizador();
+
+        }, { passive: true });
+    }
+
     // Reiniciar temporizador automático
     let temporizador = null;
 

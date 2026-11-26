@@ -2530,5 +2530,7 @@ body:has(#contenedorProductos) .container-xxl {
 }
 
 #contenedorProductos .btn-agregar-carrito {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
 }
+
+

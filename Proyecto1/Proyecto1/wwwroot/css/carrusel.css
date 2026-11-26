@@ -743,3 +743,45 @@ body {
 .promo-fila-2.carrusel-listo .promo-flecha {
     display: flex !important;
 }
+
+
+
+
+@media (max-width: 576px) {
+    .promo-fila-2 .promo-flecha {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    .promo-fila-2-visor {
+        touch-action: pan-y;
+        overflow: hidden;
+    }
+}
+
+
+
+@media (max-width: 576px) {
+
+    .promo-fila-2 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .promo-fila-2-visor {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        overflow: hidden;
+        touch-action: pan-y;
+    }
+
+    #pistaPromociones2 {
+        width: 100%;
+    }
+}

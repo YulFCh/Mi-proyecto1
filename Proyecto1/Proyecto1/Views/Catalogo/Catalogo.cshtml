@@ -50,6 +50,23 @@
     @if (!estaLogueado)
     {
         <!-- PANEL LATERAL DE FILTROS -->
+        <!-- BOTÓN FILTROS PARA CELULAR -->
+        <button type="button"
+                id="btnMostrarFiltrosMovil"
+                class="btn-filtros-movil"
+                aria-expanded="false"
+                aria-controls="panelFiltros"
+                onclick="
+                const panel = document.getElementById('panelFiltros');
+                const abierto = panel.classList.toggle('filtros-movil-abiertos');
+                this.setAttribute('aria-expanded', abierto);
+                this.innerHTML = abierto
+                    ? '✕ &nbsp; Ocultar filtros'
+                    : '☰ &nbsp; Mostrar filtros';
+            ">
+            ☰ &nbsp; Mostrar filtros
+        </button>
+
         <aside class="panel-filtros" id="panelFiltros"
         style="
         box-sizing:border-box;
