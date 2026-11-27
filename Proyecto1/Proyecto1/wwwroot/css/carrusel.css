@@ -918,3 +918,16 @@ body {
         touch-action: pan-y pinch-zoom !important;
     }
 }
+
+
+/* Permitir desplazamiento vertical sobre los indicadores */
+@media (max-width: 576px) {
+
+    #indicadoresPromociones2 {
+        touch-action: pan-y pinch-zoom !important;
+    }
+
+        #indicadoresPromociones2 .promo-indicador {
+            touch-action: pan-y pinch-zoom !important;
+        }
+}
