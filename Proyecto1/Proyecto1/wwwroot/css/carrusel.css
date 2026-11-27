@@ -785,3 +785,94 @@ body {
         width: 100%;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   FILA 2 - FULL WIDTH RESPONSIVE
+   DE BORDE A BORDE
+========================================== */
+
+#carruselPromociones .promo-fila-2 {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+}
+
+/* VISOR */
+#carruselPromociones .promo-fila-2-visor {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: clamp(100px, 32vw, 400px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* PISTA */
+#carruselPromociones #pistaPromociones2 {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* DIAPOSITIVAS */
+#carruselPromociones .promo-fila-2 .promo-slide {
+    flex: 0 0 100vw !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* IMAGEN */
+#carruselPromociones .promo-fila-2 .promo-imagen {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* INDICADORES */
+#carruselPromociones #indicadoresPromociones2 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* MÓVILES */
+@media (max-width: 576px) {
+
+    #carruselPromociones .promo-fila-2-visor {
+        height: clamp(200px, 60vw, 320px) !important;
+    }
+}
