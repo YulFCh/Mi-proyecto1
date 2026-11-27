@@ -790,6 +790,7 @@ function seleccionarImagenIndicador(productoId, indice) {
 // DESLIZAMIENTO TÁCTIL EXCLUSIVO PARA MÓVILES
 // =====================================================
 
+
 function inicializarDeslizamientoMovil(contenedor) {
 
     if (!window.matchMedia("(max-width: 576px)").matches) return;
@@ -802,43 +803,306 @@ function inicializarDeslizamientoMovil(contenedor) {
 
         let inicioX = 0;
         let inicioY = 0;
+        let desplazamientoX = 0;
+        let arrastrando = false;
+        let movimientoHorizontal = false;
+        let imagenOriginal = null;
+        let imagenSiguiente = null;
+        let anchoArea = 0;
+        let indiceDestino = -1;
+        let imagenesActuales = [];
+
+        const card = area.closest(".product-gallery");
+
+        if (!card) return;
+
+        function limpiarDeslizamiento() {
+
+            if (imagenSiguiente) {
+                imagenSiguiente.remove();
+                imagenSiguiente = null;
+            }
+
+            if (imagenOriginal) {
+                imagenOriginal.style.transition = "";
+                imagenOriginal.style.transform = "";
+            }
+
+            arrastrando = false;
+            movimientoHorizontal = false;
+            desplazamientoX = 0;
+            indiceDestino = -1;
+        }
 
         area.addEventListener("touchstart", e => {
 
-            inicioX = e.changedTouches[0].clientX;
-            inicioY = e.changedTouches[0].clientY;
+            if (e.touches.length !== 1) return;
 
-        }, { passive: true });
+            imagenOriginal = area.querySelector(".main-product-image");
 
-        area.addEventListener("touchend", e => {
-
-            const diferenciaX = e.changedTouches[0].clientX - inicioX;
-            const diferenciaY = e.changedTouches[0].clientY - inicioY;
-
-            if (
-                Math.abs(diferenciaX) < 40 ||
-                Math.abs(diferenciaX) < Math.abs(diferenciaY)
-            ) return;
-
-            const card = area.closest(".product-gallery");
-            if (!card) return;
+            if (!imagenOriginal) return;
 
             const productoId = Number(
                 card.id.replace("producto-", "")
             );
 
-            const indiceActual = Number(card.dataset.imagenIndex || 0);
+            const producto = window.productosAgrupados?.find(
+                p => Number(p.id) === productoId
+            );
 
-            const siguienteIndice = diferenciaX < 0
-                ? indiceActual + 1
-                : indiceActual - 1;
+            if (!producto) return;
 
-            actualizarImagenMovil(productoId, siguienteIndice);
+            const variantes = producto.variantes || producto.Variantes || [];
+
+            const variante = variantes[Number(card.dataset.varianteIndex)];
+
+            if (!variante) return;
+
+            imagenesActuales = [
+                variante.url_Equipo,
+                variante.url1,
+                variante.url2,
+                variante.url3
+            ].filter(Boolean);
+
+            inicioX = e.touches[0].clientX;
+            inicioY = e.touches[0].clientY;
+
+            desplazamientoX = 0;
+            arrastrando = true;
+            movimientoHorizontal = false;
+
+            anchoArea = area.offsetWidth;
+
+            imagenOriginal.style.transition = "none";
+            imagenOriginal.style.transform = "translateX(0)";
+
+            area.dataset.suprimirClick = "false";
 
         }, { passive: true });
 
+        area.addEventListener("touchmove", e => {
+
+            if (!arrastrando || !imagenOriginal || e.touches.length !== 1) return;
+
+            const actualX = e.touches[0].clientX;
+            const actualY = e.touches[0].clientY;
+
+            desplazamientoX = actualX - inicioX;
+
+            const diferenciaY = actualY - inicioY;
+
+            // Esperar a que el movimiento sea claramente horizontal
+            if (!movimientoHorizontal) {
+
+                if (
+                    Math.abs(desplazamientoX) < 8 &&
+                    Math.abs(diferenciaY) < 8
+                ) return;
+
+                // Si es un gesto vertical, permitir el scroll de la página
+                if (Math.abs(diferenciaY) > Math.abs(desplazamientoX)) {
+                    arrastrando = false;
+                    imagenOriginal.style.transition = "";
+                    return;
+                }
+
+                movimientoHorizontal = true;
+            }
+
+            e.preventDefault();
+
+            const indiceActual = Number(card.dataset.imagenIndex || 0);
+
+            const direccion = desplazamientoX < 0 ? 1 : -1;
+
+            indiceDestino = indiceActual + direccion;
+
+            if (
+                indiceDestino < 0 ||
+                indiceDestino >= imagenesActuales.length
+            ) {
+                indiceDestino = -1;
+
+                if (imagenSiguiente) {
+                    imagenSiguiente.remove();
+                    imagenSiguiente = null;
+                }
+
+                imagenOriginal.style.transform =
+                    `translateX(${desplazamientoX * 0.35}px)`;
+
+                return;
+            }
+
+            // Crear la imagen siguiente una sola vez durante el gesto
+            if (!imagenSiguiente) {
+
+                imagenSiguiente = document.createElement("img");
+
+                imagenSiguiente.src = imagenesActuales[indiceDestino];
+                imagenSiguiente.className = "main-product-image swipe-preview-image";
+
+                imagenSiguiente.style.position = "absolute";
+                imagenSiguiente.style.top = "0";
+                imagenSiguiente.style.left = "0";
+                imagenSiguiente.style.width = "100%";
+                imagenSiguiente.style.height = "100%";
+                imagenSiguiente.style.objectFit = "contain";
+                imagenSiguiente.style.pointerEvents = "none";
+                imagenSiguiente.style.transition = "none";
+                imagenSiguiente.style.willChange = "transform";
+
+                area.appendChild(imagenSiguiente);
+            }
+
+            // Si cambia la dirección durante el arrastre,
+            // actualizar la imagen de vista previa
+            if (imagenSiguiente.src !== imagenesActuales[indiceDestino]) {
+                imagenSiguiente.src = imagenesActuales[indiceDestino];
+            }
+
+            if (desplazamientoX < 0) {
+
+                imagenSiguiente.style.transform =
+                    `translateX(${anchoArea + desplazamientoX}px)`;
+
+            } else {
+
+                imagenSiguiente.style.transform =
+                    `translateX(${-anchoArea + desplazamientoX}px)`;
+            }
+
+            imagenOriginal.style.transform =
+                `translateX(${desplazamientoX}px)`;
+
+        }, { passive: false });
+
+        area.addEventListener("touchend", () => {
+
+            if (!arrastrando || !imagenOriginal) return;
+
+            arrastrando = false;
+
+            const deslizar = movimientoHorizontal &&
+                Math.abs(desplazamientoX) >= 40 &&
+                indiceDestino >= 0;
+
+            if (movimientoHorizontal) {
+                area.dataset.suprimirClick = "true";
+            }
+
+            if (!imagenSiguiente || !deslizar) {
+
+                // Regresar suavemente a la imagen actual
+                imagenOriginal.style.transition =
+                    "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+                imagenOriginal.style.transform = "translateX(0)";
+
+                if (imagenSiguiente) {
+
+                    imagenSiguiente.style.transition =
+                        "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+                    imagenSiguiente.style.transform =
+                        desplazamientoX < 0
+                            ? `translateX(${anchoArea}px)`
+                            : `translateX(${-anchoArea}px)`;
+
+                    imagenSiguiente.addEventListener("transitionend", function () {
+                        limpiarDeslizamiento();
+                    }, { once: true });
+
+                } else {
+
+                    imagenOriginal.addEventListener("transitionend", function () {
+                        limpiarDeslizamiento();
+                    }, { once: true });
+                }
+
+                // Reinicio por seguridad si no se produce transitionend
+                // en un movimiento prácticamente nulo
+                if (Math.abs(desplazamientoX) < 2) {
+                    limpiarDeslizamiento();
+                }
+
+                return;
+            }
+
+            // Deslizamiento completado: avanzar o retroceder
+            const direccionFinal = desplazamientoX < 0 ? -1 : 1;
+
+            imagenOriginal.style.transition =
+                "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+            imagenSiguiente.style.transition =
+                "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+            imagenOriginal.style.transform =
+                `translateX(${direccionFinal * anchoArea}px)`;
+
+            imagenSiguiente.style.transform = "translateX(0)";
+
+            imagenSiguiente.addEventListener("transitionend", function () {
+
+                actualizarImagenMovil(
+                    Number(card.id.replace("producto-", "")),
+                    indiceDestino
+                );
+
+                limpiarDeslizamiento();
+
+            }, { once: true });
+
+        }, { passive: true });
+
+        area.addEventListener("touchcancel", () => {
+
+            if (!arrastrando) return;
+
+            arrastrando = false;
+
+            if (imagenOriginal) {
+                imagenOriginal.style.transition =
+                    "transform 0.25s ease";
+                imagenOriginal.style.transform = "translateX(0)";
+            }
+
+            if (imagenSiguiente) {
+                imagenSiguiente.style.transition =
+                    "transform 0.25s ease";
+
+                imagenSiguiente.style.transform =
+                    desplazamientoX < 0
+                        ? `translateX(${anchoArea}px)`
+                        : `translateX(${-anchoArea}px)`;
+
+                imagenSiguiente.addEventListener("transitionend", () => {
+                    limpiarDeslizamiento();
+                }, { once: true });
+            } else {
+                limpiarDeslizamiento();
+            }
+
+        }, { passive: true });
+
+        // Evitar abrir el zoom al soltar el dedo después de deslizar
+        area.addEventListener("click", e => {
+
+            if (area.dataset.suprimirClick === "true") {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                area.dataset.suprimirClick = "false";
+            }
+
+        }, true);
+
     });
 }
+
 
 
 function abrirZoomProductoSeleccionado(productoId) {

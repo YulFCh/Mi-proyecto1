@@ -2534,3 +2534,28 @@ body:has(#contenedorProductos) .container-xxl {
 }
 
 
+
+
+
+/* ==========================================
+   DESLIZAMIENTO REAL DE IMÁGENES EN MÓVILES
+   ========================================== */
+
+@media (max-width: 576px) {
+
+    #contenedorProductos .main-image-container {
+        position: relative;
+        overflow: hidden;
+        touch-action: pan-y;
+        isolation: isolate;
+    }
+
+    #contenedorProductos .main-product-image {
+        will-change: transform;
+        transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    #contenedorProductos .swipe-preview-image {
+        z-index: 2;
+    }
+}
