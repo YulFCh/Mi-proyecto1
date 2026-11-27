@@ -894,3 +894,27 @@ body {
         object-position: center !important;
     }
 }
+
+
+
+
+
+/* ==========================================
+   PERMITIR DESPLAZAMIENTO VERTICAL SOBRE
+   EL CARRUSEL DE PROMOCIONES
+========================================== */
+
+@media (max-width: 576px) {
+
+    #carruselPromociones .promo-fila-2-visor {
+        touch-action: pan-y pinch-zoom !important;
+        overscroll-behavior-x: contain;
+    }
+
+    #carruselPromociones .promo-fila-2,
+    #carruselPromociones #pistaPromociones2,
+    #carruselPromociones .promo-fila-2 .promo-slide,
+    #carruselPromociones .promo-fila-2 .promo-imagen {
+        touch-action: pan-y pinch-zoom !important;
+    }
+}
