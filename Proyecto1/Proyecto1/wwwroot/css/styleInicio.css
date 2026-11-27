@@ -2559,3 +2559,8 @@ body:has(#contenedorProductos) .container-xxl {
         z-index: 2;
     }
 }
+
+
+#contenedorProductos .main-product-image {
+    will-change: transform, opacity;
+}

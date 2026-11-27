@@ -1011,13 +1011,38 @@ function inicializarDeslizamientoMovil(contenedor) {
                             : `translateX(${-anchoArea}px)`;
 
                     imagenSiguiente.addEventListener("transitionend", function () {
-                        limpiarDeslizamiento();
-                    }, { once: true });
 
-                } else {
+                        // La imagen entrante ya está en el centro.
+                        // Ocultamos momentáneamente la imagen original
+                        // para evitar que se vea el cambio de src.
+                        imagenOriginal.style.transition = "none";
+                        imagenOriginal.style.opacity = "0";
 
-                    imagenOriginal.addEventListener("transitionend", function () {
-                        limpiarDeslizamiento();
+                        // Actualizar la imagen principal y los indicadores
+                        actualizarImagenMovil(
+                            Number(card.id.replace("producto-", "")),
+                            indiceDestino
+                        );
+
+                        // Restablecer posición de la imagen principal
+                        imagenOriginal.style.transform = "translateX(0)";
+
+                        // Retirar la imagen temporal
+                        if (imagenSiguiente) {
+                            imagenSiguiente.remove();
+                            imagenSiguiente = null;
+                        }
+
+                        // Mostrar la imagen principal ya actualizada
+                        imagenOriginal.style.opacity = "1";
+                        imagenOriginal.style.transition = "";
+                        imagenOriginal.style.transform = "";
+
+                        arrastrando = false;
+                        movimientoHorizontal = false;
+                        desplazamientoX = 0;
+                        indiceDestino = -1;
+
                     }, { once: true });
                 }
 
