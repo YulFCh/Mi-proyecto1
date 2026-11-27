@@ -897,3 +897,29 @@ body {
 
 
 
+
+
+
+/* ==========================================
+   FILA 1 - IMAGEN COMPLETA EN MÓVILES
+========================================== */
+
+@media (max-width: 576px) {
+
+    #carruselPromociones .promo-fila-1-visor {
+        height: clamp(35px, 10vw, 60px) !important;
+        overflow: hidden !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-slide,
+    #carruselPromociones .promo-fila-1 .promo-slide a {
+        height: 100% !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-imagen {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center !important;
+    }
+}
