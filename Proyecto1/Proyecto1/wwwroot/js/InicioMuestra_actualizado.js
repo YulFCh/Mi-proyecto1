@@ -1056,27 +1056,58 @@ function inicializarDeslizamientoMovil(contenedor) {
             }
 
             // Deslizamiento completado: avanzar o retroceder
-            const direccionFinal = desplazamientoX < 0 ? -1 : 1;
+            // Deslizamiento completado: avanzar o retroceder
+            const indiceFinal = indiceDestino;
+
+            const duracionDeslizamiento = "0.25s";
+            const curvaDeslizamiento = "cubic-bezier(0.22, 0.61, 0.36, 1)";
 
             imagenOriginal.style.transition =
-                "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+                `transform ${duracionDeslizamiento} ${curvaDeslizamiento}`;
 
             imagenSiguiente.style.transition =
-                "transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1)";
+                `transform ${duracionDeslizamiento} ${curvaDeslizamiento}`;
+
+            const direccionFinal = desplazamientoX < 0 ? -1 : 1;
 
             imagenOriginal.style.transform =
                 `translateX(${direccionFinal * anchoArea}px)`;
 
             imagenSiguiente.style.transform = "translateX(0)";
 
-            imagenSiguiente.addEventListener("transitionend", function () {
+            imagenSiguiente.addEventListener("transitionend", function (e) {
 
-                actualizarImagenMovil(
-                    Number(card.id.replace("producto-", "")),
-                    indiceDestino
-                );
+                if (e.propertyName !== "transform") return;
 
-                limpiarDeslizamiento();
+                // Actualizar el índice de la imagen actual
+                card.dataset.imagenIndex = indiceFinal;
+
+                // Actualizar los indicadores
+                card.querySelectorAll(".indicador-imagen").forEach((boton, i) => {
+                    boton.classList.toggle("activo", i === indiceFinal);
+                });
+
+                // La imagen entrante se convierte en la imagen principal.
+                // No volvemos a cambiar su src, porque ya contiene la imagen correcta.
+                imagenSiguiente.classList.remove("swipe-preview-image");
+
+                // Limpiar estilos temporales de la imagen entrante
+                imagenSiguiente.style.transition = "none";
+                imagenSiguiente.style.transform = "none";
+                imagenSiguiente.removeAttribute("style");
+
+                // Retirar la imagen anterior
+                imagenOriginal.remove();
+
+                // La nueva imagen queda como imagen principal
+                imagenOriginal = imagenSiguiente;
+                imagenSiguiente = null;
+
+                // Reiniciar estado del gesto
+                arrastrando = false;
+                movimientoHorizontal = false;
+                desplazamientoX = 0;
+                indiceDestino = -1;
 
             }, { once: true });
 
