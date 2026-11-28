@@ -2566,3 +2566,30 @@ body:has(#contenedorProductos) .container-xxl {
 }
 
 
+
+
+/* LOGO + NOMBRE COMP SOLUTION */
+.logo-fractalica-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-fractalica-img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
+.logo-fractalica {
+    margin: 0;
+}
+
+    /* COLORES DEL NOMBRE COMP SOLUTION */
+    .logo-fractalica .logo-comp {
+        color: #48C970; /* Verde agua */
+    }
+
+    .logo-fractalica .logo-solution {
+        color: #0080FF; /* Azul claro */
+    }

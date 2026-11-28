@@ -1197,3 +1197,25 @@ body {
         transform: translateY(6px) !important;
     }
 }
+
+
+/* SUBIR SOLO EL BOTÓN VER TODO EN MÓVILES */
+@media (max-width: 768px) {
+    #carruselPromociones .promo-fila-1 .btn-ver-todo {
+        transform: translateY(-3px) !important;
+    }
+}
+
+
+/* =====================================================
+   SEPARACIÓN ENTRE EL LAYOUT SUPERIOR Y FILA 1
+===================================================== */
+
+#carruselPromociones .promo-fila-1 {
+    margin-top: 5px !important;
+}
+
+/* SEPARACIÓN ENTRE FILA 1 Y FILA 2 */
+#carruselPromociones .promo-fila-1 {
+    margin-bottom: 3px !important;
+}
