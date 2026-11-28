@@ -2593,3 +2593,40 @@ body:has(#contenedorProductos) .container-xxl {
     .logo-fractalica .logo-solution {
         color: #0080FF; /* Azul claro */
     }
+
+
+
+/* ==========================================
+   LOGO COMP SOLUTION - AJUSTE PARA MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+
+    .logo-fractalica {
+        font-size: 13px !important;
+        letter-spacing: 1px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+    }
+
+    .logo-fractalica-contenedor {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .logo-fractalica-img {
+        flex-shrink: 0 !important;
+    }
+}
+
+/* REDUCIR LIGERAMENTE EL LOGO EN MÓVILES */
+@media (max-width: 600px) {
+    .logo-fractalica-img {
+        width: 32px !important;
+        height: 32px !important;
+        object-fit: contain !important;
+    }
+}
