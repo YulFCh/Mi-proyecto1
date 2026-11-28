@@ -1202,7 +1202,7 @@ body {
 /* SUBIR SOLO EL BOTÓN VER TODO EN MÓVILES */
 @media (max-width: 768px) {
     #carruselPromociones .promo-fila-1 .btn-ver-todo {
-        transform: translateY(-3px) !important;
+        transform: translateY(-1px) !important;
     }
 }
 
