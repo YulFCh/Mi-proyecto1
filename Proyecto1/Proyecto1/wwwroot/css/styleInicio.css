@@ -2564,3 +2564,5 @@ body:has(#contenedorProductos) .container-xxl {
 #contenedorProductos .main-product-image {
     will-change: transform, opacity;
 }
+
+
