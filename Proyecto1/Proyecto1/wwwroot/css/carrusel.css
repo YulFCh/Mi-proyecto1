@@ -1016,3 +1016,173 @@ body {
             height: 22px;
         }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   FILA 1: VISOR HASTA VER TODO
+   EL BOTÓN NO SE SUPERPONE A LA IMAGEN
+===================================================== */
+
+#carruselPromociones .promo-fila-1 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+}
+
+/* VISOR: OCUPA EL ESPACIO RESTANTE */
+#carruselPromociones .promo-fila-1-visor {
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* PISTA */
+#carruselPromociones .promo-fila-1 .promo-pista {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* CADA DIAPOSITIVA SE AJUSTA AL VISOR */
+#carruselPromociones .promo-fila-1 .promo-slide {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+}
+
+/* IMAGEN */
+#carruselPromociones .promo-fila-1 .promo-imagen {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+/* BOTÓN: RESERVA SU PROPIO ESPACIO */
+#carruselPromociones .promo-fila-1 .btn-ver-todo {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    flex: 0 0 auto !important;
+    margin: 0 38px 0 8px !important;
+    white-space: nowrap !important;
+    z-index: 20 !important;
+}
+
+/* MÓVILES */
+@media (max-width: 768px) {
+
+    #carruselPromociones .promo-fila-1 {
+        display: flex !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        gap: 0 !important;
+    }
+
+    #carruselPromociones .promo-fila-1-visor {
+        flex: 1 1 0% !important;
+        width: 0 !important;
+        min-width: 0 !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-slide {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .btn-ver-todo {
+        flex: 0 0 auto !important;
+        position: relative !important;
+        margin: 0 30px 0 5px !important;
+        right: auto !important;
+        transform: none !important;
+        height: 22px !important;
+        padding: 0 9px !important;
+        font-size: 10px !important;
+    }
+}
+
+
+
+/* =====================================================
+   FILA 1: ANCHO COMPLETO Y ALTURA REDUCIDA
+   SOLO PANTALLAS GRANDES
+===================================================== */
+
+@media (min-width: 769px) {
+
+    #carruselPromociones .promo-fila-1 {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 55px !important;
+        min-height: 55px !important;
+        max-height: 55px !important;
+        aspect-ratio: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* IMAGEN: OCUPA TODO EL ESPACIO HASTA EL BOTÓN */
+    #carruselPromociones .promo-fila-1-visor {
+        flex: 1 1 0% !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-pista {
+        display: flex !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-slide {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+    }
+
+    #carruselPromociones .promo-fila-1 .promo-imagen {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+
+    /* BOTÓN: RESERVA SU PROPIO ESPACIO */
+    #carruselPromociones .promo-fila-1 .btn-ver-todo {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+        flex-shrink: 0 !important;
+        margin: 0 38px 0 8px !important;
+        z-index: 20 !important;
+    }
+}
