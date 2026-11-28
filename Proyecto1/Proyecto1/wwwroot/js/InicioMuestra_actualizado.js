@@ -877,7 +877,6 @@ function inicializarDeslizamientoMovil(contenedor) {
             imagenOriginal.style.transition = "none";
             imagenOriginal.style.transform = "translateX(0)";
 
-            area.dataset.suprimirClick = "false";
 
         }, { passive: true });
 
@@ -989,7 +988,8 @@ function inicializarDeslizamientoMovil(contenedor) {
                 indiceDestino >= 0;
 
             if (movimientoHorizontal) {
-                area.dataset.suprimirClick = "true";
+                area.dataset.suprimirClickHasta =
+                    String(Date.now() + 400);
             }
 
             if (!imagenSiguiente || !deslizar) {
@@ -1144,14 +1144,19 @@ function inicializarDeslizamientoMovil(contenedor) {
         }, { passive: true });
 
         // Evitar abrir el zoom al soltar el dedo después de deslizar
+
         area.addEventListener("click", e => {
 
-            if (area.dataset.suprimirClick === "true") {
+            const tiempoBloqueo =
+                Number(area.dataset.suprimirClickHasta || 0);
+
+            if (Date.now() <= tiempoBloqueo) {
 
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
 
-                area.dataset.suprimirClick = "false";
+                area.dataset.suprimirClickHasta = "0";
             }
 
         }, true);
